@@ -3,13 +3,16 @@ package services;
 import exceptions.DuplicateExistsException;
 import exceptions.EntityNotFoundException;
 import exceptions.InvalidEmailException;
+import exceptions.UnauthorizedOperationException;
 import models.User;
+import org.springframework.stereotype.Service;
 import repositories.UserRepository;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Service
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
@@ -46,7 +49,10 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void delete(User user, User deletedBy) {
-
+//        if (!deletedBy.isAdmin()) {
+//            throw new UnauthorizedOperationException("Only admins can delete users!");
+//        }
+        userRepository.delete(user);
     }
 
     @Override

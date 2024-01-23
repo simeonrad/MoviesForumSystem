@@ -5,9 +5,11 @@ import models.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class UserRepositoryImpl implements UserRepository {
 
     private final SessionFactory sessionFactory;
@@ -27,7 +29,11 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(User user) {
-
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.remove(user);
+            session.getTransaction().commit();
+        }
     }
 
     @Override
@@ -43,7 +49,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User getByName(String name) {
         try (Session session = sessionFactory.openSession()) {
-//            Query<User> query = session.createQuery("from User where first_name = :name", User.class);
+//            Query<User> query = session.createQuery("from User where name = :first_name", User.class);
 //            query.setParameter("first_name", name);
 //            List<User> result = query.list();
 //            if (result.isEmpty()) {
@@ -57,23 +63,20 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User getById(int id) {
         try (Session session = sessionFactory.openSession()) {
-//            Query<User> query = session.createQuery("from User where user_id = :id", User.class);
-//            query.setParameter("user_id", id);
-//            List<User> result = query.list();
-//            if (result.isEmpty()) {
-//                throw new EntityNotFoundException("User", "id", id);
-//            }
-//            return result.get(0);
+            User user = session.get(User.class, id);
+            if (user == null) {
+                throw new EntityNotFoundException("User", id);
+            }
+            return user;
         }
-        return null;
     }
 
     @Override
     public List<User> getAll() {
-//        try (Session session = sessionFactory.openSession()) {
-//            Query<User> query = session.createQuery("from User", User.class);
-//            return query.list();
-//        }
+        try (Session session = sessionFactory.openSession()) {
+            //Query<User> query = session.createQuery("from User", User.class);
+            //return query.list();
+        }
         return null;
     }
 
