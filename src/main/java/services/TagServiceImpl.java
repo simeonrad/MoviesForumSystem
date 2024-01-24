@@ -18,31 +18,31 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public void create(Tag tag, User user) {
-//        Tag existingTag = tagRepository.getByName(tag.getName());
-//        if (existingTag != null) {
-//            throw new DuplicateExistsException("Tag", "name", tag.getName());
-//        }
-//        tag.setName(tag.getName().toLowerCase());
-//        tagRepository.create(tag);
+        Tag existingTag = tagRepository.getByName(tag.getName());
+        if (existingTag != null) {
+            throw new DuplicateExistsException("Tag", "name", tag.getName());
+        }
+        tag.setName(tag.getName().toLowerCase());
+        tagRepository.create(tag);
     }
 
     @Override
     public void update(Tag tag, User user) {
-//        Tag existingTag = tagRepository.getById(tag.getId());
-//        if (existingTag == null) {
-//            throw new EntityNotFoundException("Tag", "id", Integer.toString(tag.getId()));
-//        }
-//        tag.setName(tag.getName().toLowerCase());
-//        tagRepository.update(tag);
+        Tag existingTag = tagRepository.getById(tag.getId());
+        if (existingTag == null) {
+            throw new EntityNotFoundException("Tag", "id", Integer.toString(tag.getId()));
+        }
+        tag.setName(tag.getName().toLowerCase());
+        tagRepository.update(tag);
     }
 
     @Override
     public void delete(Tag tag, User user) {
-//        Tag existingTag = tagRepository.getById(tag.getId());
-//        if (existingTag == null) {
-//            throw new EntityNotFoundException("Tag", "id", Integer.toString(tag.getId()));
-//        }
-//        tagRepository.delete(tag);
+        Tag existingTag = tagRepository.getById(tag.getId());
+        if (existingTag == null) {
+            throw new EntityNotFoundException("Tag", "id", Integer.toString(tag.getId()));
+        }
+        tagRepository.delete(tag);
     }
 
     @Override

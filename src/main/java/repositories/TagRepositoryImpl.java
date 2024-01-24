@@ -67,7 +67,6 @@ public class TagRepositoryImpl implements TagRepository {
 //                throw new EntityNotFoundException("Tag", "name", name);
 //            }
 //            return result.get(0);
-//        }
         }
         return null;
     }

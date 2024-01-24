@@ -23,56 +23,57 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void create(User user, User createdBy) {
-//        boolean usernameExists = true;
-//        try {
-//            userRepository.getByUsername(user.getUsername());
-//        }catch (EntityNotFoundException e) {
-//            usernameExists = false;
-//        }
-//        if (usernameExists) {
-//            throw new DuplicateExistsException("User", "username", user.getUsername());
-//        }
-//
-//        emailValidator(user.getEmail());
-//        boolean emailExists = true;
-//        try {
-//            userRepository.getByEmail(user.getEmail());
-//        }catch (EntityNotFoundException e){
-//            emailExists = false;
-//        }
-//        if (emailExists) {
-//            throw new DuplicateExistsException("User", "email", user.getEmail());
-//        }
+        boolean usernameExists = true;
+        try {
+            userRepository.getByUsername(user.getUsername());
+        }catch (EntityNotFoundException e) {
+            usernameExists = false;
+        }
+        if (usernameExists) {
+            throw new DuplicateExistsException("User", "username", user.getUsername());
+        }
+
+        emailValidator(user.getEmail());
+        boolean emailExists = true;
+        try {
+            userRepository.getByEmail(user.getEmail());
+        }catch (EntityNotFoundException e){
+            emailExists = false;
+        }
+        if (emailExists) {
+            throw new DuplicateExistsException("User", "email", user.getEmail());
+        }
 
         userRepository.create(user);
     }
 
     @Override
     public void delete(User user, User deletedBy) {
-//        if (!deletedBy.isAdmin()) {
-//            throw new UnauthorizedOperationException("Only admins can delete users!");
-//        }
+        if (!deletedBy.isAdmin()) {
+            throw new UnauthorizedOperationException("Only admins can delete users!");
+        }
         userRepository.delete(user);
     }
 
     @Override
     public void update(User user, User updatedBy) {
-//        if (!user.equals(updatedBy)) {
-//            throw new UnauthorizedOperationException("Only the user can modify it's data!");
-//        }
-//        boolean duplicateExists = true;
-//
-//        try {
-//            if (user.getEmail()) {
-//                duplicateExists = false;
-//            }
-//        } catch (EntityNotFoundException e) {
-//            duplicateExists = false;
-//        }
-//        if (duplicateExists) {
-//            throw new DuplicateExistsException("User", "name", user.getName());
-//        }
-//        userRepository.update(user);
+        if (!user.equals(updatedBy)) {
+            throw new UnauthorizedOperationException("Only the user can modify it's data!");
+        }
+        if (!user.getUsername().equals(updatedBy.getUsername())) {
+            throw new UnauthorizedOperationException("Username cannot be changed");
+        }
+        boolean emailExists = true;
+        try {
+            userRepository.getByEmail(user.getEmail());
+        }catch (EntityNotFoundException e){
+            emailExists = false;
+        }
+        if (emailExists) {
+            throw new DuplicateExistsException("User", "email", user.getEmail());
+        }
+
+        userRepository.update(user);
     }
 
     @Override
