@@ -60,14 +60,13 @@ public class TagRepositoryImpl implements TagRepository {
     @Override
     public Tag getByName(String name) {
         try (Session session = sessionFactory.openSession()) {
-//            Query<Tag> query = session.createQuery("from Tag where name = :tag_name", Tag.class);
-//            query.setParameter("tag_name", name);
-//            List<Tag> result = query.list();
-//            if (result.isEmpty()) {
-//                throw new EntityNotFoundException("Tag", "name", name);
-//            }
-//            return result.get(0);
+            Query<Tag> query = session.createQuery("from Tag where name = :tag_name", Tag.class);
+            query.setParameter("tag_name", name);
+            List<Tag> result = query.list();
+            if (result.isEmpty()) {
+                throw new EntityNotFoundException("Tag", "name", name);
+            }
+            return result.get(0);
         }
-        return null;
     }
 }

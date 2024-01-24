@@ -2,8 +2,6 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -17,34 +15,25 @@ public class User {
     private boolean isAdmin;
 
     @Column(name = "username")
-    @NotNull(message = "Username can't be empty!")
-    @Size(min = 4, max = 50, message = "Username should be between 6 and 50 symbols!")
     private String username;
 
     @JsonIgnore
     @Column(name = "password")
-    @NotNull(message = "Password can't be empty!")
-    @Size(min = 8, max = 50, message = "Password should be between 8 and 50 symbols!")
     private String password;
 
     @Column(name = "first_name")
-    @NotNull(message = "First name can't be empty!")
-    @Size(min = 2, max = 32, message = "First name should be between 4 and 32 symbols!")
     private String firstName;
 
     @Column(name = "last_name")
-    @NotNull(message = "Last name can't be empty!")
-    @Size(min = 2, max = 32, message = "Last name should be between 2 and 32 symbols!")
     private String lastName;
 
     @Column(name = "email")
-    @NotNull(message = "Email can't be empty!")
-    @Size(min = 10, max = 100, message = "Email should be between 10 and 100 symbols!")
     private String email;
-    @Column(name = "is_blocked")
-    private String isBlocked;
 
-    public User(boolean isAdmin, int id, String username, String password, String firstName, String lastName, String email, String isBlocked) {
+    @Column(name = "is_blocked")
+    private boolean isBlocked;
+
+    public User(boolean isAdmin, int id, String username, String password, String firstName, String lastName, String email, boolean isBlocked) {
         this.isAdmin = isAdmin;
         this.id = id;
         this.username = username;
@@ -114,11 +103,11 @@ public class User {
         this.email = email;
     }
 
-    public String getIsBlocked() {
+    public boolean getIsBlocked() {
         return isBlocked;
     }
 
-    public void setIsBlocked(String isBlocked) {
+    public void setIsBlocked(boolean isBlocked) {
         this.isBlocked = isBlocked;
     }
 }
