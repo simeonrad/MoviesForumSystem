@@ -1,5 +1,6 @@
 package models;
 
+
 public class User {
     private boolean isAdmin;
 

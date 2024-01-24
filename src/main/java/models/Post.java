@@ -1,20 +1,46 @@
 package models;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "posts")
+
 public class Post {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
+    private int id;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User author;
+    @Column(name = "content")
     private String content;
+    @Column(name = "likes")
     private int likes;
+    @Column(name = "date_created")
     private LocalDate timeStamp;
-    public void create(Comment comment) {
+    @Column(name = "title")
+    private String title;
+
+    public Post(String content, String title) {
+        this.title = title;
+        this.content = content;
+        this.timeStamp = LocalDate.now();
+        this.likes = 0;
+    }
+
+    public Post() {
 
     }
 
-    public Post(String content) {
-        this.content = content;
-        this.timeStamp =LocalDate.now();
-        this.likes = 0;
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public User getAuthor() {

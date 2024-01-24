@@ -1,20 +1,35 @@
 package models;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 
+@Entity
+@Table(name = "comments")
 public class Comment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id")
+    private int id;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User author;
+    @Column(name = "content")
     private String content;
-    private int likes;
+    @Column(name = "date_created")
     private LocalDate timeStamp;
+
+    public Comment() {
+
+    }
+
     public void create(Comment comment) {
 
     }
 
     public Comment(String content) {
         this.content = content;
-        this.timeStamp =LocalDate.now();
-        this.likes = 0;
+        this.timeStamp = LocalDate.now();
     }
 
     public User getAuthor() {
@@ -31,14 +46,6 @@ public class Comment {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public int getLikes() {
-        return likes;
-    }
-
-    public void setLikes(int likes) {
-        this.likes = likes;
     }
 
     public LocalDate getTimeStamp() {
