@@ -24,6 +24,7 @@ public class Tag {
 
     @Column(name = "tag_name")
     private String name;
+
     public Tag(String name, int id) {
         this.name = name;
         this.id = id;
