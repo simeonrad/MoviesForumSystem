@@ -59,9 +59,8 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public List<Comment> getByPostId(int id) {
         try (Session session = sessionFactory.openSession()) {
-            //  Query<Comment> query = session.createQuery("from Post where post_id = id", Comment.class);
-            //return query.list();
+              Query<Comment> query = session.createQuery("from Post where : post_id = id", Comment.class);
+            return query.list();
         }
-        return null;
     }
 }

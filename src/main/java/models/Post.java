@@ -1,8 +1,10 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @Table(name = "posts")
@@ -23,6 +25,17 @@ public class Post {
     private LocalDate timeStamp;
     @Column(name = "title")
     private String title;
+    @OneToMany
+    @JoinColumn(name = "post_id")
+    private Set<Comment> comments;
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "posts_tags",
+            inverseJoinColumns = @JoinColumn(name = "tag_id"),
+            joinColumns = @JoinColumn(name = "post_id")
+    )
+    private Set<Tag> tags;
 
     public Post(String content, String title) {
         this.title = title;
@@ -33,6 +46,38 @@ public class Post {
 
     public Post() {
 
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Set<Comment> getComments() {
+        return comments;
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
+
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+    }
+
+    public void addTag(Tag tag) {
+        tags.add(tag);
+    }
+
+    public void removeTag(Tag tag) {
+        tags.remove(tag);
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
     }
 
     public String getTitle() {
