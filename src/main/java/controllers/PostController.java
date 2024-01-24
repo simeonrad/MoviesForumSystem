@@ -1,9 +1,10 @@
 package controllers;
 
-import models.Comment;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+@RequestMapping("/movieForum/beers")
 public class PostController {
-    public void create(Comment comment) {
 
-    }
 }
