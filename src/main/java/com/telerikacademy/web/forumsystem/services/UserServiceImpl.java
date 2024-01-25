@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
         } catch (EntityNotFoundException e) {
             usernameExists = false;
         }
-        if (usernameExists) {
+        if (usernameExists && !user.isDeleted()) {
             throw new DuplicateExistsException("User", "username", user.getUsername());
         }
 
@@ -48,14 +48,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void delete(User user, User deletedBy) {
-        if (!deletedBy.isAdmin()) {
-            throw new UnauthorizedOperationException("Only admins can delete users!");
-        }
-        userRepository.delete(user);
-    }
-
-    @Override
     public void update(User user, User updatedBy) {
         if (!user.equals(updatedBy)) {
             throw new UnauthorizedOperationException("Only the user can modify it's data!");
@@ -69,6 +61,19 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateExistsException("User", "email", user.getEmail());
         }
         userRepository.update(user);
+    }
+
+    @Override
+    public void delete(User user, User deletedBy) {
+        user = userRepository.getByUsername(user.getUsername());
+        if (user.isDeleted()) {
+            throw new EntityNotFoundException("User", "username", user.getUsername());
+        }
+        if (!deletedBy.isAdmin() && !user.getUsername().equals(deletedBy.getUsername())) {
+            throw new UnauthorizedOperationException("Only admins or the same user can delete user profiles!");
+        }
+        user.setDeleted(true);
+        userRepository.delete(user);
     }
 
     @Override

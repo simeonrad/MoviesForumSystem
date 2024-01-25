@@ -34,7 +34,11 @@ public class User {
     @Column(name = "is_blocked")
     private boolean isBlocked;
 
-    public User(boolean isAdmin, int id, String username, String password, String firstName, String lastName, String email, boolean isBlocked) {
+    @Column(name = "is_deleted")
+    private boolean isDeleted;
+
+    public User(boolean isAdmin, int id, String username, String password, String firstName, String lastName,
+                String email, boolean isBlocked, boolean isDeleted) {
         this.isAdmin = isAdmin;
         this.id = id;
         this.username = username;
@@ -43,6 +47,7 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.isBlocked = isBlocked;
+        this.isDeleted = isDeleted;
     }
 
     public User() {
@@ -110,6 +115,14 @@ public class User {
 
     public void setIsBlocked(boolean isBlocked) {
         this.isBlocked = isBlocked;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 
     @Override

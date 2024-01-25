@@ -31,7 +31,7 @@ public class UserRepositoryImpl implements UserRepository {
     public void delete(User user) {
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            session.remove(user);
+            session.merge(user);
             session.getTransaction().commit();
         }
     }
