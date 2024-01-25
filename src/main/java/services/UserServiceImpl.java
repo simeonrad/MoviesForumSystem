@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void create(User user, User createdBy) {
+    public void create(User user) {
         boolean usernameExists = true;
         try {
             userRepository.getByUsername(user.getUsername());
@@ -77,18 +77,55 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User getByName(String name) {
+    public User getByName(String name, User user) {
+        if (!user.isAdmin()) {
+            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
+        }
         return userRepository.getByName(name);
     }
 
     @Override
-    public User getByUsername(String username) {
+    public User getByUsername(String username, User user) {
+        if (!user.isAdmin()) {
+            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
+        }
         return userRepository.getByUsername(username);
     }
 
     @Override
-    public User getById(int id) {
+    public User getById(int id, User user) {
+        if (!user.isAdmin()) {
+            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
+        }
         return userRepository.getById(id);
+    }
+
+    @Override
+    public User getByEmail(String email, User user) {
+        if (!user.isAdmin()) {
+            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
+        }
+        return userRepository.getByEmail(email);
+    }
+
+    @Override
+    public void blockUser(String username, User admin) {
+        if (!admin.isAdmin()) {
+            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
+        }
+        User userToBlock = userRepository.getByUsername(username);
+        userToBlock.setIsBlocked(true);
+        userRepository.update(userToBlock);
+    }
+
+    @Override
+    public void unblockUser(String username, User admin) {
+        if (!admin.isAdmin()) {
+            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
+        }
+        User userToUnblock = userRepository.getByUsername(username);
+        userToUnblock.setIsBlocked(false);
+        userRepository.update(userToUnblock);
     }
 
     @Override
@@ -96,16 +133,16 @@ public class UserServiceImpl implements UserService{
         return userRepository.getAll();
     }
 
-    private String emailValidator(String mail) {
+    private String emailValidator(String email) {
         String MAIL_REGEX = "^[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+$";
         Pattern MAIL_PATTERN = Pattern.compile(MAIL_REGEX);
 
-        Matcher matcher = MAIL_PATTERN.matcher(mail);
+        Matcher matcher = MAIL_PATTERN.matcher(email);
         if (matcher.matches()) {
-            return mail;
+            return email;
         }
         else {
-            throw new InvalidEmailException(mail);
+            throw new InvalidEmailException(email);
         }
     }
 }

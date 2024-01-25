@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
+import repositories.UserRepository;
 import services.UserService;
 
 @Component
@@ -15,9 +16,12 @@ public class AuthenticationHelper {
     public static final String PASSWORD_HEADER_NAME = "password";
     private final UserService service;
 
+    private final UserRepository repository;
+
     @Autowired
-    public AuthenticationHelper(UserService service) {
+    public AuthenticationHelper(UserService service, UserRepository repository) {
         this.service = service;
+        this.repository = repository;
     }
 
     public User tryGetUser(HttpHeaders headers) {
@@ -29,7 +33,7 @@ public class AuthenticationHelper {
         try {
             String username = headers.getFirst(USERNAME_HEADER_NAME);
             String password = headers.getFirst(PASSWORD_HEADER_NAME);
-            User user = service.getByUsername(username);
+            User user = repository.getByUsername(username);
             if (!user.getPassword().equals(password)) {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
                         "Invalid authentication! Password is incorrect!");
