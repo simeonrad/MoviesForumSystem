@@ -1,10 +1,11 @@
 package services;
 
-import exceptions.DuplicateExistsException;
-import exceptions.EntityNotFoundException;
-import exceptions.InvalidEmailException;
-import exceptions.UnauthorizedOperationException;
-import models.User;
+import com.telerikacademy.web.forumsystem.exceptions.DuplicateExistsException;
+import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
+import com.telerikacademy.web.forumsystem.exceptions.InvalidEmailException;
+import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
+import com.telerikacademy.web.forumsystem.helpers.UserMapper;
+import com.telerikacademy.web.forumsystem.models.User;
 import org.springframework.stereotype.Service;
 import repositories.UserRepository;
 
@@ -16,16 +17,25 @@ import java.util.regex.Pattern;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public UserServiceImpl(UserRepository userRepository) {
+
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     @Override
     public void create(User user) {
         boolean usernameExists = true;
         try {
-            userRepository.getByUsername(user.getUsername());
+            User userCreated = userRepository.getByUsername(user.getUsername());
+            if (userCreated.isDeleted()) {
+                user = userMapper.fromDtoUpdate(user);
+                user.setDeleted(false);
+                userRepository.update(user);
+                return;
+            }
         } catch (EntityNotFoundException e) {
             usernameExists = false;
         }
@@ -36,14 +46,13 @@ public class UserServiceImpl implements UserService {
         emailValidator(user.getEmail());
         boolean emailExists = true;
         try {
-            userRepository.getByEmail(user.getEmail());
+            user = userRepository.getByEmail(user.getEmail());
         } catch (EntityNotFoundException e) {
             emailExists = false;
         }
         if (emailExists) {
             throw new DuplicateExistsException("User", "email", user.getEmail());
         }
-
         userRepository.create(user);
     }
 
