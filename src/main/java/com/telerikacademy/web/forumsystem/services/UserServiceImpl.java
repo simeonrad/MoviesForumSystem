@@ -13,7 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService{
         boolean usernameExists = true;
         try {
             userRepository.getByUsername(user.getUsername());
-        }catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             usernameExists = false;
         }
         if (usernameExists) {
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService{
         boolean emailExists = true;
         try {
             userRepository.getByEmail(user.getEmail());
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             emailExists = false;
         }
         if (emailExists) {
@@ -63,16 +63,11 @@ public class UserServiceImpl implements UserService{
         if (!user.getUsername().equals(updatedBy.getUsername())) {
             throw new UnauthorizedOperationException("Username cannot be changed");
         }
-        boolean emailExists = true;
-        try {
-            userRepository.getByEmail(user.getEmail());
-        }catch (EntityNotFoundException e){
-            emailExists = false;
-        }
+        boolean emailExists = userRepository.updateEmail(user.getEmail());;
+
         if (emailExists) {
             throw new DuplicateExistsException("User", "email", user.getEmail());
         }
-
         userRepository.update(user);
     }
 
@@ -134,14 +129,13 @@ public class UserServiceImpl implements UserService{
     }
 
     private String emailValidator(String email) {
-        String MAIL_REGEX = "^[a-zA-Z]+@[a-zA-Z]+\\.[a-zA-Z]+$";
+        String MAIL_REGEX = "^[a-zA-Z]+@[a-zA-Z]+\\.[a-z]+$";
         Pattern MAIL_PATTERN = Pattern.compile(MAIL_REGEX);
 
         Matcher matcher = MAIL_PATTERN.matcher(email);
         if (matcher.matches()) {
             return email;
-        }
-        else {
+        } else {
             throw new InvalidEmailException(email);
         }
     }

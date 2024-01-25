@@ -17,4 +17,6 @@ public interface UserRepository {
 
     User getByUsername (String username);
     User getByEmail (String email);
+
+    boolean updateEmail (String email);
 }

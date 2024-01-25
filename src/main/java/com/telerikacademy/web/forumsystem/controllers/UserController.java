@@ -1,18 +1,19 @@
-package controllers;
+package com.telerikacademy.web.forumsystem.controllers;
 
-import exceptions.DuplicateExistsException;
-import exceptions.EntityNotFoundException;
-import exceptions.UnauthorizedOperationException;
-import helpers.AuthenticationHelper;
-import helpers.UserMapper;
-import models.User;
-import models.UserDto;
+import com.telerikacademy.web.forumsystem.exceptions.DuplicateExistsException;
+import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
+import com.telerikacademy.web.forumsystem.exceptions.InvalidEmailException;
+import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
+import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.models.UserDto;
+import com.telerikacademy.web.forumsystem.repositories.UserRepository;
+import com.telerikacademy.web.forumsystem.services.UserService;
+import com.telerikacademy.web.forumsystem.helpers.AuthenticationHelper;
+import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import repositories.UserRepository;
-import services.UserService;
 
 @RestController
 @RequestMapping("/users")
@@ -38,20 +39,24 @@ public class UserController {
             return userMapper.toDto(user);
         } catch (DuplicateExistsException de) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, de.getMessage());
+        } catch (InvalidEmailException ie) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ie.getMessage());
         }
     }
 
     @PutMapping()
-    public UserDto updateUser(@RequestHeader HttpHeaders headers, @RequestBody UserDto userDto) {
+    public UserDto updateUser(@RequestHeader HttpHeaders headers, @RequestBody User user) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
-            User updatedUser = userMapper.fromDto(userDto);
+            User updatedUser = userMapper.fromDtoUpdate(user);
             userService.update(updatedUser, currentUser);
             return userMapper.toDto(updatedUser);
         } catch (UnauthorizedOperationException uo) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, uo.getMessage());
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (DuplicateExistsException de) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, de.getMessage());
         }
     }
 
@@ -123,7 +128,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/searchByName")
+    @GetMapping("/searchByEmail")
     public UserDto getByEmail(@RequestParam String email, @RequestHeader HttpHeaders headers) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
@@ -135,7 +140,6 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-
 
 
 }

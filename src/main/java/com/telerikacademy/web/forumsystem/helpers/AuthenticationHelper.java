@@ -1,21 +1,20 @@
-package helpers;
+package com.telerikacademy.web.forumsystem.helpers;
 
-import exceptions.EntityNotFoundException;
-import models.User;
+import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
+import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.repositories.UserRepository;
+import com.telerikacademy.web.forumsystem.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
-import repositories.UserRepository;
-import services.UserService;
 
 @Component
 public class AuthenticationHelper {
     public static final String USERNAME_HEADER_NAME = "username";
     public static final String PASSWORD_HEADER_NAME = "password";
     private final UserService service;
-
     private final UserRepository repository;
 
     @Autowired
