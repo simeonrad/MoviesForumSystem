@@ -1,7 +1,8 @@
-package repositories;
+package com.telerikacademy.web.forumsystem.repositories;
 
-import exceptions.EntityNotFoundException;
-import models.User;
+import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
+import com.telerikacademy.web.forumsystem.models.User;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;

@@ -1,4 +1,5 @@
-package services;
+package com.telerikacademy.web.forumsystem.services;
+
 
 import com.telerikacademy.web.forumsystem.exceptions.DuplicateExistsException;
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
@@ -6,8 +7,9 @@ import com.telerikacademy.web.forumsystem.exceptions.InvalidEmailException;
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
 import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.services.UserService;
 import org.springframework.stereotype.Service;
-import repositories.UserRepository;
+import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 
 import java.util.List;
 import java.util.regex.Matcher;

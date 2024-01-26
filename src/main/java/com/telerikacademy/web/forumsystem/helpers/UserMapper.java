@@ -1,4 +1,5 @@
-package helpers;
+package com.telerikacademy.web.forumsystem.helpers;
+
 
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.models.User;

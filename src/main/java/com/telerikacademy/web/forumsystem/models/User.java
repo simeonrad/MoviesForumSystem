@@ -1,4 +1,5 @@
-package models;
+package com.telerikacademy.web.forumsystem.models;
+
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

@@ -1,6 +1,6 @@
-package repositories;
+package com.telerikacademy.web.forumsystem.repositories;
 
-import models.User;
+import com.telerikacademy.web.forumsystem.models.User;
 
 import java.util.List;
 
