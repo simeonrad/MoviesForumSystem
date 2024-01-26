@@ -1,4 +1,4 @@
-package models;
+package com.telerikacademy.web.forumsystem.models;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -10,7 +10,6 @@ public class UserDto {
     @NotNull(message = "Username can't be empty!")
     @Size(min = 4, max = 50, message = "Username should be between 4 and 50 symbols!")
     private String username;
-
     @NotNull(message = "Password can't be empty!")
     @Size(min = 8, max = 50, message = "Password should be between 8 and 50 symbols!")
     private String password;
@@ -27,19 +26,14 @@ public class UserDto {
     @Size(min = 10, max = 100, message = "Email should be between 10 and 100 symbols!")
     private String email;
 
-    private boolean isBlocked;
-
     public UserDto() {
     }
 
-    public UserDto(int id, String username, String password, String firstName, String lastName, String email, boolean isBlocked) {
-        this.id = id;
+    public UserDto(String username, String firstName, String lastName, String email) {
         this.username = username;
-        this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.isBlocked = isBlocked;
     }
 
     public int getId() {
@@ -66,10 +60,6 @@ public class UserDto {
         return email;
     }
 
-    public boolean getIsBlocked() {
-        return isBlocked;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -92,9 +82,5 @@ public class UserDto {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void setIsBlocked(boolean isBlocked) {
-        this.isBlocked = isBlocked;
     }
 }

@@ -1,6 +1,6 @@
-package repositories;
+package com.telerikacademy.web.forumsystem.repositories;
 
-import models.User;
+import com.telerikacademy.web.forumsystem.models.User;
 
 import java.util.List;
 
@@ -8,6 +8,8 @@ public interface UserRepository {
     void create (User user);
     void delete (User user);
     void update (User user);
+
+    void recoverUser (User user);
 
     User getByName(String name);
 

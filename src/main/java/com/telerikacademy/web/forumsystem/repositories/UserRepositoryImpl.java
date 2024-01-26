@@ -1,7 +1,7 @@
-package repositories;
+package com.telerikacademy.web.forumsystem.repositories;
 
-import exceptions.EntityNotFoundException;
-import models.User;
+import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
+import com.telerikacademy.web.forumsystem.models.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -43,14 +43,26 @@ public class UserRepositoryImpl implements UserRepository {
             session.merge(user);
             session.getTransaction().commit();
         }
+    }
 
+    @Override
+    public void recoverUser(User user) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            User existingUser = session.get(User.class, user.getId());
+            if (existingUser.isDeleted()) {
+                existingUser.setDeleted(false);
+                session.merge(existingUser);
+                session.getTransaction().commit();
+            }
+        }
     }
 
     @Override
     public User getByName(String name) {
         try (Session session = sessionFactory.openSession()) {
             Query<User> query = session.createQuery("from User where firstName = :name", User.class);
-            query.setParameter("first_name", name);
+            query.setParameter("name", name);
             List<User> result = query.list();
             if (result.isEmpty()) {
                 throw new EntityNotFoundException("User", "first name", name);

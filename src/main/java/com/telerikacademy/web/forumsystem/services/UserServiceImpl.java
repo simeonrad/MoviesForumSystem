@@ -1,4 +1,4 @@
-package services;
+package com.telerikacademy.web.forumsystem.services;
 
 import com.telerikacademy.web.forumsystem.exceptions.DuplicateExistsException;
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
@@ -7,7 +7,7 @@ import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationExcept
 import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import com.telerikacademy.web.forumsystem.models.User;
 import org.springframework.stereotype.Service;
-import repositories.UserRepository;
+import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -29,17 +29,11 @@ public class UserServiceImpl implements UserService {
     public void create(User user) {
         boolean usernameExists = true;
         try {
-            User userCreated = userRepository.getByUsername(user.getUsername());
-            if (userCreated.isDeleted()) {
-                user = userMapper.fromDtoUpdate(user);
-                user.setDeleted(false);
-                userRepository.update(user);
-                return;
-            }
+            userRepository.getByUsername(user.getUsername());
         } catch (EntityNotFoundException e) {
             usernameExists = false;
         }
-        if (usernameExists && !user.isDeleted()) {
+        if (usernameExists) {
             throw new DuplicateExistsException("User", "username", user.getUsername());
         }
 
@@ -60,6 +54,10 @@ public class UserServiceImpl implements UserService {
     public void update(User user, User updatedBy) {
         if (!user.equals(updatedBy)) {
             throw new UnauthorizedOperationException("Only the user can modify it's data!");
+        }
+        if (user.isDeleted()) {
+            userRepository.recoverUser(user);
+            return;
         }
         if (!user.getUsername().equals(updatedBy.getUsername())) {
             throw new UnauthorizedOperationException("Username cannot be changed");
@@ -135,6 +133,26 @@ public class UserServiceImpl implements UserService {
         User userToUnblock = userRepository.getByUsername(username);
         userToUnblock.setIsBlocked(false);
         userRepository.update(userToUnblock);
+    }
+
+    @Override
+    public void makeAdmin(String username, User admin) {
+        User user = userRepository.getByUsername(username);
+        if (user.isAdmin()) {
+            throw new UnauthorizedOperationException(String.format("User with username %s is already an admin", username));
+        }
+        user.setAdmin(true);
+        userRepository.update(user);
+    }
+
+    @Override
+    public void unmakeAdmin (String username, User admin) {
+        User user = userRepository.getByUsername(username);
+        if (!user.isAdmin()) {
+            throw new UnauthorizedOperationException(String.format("User with username %s is not an admin", username));
+        }
+        user.setAdmin(false);
+        userRepository.update(user);
     }
 
     @Override
