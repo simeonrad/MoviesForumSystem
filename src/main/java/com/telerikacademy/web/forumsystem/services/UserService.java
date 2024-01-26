@@ -20,5 +20,8 @@ public interface UserService {
     void blockUser (String username, User admin);
     void unblockUser (String username, User admin);
 
+    void makeAdmin (String username, User admin);
+    void unmakeAdmin (String username, User admin);
+
     List<User> getAll();
 }
