@@ -34,8 +34,8 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public void delete(Comment comment, User user) {
-        if (!comment.getAuthor().equals(user))
-            throw new UnauthorizedOperationException("Only authors can delete their comments");
+        if (!(comment.getAuthor().equals(user) || user.isAdmin()))
+            throw new UnauthorizedOperationException("Only authors and admins can delete comments");
         commentRepository.delete(comment);
     }
 
