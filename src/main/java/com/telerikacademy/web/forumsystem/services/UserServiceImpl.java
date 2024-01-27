@@ -6,9 +6,11 @@ import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.exceptions.InvalidEmailException;
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
 import com.telerikacademy.web.forumsystem.helpers.UserMapper;
+import com.telerikacademy.web.forumsystem.models.FilterOptions;
 import com.telerikacademy.web.forumsystem.models.User;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.UserRepository;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -85,37 +87,60 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
-    @Override
-    public User getByName(String name, User user) {
-        if (!user.isAdmin()) {
-            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
-        }
-        return userRepository.getByName(name);
-    }
+//    @Override
+//    public User getByName(String name, User user) {
+//        if (!user.isAdmin()) {
+//            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
+//        }
+//        return userRepository.getByName(name);
+//    }
+//
+//    @Override
+//    public User getByUsername(String username, User user) {
+//        if (!user.isAdmin()) {
+//            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
+//        }
+//        return userRepository.getByUsername(username);
+//    }
+
+//    @Override
+//    public User getById(int id, User user) {
+//        if (!user.isAdmin()) {
+//            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
+//        }
+//        return userRepository.getById(id);
+//    }
 
     @Override
-    public User getByUsername(String username, User user) {
+    public List<User> get(FilterOptions filterOptions, User user) {
         if (!user.isAdmin()) {
             throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
         }
-        return userRepository.getByUsername(username);
+        return userRepository.get(filterOptions);
     }
 
-    @Override
-    public User getById(int id, User user) {
-        if (!user.isAdmin()) {
-            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
-        }
-        return userRepository.getById(id);
-    }
+//    @Override
+//    public User getByEmail(String email, User user) {
+//        if (!user.isAdmin()) {
+//            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
+//        }
+//        return userRepository.getByEmail(email);
+//    }
 
-    @Override
-    public User getByEmail(String email, User user) {
-        if (!user.isAdmin()) {
-            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
-        }
-        return userRepository.getByEmail(email);
-    }
+//    @Override
+//    public UserShowAdmin searchUser(String param, User user) {
+//        if (!user.isAdmin()) {
+//            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
+//        }
+//
+//        return switch (param.toLowerCase()) {
+//            case "username" -> userMapper.toDtoAdmin(getByUsername(user.getUsername(), user));
+//            case "firstname" -> userMapper.toDtoAdmin(getByName(user.getFirstName(), user));
+//            case "email" -> userMapper.toDtoAdmin(getByEmail(user.getEmail(), user));
+//            default ->
+//                    throw new IllegalArgumentException("Invalid parameter. Supported values are: 'username', 'firstName', 'email'");
+//        };
+//    }
 
     @Override
     public void blockUser(String username, User admin) {
@@ -148,7 +173,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void unmakeAdmin (String username, User admin) {
+    public void unmakeAdmin(String username, User admin) {
         User user = userRepository.getByUsername(username);
         if (!user.isAdmin()) {
             throw new UnauthorizedOperationException(String.format("User with username %s is not an admin", username));
