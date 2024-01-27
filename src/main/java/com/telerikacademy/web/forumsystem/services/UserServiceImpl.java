@@ -9,6 +9,7 @@ import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import com.telerikacademy.web.forumsystem.models.User;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.UserRepository;
+
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -161,6 +162,7 @@ public class UserServiceImpl implements UserService {
     public List<User> getAll() {
         return userRepository.getAll();
     }
+
 
     private String emailValidator(String email) {
         String MAIL_REGEX = "^[a-zA-Z]+@[a-zA-Z]+\\.[a-z]+$";

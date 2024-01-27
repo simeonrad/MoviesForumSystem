@@ -1,9 +1,11 @@
 package com.telerikacademy.web.forumsystem.controllers;
 
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
+import com.telerikacademy.web.forumsystem.exceptions.NotAllowedContentException;
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
 import com.telerikacademy.web.forumsystem.helpers.AuthenticationHelper;
 import com.telerikacademy.web.forumsystem.helpers.CommentMapper;
+import com.telerikacademy.web.forumsystem.helpers.TextPurifier;
 import com.telerikacademy.web.forumsystem.models.Comment;
 import com.telerikacademy.web.forumsystem.models.CommentDto;
 import com.telerikacademy.web.forumsystem.models.User;
@@ -22,28 +24,31 @@ import java.util.stream.Collectors;
 @RequestMapping("/comments")
 public class CommentController {
 
-    public static final String YOUR_ACCOUNT_IS_BLOCKED = "Your account is blocked you are not allowed to comment or reply";
-    private AuthenticationHelper authenticationHelper;
-    private CommentMapper commentMapper;
-    private CommentService commentService;
+    private final AuthenticationHelper authenticationHelper;
+    private final CommentMapper commentMapper;
+    private final CommentService commentService;
+    private final TextPurifier textPurifier;
 
     @Autowired
     public CommentController(AuthenticationHelper authenticationHelper, CommentMapper commentMapper,
-                             CommentService commentService) {
+                             CommentService commentService, TextPurifier textPurifier) {
         this.authenticationHelper = authenticationHelper;
         this.commentMapper = commentMapper;
         this.commentService = commentService;
+        this.textPurifier = textPurifier;
     }
 
     @PostMapping("/post/{postId}")
     public CommentDto commentOnPost(@RequestHeader HttpHeaders headers, @Valid @RequestBody CommentDto commentDto, @PathVariable int postId) {
         try {
             User author = authenticationHelper.tryGetUser(headers);
-            if (author.getIsBlocked()){
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, YOUR_ACCOUNT_IS_BLOCKED);
-            }
             Comment comment = commentMapper.fromDto(commentDto, author, postId);
+            textPurifier.checkTextAndBan(comment.getContent(), author);
+            commentService.create(comment, author);
             return commentMapper.toDto(comment);
+        }
+        catch (NotAllowedContentException e){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
         catch (EntityNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -56,6 +61,9 @@ public class CommentController {
                     .stream()
                     .map(commentMapper::toDto)
                     .collect(Collectors.toList());
+        }
+        catch (UnauthorizedOperationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
         catch (EntityNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -71,6 +79,9 @@ public class CommentController {
                     .collect(Collectors.toList());
 
         }
+        catch (UnauthorizedOperationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
         catch (EntityNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -80,12 +91,16 @@ public class CommentController {
     public CommentDto replyToComment(@RequestHeader HttpHeaders headers, @Valid @RequestBody CommentDto commentDto, @PathVariable int commentId) {
        try {
            User author = authenticationHelper.tryGetUser(headers);
-           if (author.getIsBlocked()) {
-               throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, YOUR_ACCOUNT_IS_BLOCKED);
-           }
            Comment comment = commentMapper.replyFromDto(commentDto, author, commentId);
-           commentService.create(comment);
+           textPurifier.checkTextAndBan(comment.getContent(), author);
+           commentService.create(comment,author);
            return commentMapper.toDto(comment);
+       }
+       catch (NotAllowedContentException e){
+           throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+       }
+       catch (UnauthorizedOperationException e) {
+           throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
        }
        catch (EntityNotFoundException e){
            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

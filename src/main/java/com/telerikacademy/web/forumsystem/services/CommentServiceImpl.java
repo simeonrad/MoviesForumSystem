@@ -10,10 +10,13 @@ import com.telerikacademy.web.forumsystem.repositories.CommentRepository;
 
 import java.util.List;
 
+
 @Service
 public class CommentServiceImpl implements CommentService{
+    public static final String YOUR_ACCOUNT_IS_BLOCKED = "Your account is blocked you are not allowed to comment or reply";
 
-    private CommentRepository commentRepository;
+
+    private final CommentRepository commentRepository;
 
     @Autowired
     public CommentServiceImpl(CommentRepository commentRepository) {
@@ -21,7 +24,10 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public void create(Comment comment) {
+    public void create(Comment comment, User user) {
+        if (user.getIsBlocked()) {
+            throw new UnauthorizedOperationException(YOUR_ACCOUNT_IS_BLOCKED);
+        }
         commentRepository.create(comment);
     }
 
