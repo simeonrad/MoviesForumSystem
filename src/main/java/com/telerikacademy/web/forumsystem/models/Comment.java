@@ -19,6 +19,7 @@ public class Comment {
     private String content;
     @Column(name = "date_created")
     private LocalDate timeStamp;
+
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;

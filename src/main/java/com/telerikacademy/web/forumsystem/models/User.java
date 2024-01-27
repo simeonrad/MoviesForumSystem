@@ -36,7 +36,7 @@ public class User {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
-//    @OneToMany
+//    @ManyToOne
 //    @JoinTable(
 //            name = "phone_numbers",
 //            inverseJoinColumns = @JoinColumn(name = "user_id"),
