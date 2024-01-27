@@ -43,6 +43,7 @@ public class CommentController {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, YOUR_ACCOUNT_IS_BLOCKED);
             }
             Comment comment = commentMapper.fromDto(commentDto, author, postId);
+            commentService.create(comment);
             return commentMapper.toDto(comment);
         }
         catch (EntityNotFoundException e){
@@ -69,7 +70,6 @@ public class CommentController {
                     .stream()
                     .map(commentMapper::toDto)
                     .collect(Collectors.toList());
-
         }
         catch (EntityNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

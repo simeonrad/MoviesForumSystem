@@ -19,9 +19,9 @@ public class Comment {
     private String content;
     @Column(name = "date_created")
     private LocalDate timeStamp;
-    @ManyToOne
-    @JoinColumn(name = "post_id")
-    private Post post;
+
+    @Column(name = "post_id")
+    private int post;
     @ManyToOne
     @JoinColumn(name = "repliedTo_id")
     private Comment repliedTo;
@@ -75,11 +75,11 @@ public class Comment {
         this.timeStamp = timeStamp;
     }
 
-    public Post getPost() {
+    public int getPost() {
         return post;
     }
 
-    public void setPost(Post post) {
+    public void setPost(int post) {
         this.post = post;
     }
 }
