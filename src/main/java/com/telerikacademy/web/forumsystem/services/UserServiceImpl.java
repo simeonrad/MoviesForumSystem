@@ -187,6 +187,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.getAll();
     }
 
+
     private String emailValidator(String email) {
         String MAIL_REGEX = "^[a-zA-Z]+@[a-zA-Z]+\\.[a-z]+$";
         Pattern MAIL_PATTERN = Pattern.compile(MAIL_REGEX);
