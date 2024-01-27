@@ -1,7 +1,5 @@
 package com.telerikacademy.web.forumsystem.helpers;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class UserShow {
     private String username;
     private String firstName;
