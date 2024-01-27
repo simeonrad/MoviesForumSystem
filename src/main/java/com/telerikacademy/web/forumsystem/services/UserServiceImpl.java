@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
         if (!user.getUsername().equals(updatedBy.getUsername())) {
             throw new UnauthorizedOperationException("Username cannot be changed");
         }
-        boolean emailExists = userRepository.updateEmail(user.getEmail());;
+        boolean emailExists = userRepository.updateEmail(user.getEmail());
 
         if (emailExists) {
             throw new DuplicateExistsException("User", "email", user.getEmail());

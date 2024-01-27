@@ -1,4 +1,4 @@
-package exceptions;
+package com.telerikacademy.web.forumsystem.exceptions;
 
 public class InvalidEmailException extends RuntimeException {
     public InvalidEmailException (String mail) {

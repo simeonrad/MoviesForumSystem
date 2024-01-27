@@ -59,13 +59,13 @@ create table comments
         foreign key (user_id) references users (user_id)
 );
 
-create table post_tags
+create table posts_tags
 (
     tag_id  int null,
     post_id int null,
-    constraint post_tags_posts_post_id_fk
+    constraint posts_tags_posts_post_id_fk
         foreign key (post_id) references posts (post_id),
-    constraint post_tags_tags_tag_id_fk
+    constraint posts_tags_tags_tag_id_fk
         foreign key (tag_id) references tags (tag_id)
 );
 

@@ -19,8 +19,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.3.2'
+    implementation 'org.mariadb.jdbc:mariadb-java-client'
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
