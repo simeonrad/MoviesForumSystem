@@ -87,30 +87,6 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
     }
 
-//    @Override
-//    public User getByName(String name, User user) {
-//        if (!user.isAdmin()) {
-//            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
-//        }
-//        return userRepository.getByName(name);
-//    }
-//
-//    @Override
-//    public User getByUsername(String username, User user) {
-//        if (!user.isAdmin()) {
-//            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
-//        }
-//        return userRepository.getByUsername(username);
-//    }
-
-//    @Override
-//    public User getById(int id, User user) {
-//        if (!user.isAdmin()) {
-//            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
-//        }
-//        return userRepository.getById(id);
-//    }
-
     @Override
     public List<User> get(FilterOptions filterOptions, User user) {
         if (!user.isAdmin()) {
@@ -118,29 +94,6 @@ public class UserServiceImpl implements UserService {
         }
         return userRepository.get(filterOptions);
     }
-
-//    @Override
-//    public User getByEmail(String email, User user) {
-//        if (!user.isAdmin()) {
-//            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
-//        }
-//        return userRepository.getByEmail(email);
-//    }
-
-//    @Override
-//    public UserShowAdmin searchUser(String param, User user) {
-//        if (!user.isAdmin()) {
-//            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
-//        }
-//
-//        return switch (param.toLowerCase()) {
-//            case "username" -> userMapper.toDtoAdmin(getByUsername(user.getUsername(), user));
-//            case "firstname" -> userMapper.toDtoAdmin(getByName(user.getFirstName(), user));
-//            case "email" -> userMapper.toDtoAdmin(getByEmail(user.getEmail(), user));
-//            default ->
-//                    throw new IllegalArgumentException("Invalid parameter. Supported values are: 'username', 'firstName', 'email'");
-//        };
-//    }
 
     @Override
     public void blockUser(String username, User admin) {

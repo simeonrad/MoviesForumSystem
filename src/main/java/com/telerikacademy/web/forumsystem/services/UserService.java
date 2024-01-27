@@ -6,26 +6,21 @@ import com.telerikacademy.web.forumsystem.models.User;
 import java.util.List;
 
 public interface UserService {
-    void create (User user);
-    void delete (User user, User deletedBy);
-    void update (User user, User updatedBy);
+    void create(User user);
 
-//    User getByName(String name, User user);
-//
-//    User getByUsername (String username, User user);
+    void delete(User user, User deletedBy);
 
-//    User getById (int id, User user);
+    void update(User user, User updatedBy);
 
-//    User getByEmail(String email, User user);
+    List<User> get(FilterOptions filterOptions, User user);
 
-    List <User> get (FilterOptions filterOptions, User user);
-//    UserShowAdmin searchUser(String param, User user);
+    void blockUser(String username, User admin);
 
-    void blockUser (String username, User admin);
-    void unblockUser (String username, User admin);
+    void unblockUser(String username, User admin);
 
-    void makeAdmin (String username, User admin);
-    void unmakeAdmin (String username, User admin);
+    void makeAdmin(String username, User admin);
+
+    void unmakeAdmin(String username, User admin);
 
     List<User> getAll();
 }

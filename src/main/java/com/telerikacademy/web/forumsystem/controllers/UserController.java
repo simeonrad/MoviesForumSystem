@@ -134,58 +134,6 @@ public class UserController {
         }
     }
 
-
-//    @GetMapping("/searchByUsername")
-//    public UserShowAdmin getByUsername(@RequestParam String username, @RequestHeader HttpHeaders headers) {
-//        try {
-//            User currentUser = authenticationHelper.tryGetUser(headers);
-//            User user = userService.getByUsername(username, currentUser);
-//            return userMapper.toDtoAdmin(user);
-//        } catch (UnauthorizedOperationException uo) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, uo.getMessage());
-//        } catch (EntityNotFoundException e) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-//        }
-//    }
-//
-//    @GetMapping("/searchByName")
-//    public UserShowAdmin getByName(@RequestParam String firstName, @RequestHeader HttpHeaders headers) {
-//        try {
-//            User currentUser = authenticationHelper.tryGetUser(headers);
-//            User user = userService.getByName(firstName, currentUser);
-//            return userMapper.toDtoAdmin(user);
-//        } catch (UnauthorizedOperationException uo) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, uo.getMessage());
-//        } catch (EntityNotFoundException e) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-//        }
-//    }
-//
-//    @GetMapping("/searchByEmail")
-//    public UserShowAdmin getByEmail(@RequestParam String email, @RequestHeader HttpHeaders headers) {
-//        try {
-//            User currentUser = authenticationHelper.tryGetUser(headers);
-//            User user = userService.getByEmail(email, currentUser);
-//            return userMapper.toDtoAdmin(user);
-//        } catch (UnauthorizedOperationException uo) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, uo.getMessage());
-//        } catch (EntityNotFoundException e) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-//        }
-//    }
-
-//    @GetMapping("/search")
-//    public UserShowAdmin searchUser(@RequestParam String param, @RequestHeader HttpHeaders headers) {
-//        try {
-//            User currentUser = authenticationHelper.tryGetUser(headers);
-//            return userService.searchUser(param, currentUser);
-//        } catch (UnauthorizedOperationException uo) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, uo.getMessage());
-//        } catch (EntityNotFoundException e) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-//        }
-//    }
-
     @GetMapping
     public List<User> get(
             @RequestParam(required = false) String email,

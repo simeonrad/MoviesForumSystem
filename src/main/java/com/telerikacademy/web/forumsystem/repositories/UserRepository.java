@@ -14,8 +14,6 @@ public interface UserRepository {
 
     List<User> get(FilterOptions filterOptions);
 
-    User getByName(String name);
-
     User getById(int id);
 
     List<User> getAll();
