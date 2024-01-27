@@ -58,7 +58,7 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public List<Comment> getByPostId(int id) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Comment> query = session.createQuery("from Comment where post = :id", Comment.class);
+            Query<Comment> query = session.createQuery("from Comment where post.id = :id", Comment.class);
             query.setParameter("id", id);
             if (query.list().isEmpty()) {
                 throw new EntityNotFoundException("Comments", "post id", String.valueOf(id));
@@ -70,7 +70,7 @@ public class CommentRepositoryImpl implements CommentRepository {
     @Override
     public List<Comment> getByCommentId(int id) {
         try (Session session = sessionFactory.openSession()) {
-            Query<Comment> query = session.createQuery("from Comment where repliedTo = :comment_id", Comment.class);
+            Query<Comment> query = session.createQuery("from Comment where repliedTo.id = :comment_id", Comment.class);
             query.setParameter("comment_id", id);
             List<Comment> resultList = query.list();
 
