@@ -27,7 +27,7 @@ public class HibernateConfig {
     }
 
     @Bean(name = "entityManagerFactory")
-    public LocalSessionFactoryBean sessionFactory () {
+    public LocalSessionFactoryBean sessionFactory() {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource());
         sessionFactory.setPackagesToScan("com.telerikacademy.web.forumsystem.models");
@@ -50,6 +50,5 @@ public class HibernateConfig {
         hibernateProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.MariaDBDialect");
         return hibernateProperties;
     }
-
 
 }

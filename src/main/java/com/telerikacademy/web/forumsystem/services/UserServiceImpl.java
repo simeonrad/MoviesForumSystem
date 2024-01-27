@@ -7,10 +7,8 @@ import com.telerikacademy.web.forumsystem.exceptions.InvalidEmailException;
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
 import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import com.telerikacademy.web.forumsystem.models.User;
-import com.telerikacademy.web.forumsystem.services.UserService;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.UserRepository;
-
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,7 +64,7 @@ public class UserServiceImpl implements UserService {
         if (!user.getUsername().equals(updatedBy.getUsername())) {
             throw new UnauthorizedOperationException("Username cannot be changed");
         }
-        boolean emailExists = userRepository.updateEmail(user.getEmail());;
+        boolean emailExists = userRepository.updateEmail(user.getEmail());
 
         if (emailExists) {
             throw new DuplicateExistsException("User", "email", user.getEmail());
