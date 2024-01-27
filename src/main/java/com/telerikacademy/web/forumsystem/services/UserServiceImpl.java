@@ -138,6 +138,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void makeAdmin(String username, User admin) {
+        User user = userRepository.getByUsername(username);
+        if (user.isAdmin()) {
+            throw new UnauthorizedOperationException(String.format("User with username %s is already an admin", username));
+        }
+        user.setAdmin(true);
+        userRepository.update(user);
+    }
+
+    @Override
+    public void unmakeAdmin (String username, User admin) {
+        User user = userRepository.getByUsername(username);
+        if (!user.isAdmin()) {
+            throw new UnauthorizedOperationException(String.format("User with username %s is not an admin", username));
+        }
+        user.setAdmin(false);
+        userRepository.update(user);
+    }
+
+    @Override
     public List<User> getAll() {
         return userRepository.getAll();
     }

@@ -1,6 +1,5 @@
 package com.telerikacademy.web.forumsystem.helpers;
 
-
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.models.User;
 import com.telerikacademy.web.forumsystem.models.UserDto;
@@ -35,13 +34,15 @@ public class UserMapper {
     }
 
 
-    public UserDto toDto(User newUser) {
-        UserDto userDto = new UserDto();
-        userDto.setUsername(newUser.getUsername());
-        userDto.setFirstName(newUser.getFirstName());
-        userDto.setLastName(newUser.getLastName());
-        return userDto;
+    public UserShow toDto(User newUser) {
+        UserShow userShow = new UserShow(newUser.getUsername(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail());
+        return userShow;
     }
+    public UserShowAdmin toDtoAdmin(User newUser) {
+        UserShowAdmin userShowAdmin = new UserShowAdmin(newUser.getUsername(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), newUser.getIsBlocked(), newUser.isAdmin());
+        return userShowAdmin;
+    }
+
 
     public User fromDtoUpdate(User userUpdated) {
         try{

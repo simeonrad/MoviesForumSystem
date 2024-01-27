@@ -9,8 +9,6 @@ public interface UserRepository {
     void delete (User user);
     void update (User user);
 
-    void recoverUser (User user);
-
     User getByName(String name);
 
     User getById (int id);
