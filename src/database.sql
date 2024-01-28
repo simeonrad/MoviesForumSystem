@@ -69,3 +69,10 @@ create table posts_tags
         foreign key (tag_id) references tags (tag_id)
 );
 
+CREATE TABLE post_likes (
+                            post_id INT,
+                            user_id INT,
+                            PRIMARY KEY (post_id, user_id),
+                            FOREIGN KEY (post_id) REFERENCES posts(post_id),
+                            FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
