@@ -7,6 +7,7 @@ import com.telerikacademy.web.forumsystem.exceptions.InvalidEmailException;
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
 import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import com.telerikacademy.web.forumsystem.models.FilterOptions;
+import com.telerikacademy.web.forumsystem.models.PhoneNumber;
 import com.telerikacademy.web.forumsystem.models.User;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.UserRepository;
@@ -67,7 +68,6 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedOperationException("Username cannot be changed");
         }
         boolean emailExists = userRepository.updateEmail(user.getEmail());
-
         if (emailExists) {
             throw new DuplicateExistsException("User", "email", user.getEmail());
         }
@@ -116,12 +116,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void makeAdmin(String username, User admin) {
+    public void makeAdmin(String username, String phoneNumber, User admin) {
         User user = userRepository.getByUsername(username);
         if (user.isAdmin()) {
             throw new UnauthorizedOperationException(String.format("User with username %s is already an admin", username));
         }
         user.setAdmin(true);
+        if (phoneNumber != null) {
+            PhoneNumber number = new PhoneNumber();
+            number.setPhoneNumber(phoneNumber);
+            number.setUser(user);
+            userRepository.addPhone(number);
+        }
         userRepository.update(user);
     }
 

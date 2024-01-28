@@ -38,6 +38,7 @@ public class UserMapper {
         UserShow userShow = new UserShow(newUser.getUsername(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail());
         return userShow;
     }
+
     public UserShowAdmin toDtoAdmin(User newUser) {
         UserShowAdmin userShowAdmin = new UserShowAdmin(newUser.getUsername(), newUser.getFirstName(), newUser.getLastName(), newUser.getEmail(), newUser.getIsBlocked(), newUser.isAdmin());
         return userShowAdmin;
@@ -45,17 +46,15 @@ public class UserMapper {
 
 
     public User fromDtoUpdate(User userUpdated) {
-        try{
+        try {
             User user = userRepository.getByUsername(userUpdated.getUsername());
             user.setFirstName(userUpdated.getFirstName());
             user.setEmail(userUpdated.getEmail());
             user.setLastName(userUpdated.getLastName());
             user.setPassword(userUpdated.getPassword());
             return user;
-        }
-        catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             throw new UnsupportedOperationException("Username cannot be changed!");
         }
-
     }
 }

@@ -36,17 +36,17 @@ public class User {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
-//    @ManyToOne
-//    @JoinTable(
-//            name = "phone_numbers",
-//            inverseJoinColumns = @JoinColumn(name = "user_id"),
-//            joinColumns = @JoinColumn(name = "phone_number")
-//    )
-//    @JoinColumn(name = "user_id")
-//    private String phoneNumber;
+    @ManyToOne
+    @JoinTable(
+            name = "phone_numbers",
+            inverseJoinColumns = @JoinColumn(name = "user_id"),
+            joinColumns = @JoinColumn(name = "phone_number")
+    )
+    @JoinColumn(name = "user_id")
+    private PhoneNumber phoneNumber;
 
     public User(boolean isAdmin, int id, String username, String password, String firstName, String lastName,
-                String email, boolean isBlocked, boolean isDeleted) {
+                String email, boolean isBlocked, boolean isDeleted, PhoneNumber phoneNumber) {
         this.isAdmin = isAdmin;
         this.id = id;
         this.username = username;
@@ -56,6 +56,7 @@ public class User {
         this.email = email;
         this.isBlocked = isBlocked;
         this.isDeleted = isDeleted;
+        this.phoneNumber = phoneNumber;
     }
 
     public User() {
@@ -131,6 +132,14 @@ public class User {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public PhoneNumber getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     @Override

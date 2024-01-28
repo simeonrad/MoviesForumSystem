@@ -1,6 +1,7 @@
 package com.telerikacademy.web.forumsystem.repositories;
 
 import com.telerikacademy.web.forumsystem.models.FilterOptions;
+import com.telerikacademy.web.forumsystem.models.PhoneNumber;
 import com.telerikacademy.web.forumsystem.models.User;
 
 import java.util.List;
@@ -11,6 +12,8 @@ public interface UserRepository {
     void delete(User user);
 
     void update(User user);
+
+    void addPhone(PhoneNumber phoneNumber);
 
     List<User> get(FilterOptions filterOptions);
 

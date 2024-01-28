@@ -26,6 +26,8 @@ create table phone_numbers
 (
     user_id      int         null,
     phone_number varchar(30) not null,
+    phone_number_id int auto_increment
+        primary key,
     constraint phone_numbers_users_user_id_fk
         foreign key (user_id) references users (user_id)
 );

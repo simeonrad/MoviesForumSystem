@@ -26,14 +26,17 @@ public class UserDto {
     @Size(min = 10, max = 100, message = "Email should be between 10 and 100 symbols!")
     private String email;
 
+    private String phoneNumber;
+
     public UserDto() {
     }
 
-    public UserDto(String username, String firstName, String lastName, String email) {
+    public UserDto(String username, String firstName, String lastName, String email, String phoneNumber) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.phoneNumber = phoneNumber;
     }
 
     public int getId() {
@@ -58,6 +61,14 @@ public class UserDto {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public void setId(int id) {

@@ -79,7 +79,7 @@ public class UserController {
     }
 
     @PutMapping("/block")
-    public UserShowAdmin blockUser(@RequestBody String username, @RequestHeader HttpHeaders headers) {
+    public UserShowAdmin blockUser(@RequestParam String username, @RequestHeader HttpHeaders headers) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
             userService.blockUser(username, currentUser);
@@ -93,7 +93,7 @@ public class UserController {
     }
 
     @PutMapping("/unblock")
-    public UserShowAdmin unblockUser(@RequestBody String username, @RequestHeader HttpHeaders headers) {
+    public UserShowAdmin unblockUser(@RequestParam String username, @RequestHeader HttpHeaders headers) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
             userService.unblockUser(username, currentUser);
@@ -107,10 +107,12 @@ public class UserController {
     }
 
     @PutMapping("/makeAdmin")
-    public UserShowAdmin makeUserAdmin(@RequestBody String username, @RequestHeader HttpHeaders headers) {
+    public UserShowAdmin makeUserAdmin(@RequestParam String username,
+                                       @RequestParam(required = false) String phoneNumber,
+                                       @RequestHeader HttpHeaders headers) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
-            userService.makeAdmin(username, currentUser);
+            userService.makeAdmin(username, phoneNumber, currentUser);
             User admin = userRepository.getByUsername(username);
             return userMapper.toDtoAdmin(admin);
         } catch (UnauthorizedOperationException uo) {
@@ -121,7 +123,8 @@ public class UserController {
     }
 
     @PutMapping("/unmakeAdmin")
-    public UserShowAdmin unmakeUserAdmin(@RequestBody String username, @RequestHeader HttpHeaders headers) {
+    public UserShowAdmin unmakeUserAdmin(@RequestBody String username,
+                                         @RequestHeader HttpHeaders headers) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
             userService.unmakeAdmin(username, currentUser);
