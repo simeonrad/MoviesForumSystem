@@ -34,10 +34,19 @@ public class Post {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "posts_tags",
-            inverseJoinColumns = @JoinColumn(name = "tag_id"),
-            joinColumns = @JoinColumn(name = "post_id")
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags;
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "post_likes",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> likedByUsers;
 
     public Post(String content, String title) {
         this.title = title;
@@ -120,5 +129,13 @@ public class Post {
 
     public void setTimeStamp(LocalDate timeStamp) {
         this.timeStamp = timeStamp;
+    }
+
+    public void addLike(User user) {
+        this.likedByUsers.add(user);
+    }
+
+    public Set<User> getLikedByUsers() {
+        return likedByUsers;
     }
 }

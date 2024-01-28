@@ -12,4 +12,5 @@ public interface PostService {
     void delete (Post post, User user);
     Post getById (int id);
     List<Post> getAll();
+    void likePost(int postId, int userId);
 }

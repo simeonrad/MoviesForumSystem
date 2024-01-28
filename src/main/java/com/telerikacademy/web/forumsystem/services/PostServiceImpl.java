@@ -3,6 +3,7 @@ package com.telerikacademy.web.forumsystem.services;
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
 import com.telerikacademy.web.forumsystem.models.Post;
 import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.PostRepository;
@@ -12,6 +13,7 @@ import java.util.List;
 @Service
 public class PostServiceImpl implements PostService{
    private PostRepository postRepository;
+   private UserRepository userRepository;
 
    @Autowired
     public PostServiceImpl(PostRepository postRepository) {
@@ -42,6 +44,19 @@ public class PostServiceImpl implements PostService{
         else {
             postRepository.delete(post);
         }
+    }
+
+    public void likePost(int postId, int userId) {
+        Post post = postRepository.getById(postId);
+        User user = userRepository.getById(userId);
+
+        if (post.getLikedByUsers().contains(user)) {
+            post.getLikedByUsers().remove(user);
+        }
+
+        post.getLikedByUsers().add(user);
+        post.setLikes(post.getLikes() + 1);
+        postRepository.update(post);
     }
 
     @Override
