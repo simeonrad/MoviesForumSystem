@@ -12,7 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.springframework.http.HttpHeaders;
 
 @RestController
@@ -33,12 +38,21 @@ public class PostController {
     public PostDto createPost(@RequestBody PostDto postDto, @RequestHeader HttpHeaders headers) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
+            Set<String> tags = extractTagNamesFromHeader(headers);
             Post post = postMapper.fromDto(postDto);
-            postService.create(post, currentUser);
+            postService.addOrUpdatePost(post, tags);
             return postMapper.toDto(post);
         } catch (UnauthorizedOperationException uo) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, uo.getMessage());
         }
+    }
+
+    private Set<String> extractTagNamesFromHeader(HttpHeaders headers) {
+        String tagHeader = headers.getFirst("tags");
+        if (tagHeader != null && !tagHeader.isEmpty()) {
+            return new HashSet<>(Arrays.asList(tagHeader.split(",")));
+        }
+        return new HashSet<>();
     }
 
     @PutMapping("/{postId}")

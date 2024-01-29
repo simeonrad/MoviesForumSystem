@@ -18,13 +18,10 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public void create(Tag tag, User user) {
-        Tag existingTag = tagRepository.getByName(tag.getName());
-        if (existingTag != null) {
-            throw new DuplicateExistsException("Tag", "name", tag.getName());
-        }
-        tag.setName(tag.getName().toLowerCase());
-        tagRepository.create(tag);
+    public void create(String tag) {
+        Tag tagCreated = new Tag();
+        tagCreated.setName(tag);
+        tagRepository.create(tagCreated);
     }
 
     @Override
