@@ -36,6 +36,16 @@ public class UserServiceImpl implements UserService {
             if (userCreated.isDeleted()) {
                 user = userMapper.fromDtoUpdate(user);
                 user.setDeleted(false);
+                emailValidator(user.getEmail());
+                boolean emailExists = true;
+                try {
+                    user = userRepository.getByEmail(user.getEmail());
+                } catch (EntityNotFoundException e) {
+                    emailExists = false;
+                }
+                if (emailExists) {
+                    throw new DuplicateExistsException("User", "email", user.getEmail());
+                }
                 userRepository.update(user);
                 return;
             }
