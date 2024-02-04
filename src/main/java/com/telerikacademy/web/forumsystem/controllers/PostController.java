@@ -75,9 +75,6 @@ public class PostController {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
             Post post = postService.getById(postId);
-            if (post == null) {
-                throw new EntityNotFoundException("Post", postId);
-            }
             postService.delete(post, currentUser);
         } catch (UnauthorizedOperationException uo) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, uo.getMessage());
@@ -119,7 +116,7 @@ public class PostController {
     public void likePost(@PathVariable int postId, @RequestHeader HttpHeaders headers) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
-            postService.likePost(postId, currentUser.getId());
+            postService.likePost(postId, currentUser);
         } catch (UnauthorizedOperationException uo) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, uo.getMessage());
         } catch (EntityNotFoundException e) {
@@ -131,9 +128,6 @@ public class PostController {
     public PostDto getPostById(@PathVariable int postId) {
         try {
             Post post = postService.getById(postId);
-            if (post == null) {
-                throw new EntityNotFoundException("Post", postId);
-            }
             return postMapper.toDto(post);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());

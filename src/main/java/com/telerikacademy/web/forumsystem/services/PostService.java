@@ -19,7 +19,7 @@ public interface PostService {
 
     List<Post> getAll();
 
-    void likePost(int postId, int userId);
+    void likePost(int postId, User user);
 
     public List<Post> getMostRecentPosts(int limit);
 

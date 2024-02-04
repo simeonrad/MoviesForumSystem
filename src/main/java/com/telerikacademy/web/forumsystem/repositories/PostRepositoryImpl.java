@@ -4,6 +4,7 @@ import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.models.Post;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -55,16 +56,19 @@ public class PostRepositoryImpl implements PostRepository {
         try (Session session = sessionFactory.openSession()) {
             Post post = session.get(Post.class, id);
             if (post == null) {
-                throw new EntityNotFoundException("Post", id);
+                throw new EntityNotFoundException("Post", "id", Integer.toString(id));
             }
+            Hibernate.initialize(post.getTags());
+            Hibernate.initialize(post.getLikedByUsers());
             return post;
         }
     }
 
+
     @Override
     public List<Post> getAll() {
         try (Session session = sessionFactory.openSession()) {
-             Query<Post> query = session.createQuery("from Post", Post.class);
+            Query<Post> query = session.createQuery("from Post", Post.class);
             return query.list();
         }
     }

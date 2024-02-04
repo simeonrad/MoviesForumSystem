@@ -4,7 +4,6 @@ import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationExcept
 import com.telerikacademy.web.forumsystem.models.Post;
 import com.telerikacademy.web.forumsystem.models.Tag;
 import com.telerikacademy.web.forumsystem.models.User;
-import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.PostRepository;
@@ -13,13 +12,11 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class PostServiceImpl implements PostService{
-   private PostRepository postRepository;
-   private UserRepository userRepository;
+public class PostServiceImpl implements PostService {
+    private final PostRepository postRepository;
+    private final TagService tagService;
 
-   private TagService tagService;
-
-   @Autowired
+    @Autowired
     public PostServiceImpl(PostRepository postRepository, TagService tagService) {
         this.postRepository = postRepository;
         this.tagService = tagService;
@@ -27,16 +24,15 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public void create(Post post, User user) {
-       post.setAuthor(user);
-       postRepository.create(post);
+        post.setAuthor(user);
+        postRepository.create(post);
     }
 
     @Override
     public void update(Post post, User user, Set<Tag> tags) {
         if (!post.getAuthor().equals(user)) {
             throw new UnauthorizedOperationException("Only the user can modify it's data!");
-        }
-        else {
+        } else {
             postRepository.update(post);
             if (tags != null) {
                 tagService.addTagsToPost(tags, post);
@@ -48,19 +44,18 @@ public class PostServiceImpl implements PostService{
     public void delete(Post post, User user) {
         if (!post.getAuthor().equals(user) || !user.isAdmin()) {
             throw new UnauthorizedOperationException("Only the user can modify it's data!");
-        }
-        else {
+        } else {
             postRepository.delete(post);
         }
     }
 
-    public void likePost(int postId, int userId) {
+    public void likePost(int postId, User user) {
         Post post = postRepository.getById(postId);
-        User user = userRepository.getById(userId);
 
         if (post.getLikedByUsers().contains(user)) {
             post.getLikedByUsers().remove(user);
-        }else {
+            post.setLikes(post.getLikes() - 1);
+        } else {
             post.getLikedByUsers().add(user);
             post.setLikes(post.getLikes() + 1);
         }
