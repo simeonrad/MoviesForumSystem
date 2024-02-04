@@ -2,6 +2,7 @@ package com.telerikacademy.web.forumsystem.services;
 
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
 import com.telerikacademy.web.forumsystem.models.Post;
+import com.telerikacademy.web.forumsystem.models.Tag;
 import com.telerikacademy.web.forumsystem.models.User;
 import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,15 +10,19 @@ import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.PostRepository;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class PostServiceImpl implements PostService{
    private PostRepository postRepository;
    private UserRepository userRepository;
 
+   private TagService tagService;
+
    @Autowired
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, TagService tagService) {
         this.postRepository = postRepository;
+        this.tagService = tagService;
     }
 
     @Override
@@ -27,12 +32,15 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public void update(Post post, User user) {
+    public void update(Post post, User user, Set<Tag> tags) {
         if (!post.getAuthor().equals(user)) {
             throw new UnauthorizedOperationException("Only the user can modify it's data!");
         }
         else {
             postRepository.update(post);
+            if (tags != null) {
+                tagService.addTagsToPost(tags, post);
+            }
         }
     }
 
@@ -52,10 +60,10 @@ public class PostServiceImpl implements PostService{
 
         if (post.getLikedByUsers().contains(user)) {
             post.getLikedByUsers().remove(user);
+        }else {
+            post.getLikedByUsers().add(user);
+            post.setLikes(post.getLikes() + 1);
         }
-
-        post.getLikedByUsers().add(user);
-        post.setLikes(post.getLikes() + 1);
         postRepository.update(post);
     }
 
@@ -67,5 +75,15 @@ public class PostServiceImpl implements PostService{
     @Override
     public List<Post> getAll() {
         return postRepository.getAll();
+    }
+
+    @Override
+    public List<Post> getMostRecentPosts(int limit) {
+        return postRepository.findMostRecentPosts(limit);
+    }
+
+    @Override
+    public List<Post> getMostCommentedPosts(int limit) {
+        return postRepository.findMostCommentedPosts(limit);
     }
 }

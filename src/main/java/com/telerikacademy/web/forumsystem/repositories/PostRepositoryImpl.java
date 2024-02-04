@@ -2,6 +2,8 @@ package com.telerikacademy.web.forumsystem.repositories;
 
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.models.Post;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
@@ -13,6 +15,9 @@ import java.util.List;
 public class PostRepositoryImpl implements PostRepository {
 
     private final SessionFactory sessionFactory;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public PostRepositoryImpl(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
@@ -62,5 +67,19 @@ public class PostRepositoryImpl implements PostRepository {
              Query<Post> query = session.createQuery("from Post", Post.class);
             return query.list();
         }
+    }
+
+    @Override
+    public List<Post> findMostRecentPosts(int limit) {
+        return entityManager.createQuery("SELECT p FROM Post p ORDER BY p.timeStamp DESC", Post.class)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+    @Override
+    public List<Post> findMostCommentedPosts(int limit) {
+        return entityManager.createQuery("SELECT p FROM Post p LEFT JOIN p.comments c GROUP BY p ORDER BY COUNT(c) DESC", Post.class)
+                .setMaxResults(limit)
+                .getResultList();
     }
 }

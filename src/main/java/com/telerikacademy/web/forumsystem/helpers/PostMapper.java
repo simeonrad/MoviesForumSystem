@@ -2,8 +2,6 @@ package com.telerikacademy.web.forumsystem.helpers;
 
 import com.telerikacademy.web.forumsystem.models.Post;
 import com.telerikacademy.web.forumsystem.models.PostDto;
-import com.telerikacademy.web.forumsystem.services.CommentService;
-import com.telerikacademy.web.forumsystem.services.PostService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -23,9 +21,7 @@ public class PostMapper {
         dto.setContent(post.getContent());
         dto.setLikes(post.getLikes());
         dto.setTimeStamp(post.getTimeStamp());
-
-        // dto.setTagIds();
-
+        dto.setTag(post.getTags());
         return dto;
     }
 
@@ -33,16 +29,13 @@ public class PostMapper {
         if (dto == null) {
             return null;
         }
-
         Post post = new Post();
         post.setId(dto.getId());
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
         post.setLikes(dto.getLikes());
         post.setTimeStamp(dto.getTimeStamp());
-
-        // post.setTags();
-
+        //post.setTags(dto.getTag());
         return post;
     }
 
@@ -54,10 +47,6 @@ public class PostMapper {
     }
 
     public void updateFromDto(PostDto dto, Post post) {
-        if (dto == null || post == null) {
-            return;
-        }
-
         if (dto.getTitle() != null) {
             post.setTitle(dto.getTitle());
         }
