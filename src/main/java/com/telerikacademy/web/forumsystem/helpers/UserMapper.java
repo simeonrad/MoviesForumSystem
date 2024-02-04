@@ -1,6 +1,7 @@
 package com.telerikacademy.web.forumsystem.helpers;
 
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
+import com.telerikacademy.web.forumsystem.models.RegisterDto;
 import com.telerikacademy.web.forumsystem.models.User;
 import com.telerikacademy.web.forumsystem.models.UserDto;
 import com.telerikacademy.web.forumsystem.repositories.UserRepository;
@@ -30,6 +31,17 @@ public class UserMapper {
         user.setEmail(userDto.getEmail());
         user.setAdmin(false);
         user.setIsBlocked(false);
+        return user;
+    }
+
+    public User fromDto(RegisterDto dto) {
+        User user = new User();
+        user.setUsername(dto.getUsername());
+        user.setPassword(dto.getPassword());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setAdmin(false);
         return user;
     }
 

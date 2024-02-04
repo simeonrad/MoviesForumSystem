@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Film Forum</title>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<header>
+    <div class="header-container">
+        <img src="/logo.webp" class="logo" alt="Logo">
+        <h1 class="title">Movie Forum</h1>
+        <div class="navigation-links">
+            <!-- For Non-Authenticated Users -->
+            <a th:unless="${isAuthenticated}" th:href="@{/auth/register}" class="button">Register</a>
+            <a th:unless="${isAuthenticated}" th:href="@{/auth/login}" class="button">Login</a>
+
+            <!-- For Authenticated Users -->
+            <div th:if="${isAuthenticated}" class="auth-links">
+                <a th:href="@{/profile}" class="button">Profile Page</a>
+                <a th:href="@{/posts/new}" class="button">Create New Post</a>
+                <a th:href="@{/posts}" class="button">All Posts</a>
+                <a th:href="@{/auth/logout}" class="button">Logout</a>
+            </div>
+        </div>
+    </div>
+</header>
+<main>
+    <div class="content-container">
+        <!-- Recent Posts -->
+        <div class="column recent-posts">
+            <h2>Recent Posts</h2>
+            <ul class="posts-list">
+                <li th:each="post : ${mostRecentPosts}" class="post-item">
+                    <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title">Post Title</a>
+                    <div class="post-details">
+                        <span th:text="${#temporals.format(post.timeStamp, 'dd/MM/yyyy HH:mm')}" class="post-date">Creation Date</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Most Commented Posts -->
+        <div class="column most-commented-posts">
+            <h2>Most Commented Posts</h2>
+            <ul class="posts-list">
+                <li th:each="post : ${mostCommentedPosts}" class="post-item">
+                    <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title">Post Title</a>
+                    <div class="post-details">
+                        <span th:text="${post.comments.size()} + ' times commented'" class="comment-count">Comment Count</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+</body>
+</html>
