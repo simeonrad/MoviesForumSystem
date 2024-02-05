@@ -1,9 +1,12 @@
 package com.telerikacademy.web.forumsystem.services;
 
+import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
 import com.telerikacademy.web.forumsystem.models.Post;
 import com.telerikacademy.web.forumsystem.models.Tag;
 import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.repositories.LikeRepository;
+import com.telerikacademy.web.forumsystem.repositories.LikeRepositoryImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.PostRepository;
@@ -15,11 +18,13 @@ import java.util.Set;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final TagService tagService;
+    private final LikeRepository likeRepository;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, TagService tagService) {
+    public PostServiceImpl(PostRepository postRepository, TagService tagService, LikeRepositoryImpl likeRepository) {
         this.postRepository = postRepository;
         this.tagService = tagService;
+        this.likeRepository = likeRepository;
     }
 
     @Override
@@ -50,16 +55,13 @@ public class PostServiceImpl implements PostService {
     }
 
     public void likePost(int postId, User user) {
-        Post post = postRepository.getById(postId);
-
-        if (post.getLikedByUsers().contains(user)) {
-            post.getLikedByUsers().remove(user);
-            post.setLikes(post.getLikes() - 1);
-        } else {
-            post.getLikedByUsers().add(user);
-            post.setLikes(post.getLikes() + 1);
+        try {
+           likeRepository.getByPostAndUserId(postId, user.getId());
+           likeRepository.unlikeAPost(postId, user.getId());
         }
-        postRepository.update(post);
+        catch (EntityNotFoundException e){
+            likeRepository.likeAPost(postId, user.getId());
+        }
     }
 
     @Override

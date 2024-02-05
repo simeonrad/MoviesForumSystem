@@ -52,7 +52,11 @@ public class CommentController {
         }
         catch (EntityNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }    }
+        }
+        catch (UnauthorizedOperationException e){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        }
+    }
 
     @GetMapping("/post/{postId}")
     public List<CommentDto> getCommentsOnPost(@PathVariable int postId) {
