@@ -36,14 +36,8 @@ public class User {
     @Column(name = "is_deleted")
     private boolean isDeleted;
 
-//    @ManyToOne
-//    @JoinTable(
-//            name = "phone_numbers",
-//            inverseJoinColumns = @JoinColumn(name = "user_id"),
-//            joinColumns = @JoinColumn(name = "phone_number")
-//    )
-//    @JoinColumn(name = "user_id")
-//    private String phoneNumber;
+    @Column(name = "profile_photo_url")
+    private String profilePhotoUrl;
 
     public User(boolean isAdmin, int id, String username, String password, String firstName, String lastName,
                 String email, boolean isBlocked, boolean isDeleted) {
@@ -131,6 +125,14 @@ public class User {
 
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public String getProfilePhotoUrl() {
+        return profilePhotoUrl;
+    }
+
+    public void setProfilePhotoUrl(String profilePhotoUrl) {
+        this.profilePhotoUrl = profilePhotoUrl;
     }
 
     @Override

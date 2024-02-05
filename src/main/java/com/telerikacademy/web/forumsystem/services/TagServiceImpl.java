@@ -1,12 +1,13 @@
 package com.telerikacademy.web.forumsystem.services;
 
-import com.telerikacademy.web.forumsystem.exceptions.DuplicateExistsException;
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
+import com.telerikacademy.web.forumsystem.models.Post;
 import com.telerikacademy.web.forumsystem.models.Tag;
-import com.telerikacademy.web.forumsystem.models.User;
 
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.TagRepository;
+
+import java.util.Set;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -25,7 +26,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public void update(Tag tag, User user) {
+    public void update(Tag tag) {
         Tag existingTag = tagRepository.getById(tag.getId());
         if (existingTag == null) {
             throw new EntityNotFoundException("Tag", "id", Integer.toString(tag.getId()));
@@ -35,12 +36,17 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public void delete(Tag tag, User user) {
+    public void delete(Tag tag) {
         Tag existingTag = tagRepository.getById(tag.getId());
         if (existingTag == null) {
             throw new EntityNotFoundException("Tag", "id", Integer.toString(tag.getId()));
         }
         tagRepository.delete(tag);
+    }
+
+    @Override
+    public void addTagsToPost(Set<Tag> tags, Post post) {
+        tagRepository.addTagsToPost(tags, post);
     }
 
     @Override

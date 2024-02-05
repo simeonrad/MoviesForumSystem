@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public class PostDto {
     private int id;
@@ -18,9 +19,10 @@ public class PostDto {
     private String content;
     private int likes;
     private LocalDate timeStamp;
-    // private Set<Integer> tagIds;
+    private Set<Tag> tag;
 
     public PostDto() {
+        timeStamp = LocalDate.now();
     }
 
     public int getId() {
@@ -46,9 +48,6 @@ public class PostDto {
     public LocalDate getTimeStamp() {
         return timeStamp;
     }
-
-    // public Set<Integer> getTagIds() { return tagIds; }
-
     public void setId(int id) {
         this.id = id;
     }
@@ -73,5 +72,11 @@ public class PostDto {
         this.timeStamp = timeStamp;
     }
 
-    // public void setTagIds(Set<Integer> tagIds) { this.tagIds = tagIds; }
+    public Set<Tag> getTag() {
+        return tag;
+    }
+
+    public void setTag(Set<Tag> tag) {
+        this.tag = tag;
+    }
 }

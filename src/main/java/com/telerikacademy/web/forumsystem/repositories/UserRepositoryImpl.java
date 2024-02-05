@@ -3,6 +3,7 @@ package com.telerikacademy.web.forumsystem.repositories;
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.exceptions.InvalidParameterException;
 import com.telerikacademy.web.forumsystem.models.FilterOptions;
+import com.telerikacademy.web.forumsystem.models.PhoneNumber;
 import com.telerikacademy.web.forumsystem.models.User;
 
 import org.hibernate.Session;
@@ -47,7 +48,15 @@ public class UserRepositoryImpl implements UserRepository {
             session.merge(user);
             session.getTransaction().commit();
         }
+    }
 
+    @Override
+    public void addPhone(PhoneNumber phoneNumber) {
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            session.persist(phoneNumber);
+            session.getTransaction().commit();
+        }
     }
 
     @Override

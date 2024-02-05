@@ -2,7 +2,6 @@ package com.telerikacademy.web.forumsystem.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import com.telerikacademy.web.forumsystem.models.User;
 
 
 import java.time.LocalDate;
@@ -30,8 +29,8 @@ public class Post {
     @OneToMany
     @JoinColumn(name = "post_id")
     private Set<Comment> comments;
-    @JsonIgnore
-    @ManyToMany(fetch = FetchType.EAGER)
+
+    @ManyToMany
     @JoinTable(
             name = "posts_tags",
             joinColumns = @JoinColumn(name = "post_id"),
@@ -141,5 +140,9 @@ public class Post {
 
     public Set<User> getLikedByUsers() {
         return likedByUsers;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
     }
 }

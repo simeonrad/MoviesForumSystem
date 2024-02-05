@@ -18,7 +18,7 @@ public interface UserService {
 
     void unblockUser(String username, User admin);
 
-    void makeAdmin(String username, User admin);
+    void makeAdmin(String username, String phoneNumber, User admin);
 
     void unmakeAdmin(String username, User admin);
 

@@ -1,9 +1,11 @@
 package com.telerikacademy.web.forumsystem.helpers;
 
+import com.telerikacademy.web.forumsystem.exceptions.AuthenticationFailureException;
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.models.User;
 import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 import com.telerikacademy.web.forumsystem.services.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,9 @@ import org.springframework.web.server.ResponseStatusException;
 public class AuthenticationHelper {
     public static final String USERNAME_HEADER_NAME = "username";
     public static final String PASSWORD_HEADER_NAME = "password";
+
+    public static final String AUTHENTICATION_FAILURE_MESSAGE = "Wrong username or password";
+
     private final UserService service;
     private final UserRepository repository;
 
@@ -42,6 +47,25 @@ public class AuthenticationHelper {
         catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,
                     "Invalid username!");
+        }
+    }
+    public User tryGetUser(HttpSession session) {
+        String currentUser = (String) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            throw new AuthenticationFailureException("No user logged in");
+        }
+        return repository.getByUsername(currentUser);
+    }
+
+    public User verifyAuthentication(String username, String password) {
+        try {
+            User user = repository.getByUsername(username);
+            if (!user.getPassword().equals(password)){
+                throw new AuthenticationFailureException(AUTHENTICATION_FAILURE_MESSAGE);
+            }
+            return user;
+        } catch (EntityNotFoundException e) {
+            throw new AuthenticationFailureException(AUTHENTICATION_FAILURE_MESSAGE);
         }
     }
 }

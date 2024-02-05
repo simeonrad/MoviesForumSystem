@@ -1,6 +1,7 @@
 package com.telerikacademy.web.forumsystem.repositories;
 
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
+import com.telerikacademy.web.forumsystem.models.Post;
 import com.telerikacademy.web.forumsystem.models.Tag;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -8,14 +9,18 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public class TagRepositoryImpl implements TagRepository {
 
     private final SessionFactory sessionFactory;
 
-    public TagRepositoryImpl(SessionFactory sessionFactory) {
+    private final PostRepository postRepository;
+
+    public TagRepositoryImpl(SessionFactory sessionFactory, PostRepository postRepository) {
         this.sessionFactory = sessionFactory;
+        this.postRepository = postRepository;
     }
 
     @Override
@@ -46,6 +51,26 @@ public class TagRepositoryImpl implements TagRepository {
     }
 
     @Override
+    public void addTagsToPost(Set<Tag> tags, Post post) {
+        Tag[] tagsArray = tags.toArray(new Tag[tags.size()]);
+        for (Tag tag : tagsArray) {
+            try (Session session = sessionFactory.openSession()) {
+                session.beginTransaction();
+                Tag existingTag = session.get(Tag.class, tag.getId());
+                if (existingTag == null) {
+                    session.persist(tag);
+                } else {
+                    session.merge(tag);
+                }
+                session.getTransaction().commit();
+            }
+        }
+        post.setTags(tags);
+        postRepository.update(post);
+    }
+
+
+    @Override
     public Tag getById(int id) {
         try (Session session = sessionFactory.openSession()) {
             Tag tag = session.get(Tag.class, id);
@@ -68,4 +93,6 @@ public class TagRepositoryImpl implements TagRepository {
             return result.get(0);
         }
     }
+
+
 }

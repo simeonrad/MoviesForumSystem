@@ -10,4 +10,8 @@ public interface PostRepository {
     void delete (Post post);
     Post getById (int id);
     List <Post> getAll();
+
+    List<Post> findMostRecentPosts(int limit);
+
+    List<Post> findMostCommentedPosts(int limit);
 }
