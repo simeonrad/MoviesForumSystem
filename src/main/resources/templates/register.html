@@ -6,6 +6,7 @@
     <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet">
 </head>
 <body>
+<div th:replace="~{fragments.html :: header}"></div>
 <form action="#" th:action="@{/auth/register}" th:object="${register}" method="post">
     <label th:text="#{user.label.username}">Username</label>
     <br/>
@@ -45,5 +46,6 @@
 
     <input type="submit" value="Register"/>
 </form>
+<div th:replace="~{fragments.html :: footer}"></div>
 </body>
 </html>
