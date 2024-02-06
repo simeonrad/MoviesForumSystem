@@ -6,4 +6,5 @@ public interface LikeRepository {
     Like getByPostAndUserId(int postId, int userId);
     void likeAPost(int postId, int userId);
     void unlikeAPost(int postId, int userId);
+    int getLikesCountOnPost(int postId);
 }
