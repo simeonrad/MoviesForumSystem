@@ -109,6 +109,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void delete(User user) {
+        if (user.isDeleted()) {
+            throw new EntityNotFoundException("User", "username", user.getUsername());
+        }
+        user.setDeleted(true);
+        userRepository.delete(user);
+    }
+
+    @Override
     public List<User> get(FilterOptions filterOptions, User user) {
         if (!user.isAdmin()) {
             throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
@@ -151,6 +160,15 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.update(user);
     }
+
+    @Override
+    public void makeAdmin(String username) {
+        User user = userRepository.getByUsername(username);
+        user.setAdmin(true);
+        userRepository.update(user);
+    }
+
+
 
     @Override
     public void unmakeAdmin(String username, User admin) {

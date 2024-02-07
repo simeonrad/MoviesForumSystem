@@ -1,7 +1,6 @@
 package com.telerikacademy.web.forumsystem.models;
 
 import jakarta.persistence.*;
-import com.telerikacademy.web.forumsystem.models.User;
 
 import java.time.LocalDate;
 
@@ -12,17 +11,21 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
     private int id;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User author;
+
     @Column(name = "content")
     private String content;
+
     @Column(name = "date_created")
     private LocalDate timeStamp;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
     @ManyToOne
     @JoinColumn(name = "repliedTo_id")
     private Comment repliedTo;

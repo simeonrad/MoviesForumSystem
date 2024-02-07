@@ -10,12 +10,11 @@ import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 import com.telerikacademy.web.forumsystem.services.UserService;
 import com.telerikacademy.web.forumsystem.helpers.AuthenticationHelper;
 import com.telerikacademy.web.forumsystem.helpers.UserMapper;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -37,7 +36,7 @@ public class UserController {
     }
 
     @PostMapping()
-    public UserShow createUser(@RequestBody UserDto userDto) {
+    public UserShow createUser(@Valid @RequestBody UserDto userDto) {
         try {
             User user = userMapper.fromDto(userDto);
             userService.create(user);
@@ -50,7 +49,7 @@ public class UserController {
     }
 
     @PutMapping()
-    public UserShow updateUser(@RequestHeader HttpHeaders headers, @RequestBody User user) {
+    public UserShow updateUser(@RequestHeader HttpHeaders headers, @Valid @RequestBody User user) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
             User updatedUser = userMapper.fromDtoUpdate(user);

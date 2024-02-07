@@ -5,7 +5,6 @@ import com.telerikacademy.web.forumsystem.models.User;
 import com.telerikacademy.web.forumsystem.models.UserEmailUpdateDto;
 import com.telerikacademy.web.forumsystem.models.UserPasswordUpdateDto;
 import com.telerikacademy.web.forumsystem.models.UserProfileDto;
-import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 import com.telerikacademy.web.forumsystem.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -19,23 +18,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/profile")
 public class ProfileController {
 
-    private final UserRepository userRepository;
-
     private final UserService userService;
     @Autowired
-    public ProfileController(UserRepository userRepository, UserService userService) {
-        this.userRepository = userRepository;
+    public ProfileController(UserService userService) {
         this.userService = userService;
     }
 
     @GetMapping()
     public String showProfile(Model model, HttpSession session) {
-        String username = (String) session.getAttribute("currentUser");
-        if (username == null) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser.getUsername() == null) {
             return "redirect:/login";
         }
-
-        User currentUser = userRepository.getByUsername(username);
 
         UserProfileDto namesDto = new UserProfileDto();
         namesDto.setFirstName(currentUser.getFirstName());
@@ -56,8 +50,11 @@ public class ProfileController {
     @PostMapping("/update-password")
     public String updatePassword(@Valid @ModelAttribute("passwordDto") UserPasswordUpdateDto passwordDto,
                                  BindingResult bindingResult, Model model, HttpSession session) {
-        String username = (String) session.getAttribute("currentUser");
-        User currentUser = userRepository.getByUsername(username);
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser.getUsername() == null) {
+            return "redirect:/login";
+        }
+
 
         if (!currentUser.getPassword().equals(passwordDto.getCurrentPassword())) {
             bindingResult.rejectValue("currentPassword", "error.passwordDto", "Invalid current password.");
@@ -86,11 +83,6 @@ public class ProfileController {
     }
 
 
-
-
-
-
-
     @PostMapping("/update-names")
     public String updateNames(@Valid @ModelAttribute("namesDto") UserProfileDto namesDto,
                               BindingResult bindingResult, HttpSession session, Model model) {
@@ -102,8 +94,10 @@ public class ProfileController {
             return "profile";
         }
 
-        String username = (String) session.getAttribute("currentUser");
-        User currentUser = userRepository.getByUsername(username);
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser.getUsername() == null) {
+            return "redirect:/login";
+        }
 
         if (currentUser == null) {
             model.addAttribute("errorMessage", "User not found.");
@@ -130,8 +124,7 @@ public class ProfileController {
             return "profile";
         }
 
-        String username = (String) session.getAttribute("currentUser");
-        User currentUser = userRepository.getByUsername(username);
+        User currentUser = (User) session.getAttribute("currentUser");
 
         if (currentUser == null) {
             model.addAttribute("errorMessage", "User not found.");
@@ -144,5 +137,29 @@ public class ProfileController {
         model.addAttribute("successMessage", "Email updated successfully.");
         return "redirect:/profile";
     }
+
+    @GetMapping("/delete-confirm")
+    public String showDeleteConfirmation(Model model, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser.getUsername() == null) {
+            return "redirect:/auth/login";
+        }
+
+        model.addAttribute("firstName", currentUser.getFirstName()); // Add first name to model
+        return "delete-confirm";
+    }
+
+    @PostMapping("/delete")
+    public String deleteProfile(HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser.getUsername() != null) {
+            userService.delete(currentUser);
+            session.invalidate();
+            return "redirect:/auth/login";
+        }
+
+        return "redirect:/auth/login";
+    }
+
 
 }

@@ -117,7 +117,7 @@ header {
     margin-bottom: 10px;
 }
 
-.post-title {
+.post-title, .username {
     margin-right: 20px;
     text-decoration: underline red;
     color: #000;
@@ -241,4 +241,60 @@ footer {
 
 .submit-btn:hover {
     background-color: #0056b3;
+}
+
+.confirm-delete-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.delete-btn, .cancel-btn, .confirm-btn {
+    margin: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-btn, .confirm-btn {
+    background-color: #ff4444;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: #c6c6c6;
+    color: black;
+}
+
+.user-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Adjust the space between users */
+}
+
+.username {
+    margin-right: 20px;
+    font-weight: bold;
+    color: #000;
+}
+
+.user-action-form {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.user-action-form:last-child {
+    margin-right: 0;
+}
+
+
+.user-details {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
 }

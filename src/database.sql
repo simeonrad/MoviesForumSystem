@@ -102,4 +102,6 @@ create table post_views
         foreign key (user_id) references users (user_id)
 );
 
-
+ALTER TABLE post_views DROP FOREIGN KEY post_views_posts_post_id_fk;
+ALTER TABLE post_views ADD CONSTRAINT post_views_posts_post_id_fk
+    FOREIGN KEY (post_id) REFERENCES posts (post_id) ON DELETE CASCADE;
