@@ -9,6 +9,7 @@ import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import com.telerikacademy.web.forumsystem.models.FilterOptions;
 import com.telerikacademy.web.forumsystem.models.PhoneNumber;
 import com.telerikacademy.web.forumsystem.models.User;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 
@@ -29,7 +30,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void create(User user) {
+    public void create(@Valid User user) {
         boolean usernameExists = true;
         try {
             User userCreated = userRepository.getByUsername(user.getUsername());
@@ -78,6 +79,16 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedOperationException("Username cannot be changed");
         }
         boolean emailExists = userRepository.updateEmail(user.getEmail());
+        if (emailExists) {
+            throw new DuplicateExistsException("User", "email", user.getEmail());
+        }
+        userRepository.update(user);
+    }
+
+    @Override
+    public void update(User user) {
+        boolean emailExists = userRepository.updateEmail(user.getEmail());
+        emailValidator(user.getEmail());
         if (emailExists) {
             throw new DuplicateExistsException("User", "email", user.getEmail());
         }

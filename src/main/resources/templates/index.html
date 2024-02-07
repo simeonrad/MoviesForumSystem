@@ -11,6 +11,7 @@
         <img src="/logo.webp" class="logo" alt="Logo">
         <h1 class="title">Movie Forum</h1>
         <div class="navigation-links">
+
             <!-- For Non-Authenticated Users -->
             <a th:unless="${isAuthenticated}" th:href="@{/auth/register}" class="button">Register</a>
             <a th:unless="${isAuthenticated}" th:href="@{/auth/login}" class="button">Login</a>

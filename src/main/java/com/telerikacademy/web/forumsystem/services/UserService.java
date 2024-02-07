@@ -11,6 +11,7 @@ public interface UserService {
     void delete(User user, User deletedBy);
 
     void update(User user, User updatedBy);
+    void update(User user);
 
     List<User> get(FilterOptions filterOptions, User user);
 
