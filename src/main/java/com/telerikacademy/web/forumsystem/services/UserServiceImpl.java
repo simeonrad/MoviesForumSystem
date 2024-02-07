@@ -23,7 +23,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-
     public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
@@ -162,11 +161,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void addPhoneNumber(String phoneNumber, User user) {
+        PhoneNumber number = new PhoneNumber();
+        number.setPhoneNumber(phoneNumber);
+        number.setUser(user);
+        userRepository.addPhone(number);
+    }
+
+    @Override
+    public void addProfilePhoto(String photoUrl, User user) {
+        user.setProfilePhotoUrl(photoUrl);
+        userRepository.update(user);
+    }
+
+    @Override
     public void makeAdmin(String username) {
         User user = userRepository.getByUsername(username);
         user.setAdmin(true);
         userRepository.update(user);
     }
+
 
 
 

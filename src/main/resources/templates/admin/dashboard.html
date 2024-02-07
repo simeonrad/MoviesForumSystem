@@ -7,7 +7,20 @@
 </head>
 <body>
 <header>
-    <h1>Admin Dashboard</h1>
+    <header>
+        <div class="header-container">
+            <img src="/logo.webp" class="logo" alt="Logo">
+            <h1 class="title">Admin Dashboard</h1>
+            <div class="navigation-links">
+                <div  class="auth-links">
+                    <a th:href="@{/profile}" class="button">Profile Page</a>
+                    <a th:href="@{/posts/new}" class="button">Create New Post</a>
+                    <a th:href="@{/posts}" class="button">All Posts</a>
+                    <a th:href="@{/auth/logout}" class="button">Logout</a>
+                </div>
+            </div>
+        </div>
+    </header>
 </header>
 <main>
     <div class="content-container">
@@ -26,12 +39,12 @@
             </ul>
         </div>
         <!-- Admin Users List -->
-        <div class="column user-list">
+        <div class="column recent-posts">
             <h2>All Users</h2>
             <ul class="posts-list"> <!-- Use the same list class as for posts -->
-                <li th:each="user : ${allUsers}" class="post-item"> <!-- Use post-item for similar layout -->
-                    <span class="post-title" th:text="${user.username}"></span> <!-- Use post-title for username -->
-                    <div class="post-details"> <!-- Use post-details for button alignment -->
+                <li th:each="user : ${allUsers}" class="post-item">
+                    <span class="post-title" th:text="${user.username}"></span>
+                    <div class="post-details">
                         <!-- Block Status Button -->
                         <form th:action="@{${user.isBlocked ? '/admin/toggle-block/' + user.id : '/admin/toggle-block/' + user.id}}" method="post" class="user-action-form">
                             <button type="submit" th:text="${user.isBlocked ? 'Unblock User' : 'Block User'}"></button>
@@ -46,5 +59,30 @@
         </div>
     </div>
 </main>
+<footer>
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h3>About Film Forum</h3>
+                <p>A place to share and discuss your favorite movies and series.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <div>
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/posts/new}">Create New Post</a></li>
+                        <li><a th:href="@{/posts}">All Posts</a></li>
+                        <li><a th:href="@{/profile}">Profile Page</a></li>
+                    </div>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contact Us</h3>
+                <p>Email: support@filmforum.com</p>
+            </div>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

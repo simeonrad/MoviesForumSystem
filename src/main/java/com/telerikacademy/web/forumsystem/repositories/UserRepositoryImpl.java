@@ -52,10 +52,26 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void addPhone(PhoneNumber phoneNumber) {
+        User user = phoneNumber.getUser();
+        PhoneNumber existingPhoneNumber = findPhoneNumberByUser(user);
         try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            session.persist(phoneNumber);
+            if (existingPhoneNumber != null) {
+                existingPhoneNumber.setPhoneNumber(phoneNumber.getPhoneNumber());
+                session.merge(existingPhoneNumber);
+            } else {
+                session.persist(phoneNumber);
+            }
             session.getTransaction().commit();
+        }
+    }
+
+    private PhoneNumber findPhoneNumberByUser(User user) {
+        try (Session session = sessionFactory.openSession()) {
+            String queryStr = "FROM PhoneNumber WHERE user = :user";
+            Query<PhoneNumber> query = session.createQuery(queryStr, PhoneNumber.class);
+            query.setParameter("user", user);
+            return query.uniqueResult();
         }
     }
 

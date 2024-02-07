@@ -22,6 +22,10 @@ public interface UserService {
 
     void makeAdmin(String username, String phoneNumber, User admin);
 
+    void addPhoneNumber(String phoneNumber, User user);
+
+    void addProfilePhoto(String photoUrl, User user);
+
     void makeAdmin(String username);
 
     void unmakeAdmin(String username, User admin);

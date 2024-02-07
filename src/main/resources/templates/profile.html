@@ -27,7 +27,8 @@
         <div class="form-group">
             <label>Confirm New Password</label>
             <input type="password" name="confirmNewPassword" th:errorclass="error">
-            <div th:if="${#fields.hasErrors('confirmNewPassword')}" class="error" th:errors="*{confirmNewPassword}"></div>
+            <div th:if="${#fields.hasErrors('confirmNewPassword')}" class="error"
+                 th:errors="*{confirmNewPassword}"></div>
         </div>
         <button type="submit" class="submit-btn">Update Password</button>
     </form>
@@ -48,7 +49,6 @@
         <button type="submit" class="submit-btn">Update Names</button>
     </form>
 
-
     <!-- Update Email Form -->
     <form action="/profile/update-email" method="post" th:object="${emailDto}">
         <div class="form-group">
@@ -58,6 +58,27 @@
         </div>
         <button type="submit" class="submit-btn">Update Email</button>
     </form>
+
+    <!-- Admin Specific Section -->
+    <div th:if="${isAdmin}">
+        <!-- Telephone Number Form -->
+        <form action="/admin/add-telephone" method="post">
+            <div class="form-group">
+                <label>Telephone Number</label>
+                <input type="text" name="phoneNumber" placeholder="Enter phone number">
+            </div>
+            <button type="submit" class="submit-btn">Add Phone Number</button>
+        </form>
+
+        <!-- Profile Photo Upload Form -->
+        <form action="/admin/upload-image" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="profileImage">Profile Image</label>
+                <input type="file" id="profileImage" name="image" required>
+            </div>
+            <button type="submit" class="submit-btn">Upload Image</button>
+        </form>
+    </div>
 
     <!-- Delete Profile Button -->
     <form action="/profile/delete-confirm" method="get">
