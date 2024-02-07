@@ -49,8 +49,11 @@ public class AuthenticationController {
             return "login";
         }
         try {
-            authenticationHelper.verifyAuthentication(dto.getUsername(), dto.getPassword());
-            session.setAttribute("currentUser", dto.getUsername());
+            User user = authenticationHelper.verifyAuthentication(dto.getUsername(), dto.getPassword());
+            session.setAttribute("currentUser", user);
+            if (user.isAdmin()) {
+                return "redirect:/admin"; // Redirect to admin dashboard if the user is an admin
+            }
             return "redirect:/";
         } catch (AuthenticationFailureException e) {
             bindingResult.rejectValue("username", "auth_error", e.getMessage());

@@ -21,7 +21,8 @@ public interface PostService {
 
     void likePost(int postId, User user);
 
-    public List<Post> getMostRecentPosts(int limit);
+     List<Post> getMostRecentPosts(int limit);
 
-    public List<Post> getMostCommentedPosts(int limit);
+     List<Post> getMostCommentedPosts(int limit);
+    void tryViewingPost(int postId, int userId);
 }

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile Page</title>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments.html :: header}"></div>
+<div class="profile-container">
+    <h2 class="greeting">Hi, <span th:text="${namesDto.firstName}"></span></h2>
+
+    <!-- Update Password Form -->
+    <form action="/profile/update-password" method="post" th:object="${passwordDto}">
+        <div class="form-group">
+            <div class="form-group">
+                <label>Current Password</label>
+                <input type="password" th:field="*{currentPassword}">
+                <div th:if="${#fields.hasErrors('currentPassword')}" class="error" th:errors="*{currentPassword}"></div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>New Password</label>
+            <input type="password" name="newPassword" th:errorclass="error">
+            <div th:if="${#fields.hasErrors('newPassword')}" class="error" th:errors="*{newPassword}"></div>
+        </div>
+        <div class="form-group">
+            <label>Confirm New Password</label>
+            <input type="password" name="confirmNewPassword" th:errorclass="error">
+            <div th:if="${#fields.hasErrors('confirmNewPassword')}" class="error" th:errors="*{confirmNewPassword}"></div>
+        </div>
+        <button type="submit" class="submit-btn">Update Password</button>
+    </form>
+
+
+    <!-- Update Names Form -->
+    <form action="/profile/update-names" method="post" th:object="${namesDto}">
+        <div class="form-group">
+            <label>First Name</label>
+            <input type="text" name="firstName" th:errorclass="error">
+            <div th:if="${#fields.hasErrors('firstName')}" class="error" th:errors="*{firstName}"></div>
+        </div>
+        <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="lastName" th:errorclass="error">
+            <div th:if="${#fields.hasErrors('lastName')}" class="error" th:errors="*{lastName}"></div>
+        </div>
+        <button type="submit" class="submit-btn">Update Names</button>
+    </form>
+
+
+    <!-- Update Email Form -->
+    <form action="/profile/update-email" method="post" th:object="${emailDto}">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" th:errorclass="error">
+            <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}"></div>
+        </div>
+        <button type="submit" class="submit-btn">Update Email</button>
+    </form>
+
+    <!-- Delete Profile Button -->
+    <form action="/profile/delete-confirm" method="get">
+        <button type="submit" class="delete-btn">Delete Profile</button>
+    </form>
+
+</div>
+<footer>
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h3>About Film Forum</h3>
+                <p>A place to share and discuss your favorite movies and series.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <div>
+                        <li><a th:href="@{/}">Home</a></li>
+                        <li><a th:href="@{/posts/new}">Create New Post</a></li>
+                        <li><a th:href="@{/posts}">All Posts</a></li>
+                        <li><a th:href="@{/profile}">Profile Page</a></li>
+                    </div>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contact Us</h3>
+                <p>Email: support@filmforum.com</p>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

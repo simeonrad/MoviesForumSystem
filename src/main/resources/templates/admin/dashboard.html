@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<header>
+    <h1>Admin Dashboard</h1>
+</header>
+<main>
+    <div class="content-container">
+        <!-- Recent Posts -->
+        <div class="column recent-posts">
+            <h2>All Posts</h2>
+            <ul class="posts-list">
+                <li th:each="post : ${allPosts}" class="post-item">
+                    <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title"></a>
+                    <div class="post-details">
+                        <form th:action="@{/admin/delete-post/{id}(id=${post.id})}" method="post">
+                            <button type="submit">Delete Post</button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- Admin Users List -->
+        <div class="column user-list">
+            <h2>All Users</h2>
+            <ul class="posts-list"> <!-- Use the same list class as for posts -->
+                <li th:each="user : ${allUsers}" class="post-item"> <!-- Use post-item for similar layout -->
+                    <span class="post-title" th:text="${user.username}"></span> <!-- Use post-title for username -->
+                    <div class="post-details"> <!-- Use post-details for button alignment -->
+                        <!-- Block Status Button -->
+                        <form th:action="@{${user.isBlocked ? '/admin/toggle-block/' + user.id : '/admin/toggle-block/' + user.id}}" method="post" class="user-action-form">
+                            <button type="submit" th:text="${user.isBlocked ? 'Unblock User' : 'Block User'}"></button>
+                        </form>
+                        <!-- Admin Status Button -->
+                        <form th:action="@{/admin/toggle-admin/{id}(id=${user.id})}" method="post" class="user-action-form">
+                            <button type="submit" th:text="${user.isAdmin ? 'Remove Admin' : 'Make Admin'}"></button>
+                        </form>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</main>
+</body>
+</html>

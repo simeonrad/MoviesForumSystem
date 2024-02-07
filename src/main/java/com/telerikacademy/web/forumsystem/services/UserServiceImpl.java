@@ -9,6 +9,7 @@ import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import com.telerikacademy.web.forumsystem.models.FilterOptions;
 import com.telerikacademy.web.forumsystem.models.PhoneNumber;
 import com.telerikacademy.web.forumsystem.models.User;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 
@@ -29,7 +30,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void create(User user) {
+    public void create(@Valid User user) {
         boolean usernameExists = true;
         try {
             User userCreated = userRepository.getByUsername(user.getUsername());
@@ -85,6 +86,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void update(User user) {
+        boolean emailExists = userRepository.updateEmail(user.getEmail());
+        emailValidator(user.getEmail());
+        if (emailExists) {
+            throw new DuplicateExistsException("User", "email", user.getEmail());
+        }
+        userRepository.update(user);
+    }
+
+    @Override
     public void delete(User user, User deletedBy) {
         user = userRepository.getByUsername(user.getUsername());
         if (user.isDeleted()) {
@@ -92,6 +103,15 @@ public class UserServiceImpl implements UserService {
         }
         if (!deletedBy.isAdmin() && !user.getUsername().equals(deletedBy.getUsername())) {
             throw new UnauthorizedOperationException("Only admins or the same user can delete user profiles!");
+        }
+        user.setDeleted(true);
+        userRepository.delete(user);
+    }
+
+    @Override
+    public void delete(User user) {
+        if (user.isDeleted()) {
+            throw new EntityNotFoundException("User", "username", user.getUsername());
         }
         user.setDeleted(true);
         userRepository.delete(user);
@@ -140,6 +160,15 @@ public class UserServiceImpl implements UserService {
         }
         userRepository.update(user);
     }
+
+    @Override
+    public void makeAdmin(String username) {
+        User user = userRepository.getByUsername(username);
+        user.setAdmin(true);
+        userRepository.update(user);
+    }
+
+
 
     @Override
     public void unmakeAdmin(String username, User admin) {

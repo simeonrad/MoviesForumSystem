@@ -63,6 +63,9 @@ public class AuthenticationHelper {
             if (!user.getPassword().equals(password)){
                 throw new AuthenticationFailureException(AUTHENTICATION_FAILURE_MESSAGE);
             }
+            if (user.isDeleted()) {
+                throw new EntityNotFoundException("User", "username", username);
+            }
             return user;
         } catch (EntityNotFoundException e) {
             throw new AuthenticationFailureException(AUTHENTICATION_FAILURE_MESSAGE);

@@ -89,4 +89,19 @@ create table posts_tags
     constraint posts_tags_tags_tag_id_fk
         foreign key (tag_id) references tags (tag_id)
 );
+create table post_views
+(
+    view_id    int auto_increment
+        primary key,
+    time_stamp timestamp not null,
+    post_id    int       not null,
+    user_id    int       not null,
+    constraint post_views_posts_post_id_fk
+        foreign key (post_id) references posts (post_id),
+    constraint post_views_users_user_id_fk
+        foreign key (user_id) references users (user_id)
+);
 
+ALTER TABLE post_views DROP FOREIGN KEY post_views_posts_post_id_fk;
+ALTER TABLE post_views ADD CONSTRAINT post_views_posts_post_id_fk
+    FOREIGN KEY (post_id) REFERENCES posts (post_id) ON DELETE CASCADE;

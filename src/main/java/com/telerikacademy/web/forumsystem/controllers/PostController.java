@@ -125,12 +125,23 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public PostDto getPostById(@PathVariable int postId) {
+    public PostDto getPostById(HttpHeaders headers, @PathVariable int postId) {
         try {
+            User user = authenticationHelper.tryGetUser(headers);
+            postService.tryViewingPost(postId, user.getId());
             Post post = postService.getById(postId);
             return postMapper.toDto(post);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
+        catch (ResponseStatusException e){
+            try {
+                Post post = postService.getById(postId);
+                return postMapper.toDto(post);
+            }
+            catch (EntityNotFoundException ee) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, ee.getMessage());
+            }
         }
     }
 
