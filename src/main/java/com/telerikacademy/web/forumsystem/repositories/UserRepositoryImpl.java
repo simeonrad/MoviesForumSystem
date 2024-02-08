@@ -1,7 +1,6 @@
 package com.telerikacademy.web.forumsystem.repositories;
 
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
-import com.telerikacademy.web.forumsystem.exceptions.InvalidParameterException;
 import com.telerikacademy.web.forumsystem.models.FilterOptions;
 import com.telerikacademy.web.forumsystem.models.PhoneNumber;
 import com.telerikacademy.web.forumsystem.models.User;
@@ -12,7 +11,9 @@ import org.hibernate.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class UserRepositoryImpl implements UserRepository {
@@ -79,42 +80,39 @@ public class UserRepositoryImpl implements UserRepository {
     public List<User> get(FilterOptions filterOptions) {
         try (Session session = sessionFactory.openSession()) {
             List<String> filters = new ArrayList<>();
-            List<String> params = new ArrayList<>();
-
-            filterOptions.getEmail().ifPresent(value -> {
-                filters.add("email = :email");
-                params.add("email");
-                params.add(value);
-            });
+            Map<String, Object> params = new HashMap<>();
 
             filterOptions.getUsername().ifPresent(value -> {
-                filters.add("username = :username");
-                params.add("username");
-                params.add(value);
+                if (!value.isBlank()) {
+                    filters.add("username like :username");
+                    params.put("username", String.format("%%%s%%", value));
+                }
+            });
+
+            filterOptions.getEmail().ifPresent(value -> {
+                if (!value.isBlank()) {
+                    filters.add("email = :email");
+                    params.put("email", String.format("%s", value));
+                }
             });
 
             filterOptions.getFirstName().ifPresent(value -> {
-                filters.add("firstName = :firstName");
-                params.add("firstName");
-                params.add(value);
+                if (!value.isBlank()) {
+                filters.add("firstName like :firstName");
+                params.put("firstName", String.format("%%%s%%", value));
+                }
             });
-
 
             StringBuilder queryString = new StringBuilder("from User");
             if (!filters.isEmpty()) {
                 queryString
                         .append(" where ")
                         .append(String.join(" and ", filters));
-            } else {
-                throw new InvalidParameterException("Invalid parameter. Supported values are: 'username', 'firstName', 'email'");
             }
             queryString.append(generateOrderBy(filterOptions));
 
             Query<User> query = session.createQuery(queryString.toString(), User.class);
-            query.setParameter(params.get(0), params.get(1));
-            if (query.list().isEmpty()) {
-                throw new EntityNotFoundException("User", params.get(0), params.get(1));
-            }
+            query.setProperties(params);
             return query.list();
         }
     }
@@ -125,11 +123,30 @@ public class UserRepositoryImpl implements UserRepository {
         }
 
         String orderBy = switch (filterOptions.getSortBy().get()) {
-            case "name" -> "name";
+            case "email" -> "email";
             case "firstName" -> "firstName";
             case "username" -> "username";
             default -> "";
         };
+
+//        String orderBy = "";
+//        switch (filterOptions.getSortBy().get()) {
+//            case "email":
+//                orderBy = "email";
+//                break;
+//            case "fistName":
+//                orderBy = "firstName";
+//                break;
+//            case "username":
+//                orderBy = "username";
+//                break;
+//            default:
+//                return "";
+//        }
+
+        if (orderBy.isEmpty()) {
+            return "";
+        }
 
         orderBy = String.format(" order by %s", orderBy);
 

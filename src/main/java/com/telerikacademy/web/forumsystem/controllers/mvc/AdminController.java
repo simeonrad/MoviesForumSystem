@@ -1,13 +1,12 @@
 package com.telerikacademy.web.forumsystem.controllers.mvc;
 
-import com.telerikacademy.web.forumsystem.models.Post;
-import com.telerikacademy.web.forumsystem.models.ProfileImageForm;
-import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.models.*;
 import com.telerikacademy.web.forumsystem.repositories.PostRepository;
 import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 import com.telerikacademy.web.forumsystem.services.ImageStorageService;
 import com.telerikacademy.web.forumsystem.services.PostService;
 import com.telerikacademy.web.forumsystem.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -70,7 +69,7 @@ public class AdminController {
     }
 
     @PostMapping("/toggle-block/{id}")
-    public String toggleBlockUser(@PathVariable("id") int userId, HttpSession session, Model model) {
+    public String toggleBlockUser(@PathVariable("id") int userId, HttpSession session, Model model, HttpServletRequest request) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser != null && currentUser.isAdmin()) {
             User userToToggle = userRepository.getById(userId);
@@ -85,7 +84,8 @@ public class AdminController {
             } catch (Exception e) {
                 model.addAttribute("error", "Error toggling user block status.");
             }
-            return "redirect:/admin";
+            String refererUrl = request.getHeader("Referer");
+            return "redirect:" + refererUrl;
         } else {
             return "redirect:/auth/login";
         }
@@ -146,6 +146,19 @@ public class AdminController {
         }
 
         return "redirect:/profile";
+    }
+
+    @GetMapping("/search-user")
+    public String showSearchUserPage(@ModelAttribute("filterOptions") FilterDto filterDto, Model model) {
+        List<User> users = userService.get(new FilterOptions(
+                filterDto.getUsername(),
+                filterDto.getEmail(),
+                filterDto.getFirstName(),
+                filterDto.getSortBy(),
+                filterDto.getSortOrder()));
+        model.addAttribute("filterOptions", filterDto);
+        model.addAttribute("users", users);
+        return "searchUserView";
     }
 
 }
