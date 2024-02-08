@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirm Delete</title>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet">
+</head>
+<body>
+<div class="confirm-delete-container">
+    <h2>Are you sure you want to delete your profile,<span th:text="${firstName}"></span></h2>
+    <form action="/profile/delete" method="post">
+        <button type="submit" class="confirm-btn">Yes, delete my profile</button>
+    </form>
+    <a href="/profile"><button class="cancel-btn">Cancel</button></a>
+</div>
+</body>
+</html>

@@ -29,7 +29,7 @@ public class HomeMvcController {
     }
 
     @GetMapping
-    public String showHomePage(Model model) {
+    public String showHomePage(Model model, HttpSession session) {
         List<Post> mostRecentPosts = postService.getMostRecentPosts(10);
         List<Post> mostCommentedPosts = postService.getMostCommentedPosts(10);
 
