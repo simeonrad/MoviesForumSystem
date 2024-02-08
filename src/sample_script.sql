@@ -25,7 +25,7 @@ INSERT INTO posts (user_id, title, content, date_created, likes) VALUES (1, 'Pos
 INSERT INTO posts (user_id, title, content, date_created, likes) VALUES (2, 'Post Title 102', 'Content 1002 Content 1001 Content 1001 Content 1001', '2024-02-05 17:37:15', 0);
 INSERT INTO posts (user_id, title, content, date_created, likes) VALUES (3, 'Post Title 103', 'Content 1003 Content 1001 Content 1001 Content 1001', '2024-02-05 17:37:20', 0);
 INSERT INTO posts (user_id, title, content, date_created, likes) VALUES (4, 'Post Title 104', 'Content 1003 Content 1001 Content 1001 Content 1001 yeah', '2024-02-05 17:37:21', 0);
-INSERT INTO posts (user_id, title, content, date_created, likes) VALUES (10, 'Post Title 105', 'Content 1003 cool Content 1001Content 1001Content 1001', '2024-02-05 17:37:25', 0);
+INSERT INTO posts (user_id, title, content, date_created, likes) VALUES (8, 'Post Title 105', 'Content 1003 cool Content 1001Content 1001Content 1001', '2024-02-05 17:37:25', 0);
 INSERT INTO posts (user_id, title, content, date_created, likes) VALUES (18, 'Post Title 106', 'Content 1003 magic Content 1001Content 1001Content 1001', '2024-02-05 17:37:30', 0);
 INSERT INTO posts (user_id, title, content, date_created, likes) VALUES (19, 'Post Title 107', 'Content 1003 mark it Content 1001Content 1001Content 1001', '2024-02-05 17:37:32', 0);
 INSERT INTO posts (user_id, title, content, date_created, likes) VALUES (23, 'Post Title 108', 'Content 1003 sum up Content 1001Content 1001Content 1001', '2024-02-05 17:37:51', 0);
@@ -35,6 +35,8 @@ INSERT INTO posts (user_id, title, content, date_created, likes) VALUES (15, 'Po
 INSERT INTO comments (post_id, user_id, content, date_created) VALUES (1, 1, 'Comment Content 1', '2024-02-05 17:37:11');
 INSERT INTO comments (post_id, user_id, content, date_created) VALUES (4, 2, 'Comment Content 2', '2024-02-05 17:37:12');
 INSERT INTO comments (post_id, user_id, content, date_created) VALUES (3, 3, 'Comment Content 3', '2024-02-05 17:37:15');
+INSERT INTO comments (post_id, user_id, content, date_created) VALUES (12, 4, 'That is the best post I have seen', '2024-02-05 17:37:15');
+INSERT INTO comments (post_id, user_id, content, date_created) VALUES (12, 3, 'I cant believe you said something so wrong', '2024-02-07 17:37:15');
 
 INSERT INTO posts_tags (tag_id, post_id) VALUES (1, 1);
 INSERT INTO posts_tags (tag_id, post_id) VALUES (4, 5);

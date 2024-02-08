@@ -60,9 +60,6 @@ public class CommentRepositoryImpl implements CommentRepository {
         try (Session session = sessionFactory.openSession()) {
             Query<Comment> query = session.createQuery("from Comment where post.id = :id", Comment.class);
             query.setParameter("id", id);
-            if (query.list().isEmpty()) {
-                throw new EntityNotFoundException("Comments", "post id", String.valueOf(id));
-            }
             return query.list();
         }
     }
@@ -72,13 +69,7 @@ public class CommentRepositoryImpl implements CommentRepository {
         try (Session session = sessionFactory.openSession()) {
             Query<Comment> query = session.createQuery("from Comment where repliedTo.id = :comment_id", Comment.class);
             query.setParameter("comment_id", id);
-            List<Comment> resultList = query.list();
-
-            if (resultList.isEmpty()) {
-                throw new EntityNotFoundException("Replies", "comment id", String.valueOf(id));
-            }
-
-            return resultList;
+            return query.list();
         }
     }
 

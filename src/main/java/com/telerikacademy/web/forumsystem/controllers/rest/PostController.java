@@ -1,4 +1,4 @@
-package com.telerikacademy.web.forumsystem.controllers;
+package com.telerikacademy.web.forumsystem.controllers.rest;
 
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.exceptions.NotAllowedContentException;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpHeaders;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/api/posts")
 public class PostController {
     private final PostService postService;
     private final AuthenticationHelper authenticationHelper;
@@ -98,7 +98,7 @@ public class PostController {
         }
     }
 
-    @GetMapping("/post/{postId}")
+    @GetMapping("/api/post/{postId}")
     public List<CommentDto> getCommentsOnPost(@PathVariable int postId) {
         try {
             return commentService.getByPostId(postId)
@@ -125,7 +125,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public PostDto getPostById(HttpHeaders headers, @PathVariable int postId) {
+    public PostDto getPostById(@RequestHeader(required = false) HttpHeaders headers, @PathVariable int postId) {
         try {
             User user = authenticationHelper.tryGetUser(headers);
             postService.tryViewingPost(postId, user.getId());
@@ -147,7 +147,12 @@ public class PostController {
 
     @GetMapping()
     public List<PostDto> getAllPosts() {
-        List<Post> posts = postService.getAll();
-        return postMapper.toDtoList(posts);
+        try {
+            List<Post> posts = postService.getAll();
+            return postMapper.toDtoList(posts);
+        }
+     catch (EntityNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 }

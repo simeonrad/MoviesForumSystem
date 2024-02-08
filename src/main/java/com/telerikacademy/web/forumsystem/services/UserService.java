@@ -16,6 +16,7 @@ public interface UserService {
 
     List<User> get(FilterOptions filterOptions, User user);
     List<User> get(FilterOptions filterOptions);
+    User get(String email);
 
     void blockUser(String username, User admin);
 
