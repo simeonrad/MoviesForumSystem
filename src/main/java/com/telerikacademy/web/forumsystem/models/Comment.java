@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import com.telerikacademy.web.forumsystem.models.User;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "comments")
@@ -18,7 +19,7 @@ public class Comment {
     @Column(name = "content")
     private String content;
     @Column(name = "date_created")
-    private LocalDate timeStamp;
+    private LocalDateTime timeStamp;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -28,12 +29,12 @@ public class Comment {
     private Comment repliedTo;
 
     public Comment() {
-        this.timeStamp = LocalDate.now();
+        this.timeStamp = LocalDateTime.now();
     }
 
     public Comment(String content) {
         this.content = content;
-        this.timeStamp = LocalDate.now();
+        this.timeStamp = LocalDateTime.now();
     }
 
     public int getId() {
@@ -68,11 +69,11 @@ public class Comment {
         this.content = content;
     }
 
-    public LocalDate getTimeStamp() {
+    public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(LocalDate timeStamp) {
+    public void setTimeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 

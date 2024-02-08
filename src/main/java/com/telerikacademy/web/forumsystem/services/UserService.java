@@ -13,6 +13,7 @@ public interface UserService {
     void update(User user, User updatedBy);
 
     List<User> get(FilterOptions filterOptions, User user);
+    User get(String email);
 
     void blockUser(String username, User admin);
 

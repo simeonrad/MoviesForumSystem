@@ -1,4 +1,4 @@
-package com.telerikacademy.web.forumsystem.controllers;
+package com.telerikacademy.web.forumsystem.controllers.rest;
 
 import com.telerikacademy.web.forumsystem.exceptions.*;
 import com.telerikacademy.web.forumsystem.helpers.UserShow;

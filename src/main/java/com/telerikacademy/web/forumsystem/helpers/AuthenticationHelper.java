@@ -34,6 +34,7 @@ public class AuthenticationHelper {
                     "You need to log in in order to retrieve the required resource!");
         }
 
+
         try {
             String username = headers.getFirst(USERNAME_HEADER_NAME);
             String password = headers.getFirst(PASSWORD_HEADER_NAME);
@@ -56,7 +57,6 @@ public class AuthenticationHelper {
         }
         return repository.getByUsername(currentUser);
     }
-
     public User verifyAuthentication(String username, String password) {
         try {
             User user = repository.getByUsername(username);

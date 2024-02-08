@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${post.title}">Post Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .post-view, .comments-section {
+            background-color: #fff;
+            margin: 20px auto;
+            width: 80%;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-sizing: border-box; /* Ensures padding is included in width */
+        }
+        .post-view h1, .comments-section h2 {
+            color: #333;
+            text-align: center; /* Center post and comments titles */
+        }
+        .post-view p, .comments-section p {
+            color: #666;
+            line-height: 1.6;
+            text-align: left; /* Align text to the left */
+            margin: 10px 0; /* Add some margin for spacing */
+        }
+        .post-view span, .comments-section span {
+            font-weight: bold;
+        }
+        .comment {
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+        .comment:first-child {
+            border-top: none;
+            padding-top: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="post-view">
+    <h1 th:text="${post.title}">Post Title</h1>
+    <p th:text="${post.content}">Post content goes here...</p>
+    <p>Posted by <span th:text="${post.author.username}">Author Username</span> on <span th:text="${#temporals.format(post.timeStamp, 'yyyy-MM-dd HH:mm')}">Timestamp</span></p>
+    <p><strong>Views:</strong> <span th:text="${viewCount}">0</span></p>
+</div>
+<div class="comments-section">
+    <h2>Comments</h2>
+    <!-- Example comment -->
+    <div class="comment" th:each="comment : ${post_comments}">
+        <p><span th:text="${comment.author.username}">Comment Author</span> on <span th:text="${#temporals.format(comment.timeStamp, 'yyyy-MM-dd HH:mm')}">Comment Timestamp</span></p>
+        <p th:text="${comment.content}">Comment content goes here...</p>
+    </div>
+    <form th:action="@{__${requestURI}__}" th:object="${commentDto}" method="post">
+        <textarea th:field="*{content}" placeholder="Comment your thoughts..." rows="4" style="width: 100%;"></textarea>
+        <button type="submit">Submit Comment</button>
+    </form>
+</div>
+
+</body>
+</html>

@@ -82,6 +82,7 @@ public class UserServiceImpl implements UserService {
             throw new DuplicateExistsException("User", "email", user.getEmail());
         }
         userRepository.update(user);
+
     }
 
     @Override
@@ -103,6 +104,10 @@ public class UserServiceImpl implements UserService {
             throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
         }
         return userRepository.get(filterOptions);
+    }
+
+    public User get(String email){
+       return userRepository.getByEmail(email);
     }
 
     @Override

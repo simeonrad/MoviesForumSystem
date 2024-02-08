@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 public class PostDto {
@@ -18,11 +19,11 @@ public class PostDto {
     @Size(min = 32, max = 8192, message = "Content should be between 32 and 8192 symbols")
     private String content;
     private int likes;
-    private LocalDate timeStamp;
+    private LocalDateTime timeStamp;
     private Set<Tag> tag;
 
     public PostDto() {
-        timeStamp = LocalDate.now();
+        timeStamp = LocalDateTime.now();
     }
 
     public int getId() {
@@ -45,7 +46,7 @@ public class PostDto {
         return likes;
     }
 
-    public LocalDate getTimeStamp() {
+    public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
     public void setId(int id) {
@@ -68,7 +69,7 @@ public class PostDto {
         this.likes = likes;
     }
 
-    public void setTimeStamp(LocalDate timeStamp) {
+    public void setTimeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 

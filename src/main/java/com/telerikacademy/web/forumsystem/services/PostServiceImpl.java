@@ -9,6 +9,7 @@ import com.telerikacademy.web.forumsystem.models.User;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepository;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepositoryImpl;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.PostRepository;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@Transactional
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final TagService tagService;
@@ -70,13 +72,14 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     public void tryViewingPost(int postId, int userId){
         if (viewRepository.getViewsCountOnPost(postId) == 0){
             viewRepository.viewAPost(postId, userId);
         }
         else {
             PostView view = viewRepository.getMostRecentViewByPostAndUserId(postId, userId);
-            if (view.getTimestamp().isBefore(LocalDateTime.now().plusMinutes(5))) {
+            if (LocalDateTime.now().isAfter(view.getTimestamp().plusMinutes(5))) {
                 viewRepository.viewAPost(postId, userId);
                 }
             }
