@@ -33,6 +33,7 @@ public class PostsMvcController {
     private final CommentMapper commentMapper;
     private final CommentService commentService;
     private final AuthenticationHelper authenticationHelper;
+
     @ModelAttribute("requestURI")
     public String requestURI(final HttpServletRequest request) {
         return request.getRequestURI();
@@ -43,17 +44,23 @@ public class PostsMvcController {
         this.postService = postService;
         this.viewRepository = viewRepository;
         this.commentRepository = commentRepository;
-    this.commentMapper = commentMapper;
-    this.commentService = commentService;
-    this.authenticationHelper = authenticationHelper;
+        this.commentMapper = commentMapper;
+        this.commentService = commentService;
+        this.authenticationHelper = authenticationHelper;
     }
 
     @GetMapping("/{id}")
     public String singlePostView(Model model, @PathVariable int id, HttpSession session) {
-        try{
-           User user = authenticationHelper.tryGetUser(session);
+        try {
+            Post post = postService.getById(id);
+            User user = authenticationHelper.tryGetUser(session);
             postService.tryViewingPost(id, user.getId());
-        }catch (AuthenticationFailureException ignored){}
+        } catch (AuthenticationFailureException ignored) {
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        }
         try {
             Post post = postService.getById(id);
             model.addAttribute("post", post);
@@ -68,12 +75,13 @@ public class PostsMvcController {
         }
 
     }
+
     @PostMapping("/{id}")
     public String commentOnPost(@Valid @ModelAttribute("comment") CommentDto commentDto,
                                 BindingResult bindingResult,
                                 Model model, HttpSession session,
                                 @PathVariable int id) {
-    User user;
+        User user;
         try {
             user = authenticationHelper.tryGetUser(session);
         } catch (UnauthorizedOperationException e) {

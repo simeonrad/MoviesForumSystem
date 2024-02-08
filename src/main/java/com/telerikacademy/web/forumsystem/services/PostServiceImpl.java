@@ -63,27 +63,25 @@ public class PostServiceImpl implements PostService {
 
     public void likePost(int postId, User user) {
         try {
-           likeRepository.getByPostAndUserId(postId, user.getId());
-           likeRepository.unlikeAPost(postId, user.getId());
-        }
-        catch (EntityNotFoundException e){
+            likeRepository.getByPostAndUserId(postId, user.getId());
+            likeRepository.unlikeAPost(postId, user.getId());
+        } catch (EntityNotFoundException e) {
             likeRepository.likeAPost(postId, user.getId());
         }
     }
 
     @Override
     @Transactional
-    public void tryViewingPost(int postId, int userId){
-        if (viewRepository.getViewsCountOnPost(postId) == 0){
-            viewRepository.viewAPost(postId, userId);
-        }
-        else {
+    public void tryViewingPost(int postId, int userId) {
+        try {
             PostView view = viewRepository.getMostRecentViewByPostAndUserId(postId, userId);
             if (LocalDateTime.now().isAfter(view.getTimestamp().plusMinutes(5))) {
                 viewRepository.viewAPost(postId, userId);
-                }
             }
+        } catch (EntityNotFoundException e) {
+            viewRepository.viewAPost(postId, userId);
         }
+    }
 
     @Override
     public Post getById(int id) {
