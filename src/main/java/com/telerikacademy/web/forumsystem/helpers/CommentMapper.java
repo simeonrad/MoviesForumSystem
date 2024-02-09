@@ -31,7 +31,8 @@ public class CommentMapper {
        comment.setAuthor(author);
        comment.setPost(postRepository.getById(postId));
         return comment;
-    }    public Comment replyFromDto(CommentDto commentDto, User author, int commentId) {
+    }
+    public Comment replyFromDto(CommentDto commentDto, User author, int commentId) {
        Comment comment = new Comment();
        comment.setContent(commentDto.getContent());
        comment.setAuthor(author);

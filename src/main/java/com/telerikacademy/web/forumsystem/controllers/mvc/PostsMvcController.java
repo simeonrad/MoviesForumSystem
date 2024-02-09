@@ -112,7 +112,7 @@ public class PostsMvcController {
             User user = authenticationHelper.tryGetUser(session);
             int commentId = Integer.parseInt(request.getParameter("commentId"));
            Comment comment = commentService.getById(commentId);
-           Comment reply = commentMapper.fromDto(commentDto, user,Id);
+           Comment reply = commentMapper.replyFromDto(commentDto, user, commentId);
            comment.addReply(reply);
             redirectAttributes.addFlashAttribute("message", "Reply posted successfully.");
         } catch (AuthenticationFailureException e) {
@@ -124,7 +124,7 @@ public class PostsMvcController {
 
         }
 
-        return "redirect:/post/" + Id; // Redirect back to the post view page
+        return "redirect:/posts/" + Id; // Redirect back to the post view page
     }
 //    @GetMapping()
 //    public String PostsView(@ModelAttribute("filterOptions") FilterDto filterDto, Model model) {
