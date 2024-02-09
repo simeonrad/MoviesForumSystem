@@ -11,7 +11,6 @@ public class CommentDto {
     @NotNull(message = "Content can't be empty")
     @Size(min = 1, max = 500, message = "Content should be between 1 and 500 symbols")
     private String content;
-    @NotNull(message = "Content can't be empty")
     private User author;
     private LocalDateTime timeStamp;
 

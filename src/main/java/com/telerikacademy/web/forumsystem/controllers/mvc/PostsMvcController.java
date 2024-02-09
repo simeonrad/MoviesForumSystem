@@ -22,6 +22,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.List;
 
 
 @Controller
@@ -52,7 +55,7 @@ public class PostsMvcController {
     @GetMapping("/{id}")
     public String singlePostView(Model model, @PathVariable int id, HttpSession session) {
         try {
-            Post post = postService.getById(id);
+            postService.getById(id);
             User user = authenticationHelper.tryGetUser(session);
             postService.tryViewingPost(id, user.getId());
         } catch (AuthenticationFailureException ignored) {
@@ -63,10 +66,11 @@ public class PostsMvcController {
         }
         try {
             Post post = postService.getById(id);
+            List<Comment> comments = commentRepository.getByPostId(id);
             model.addAttribute("post", post);
             model.addAttribute("commentDto", new CommentDto());
             model.addAttribute("viewCount", viewRepository.getViewsCountOnPost(id));
-            model.addAttribute("post_comments", commentRepository.getByPostId(id));
+            model.addAttribute("post_comments", comments);
             return "PostView";
         } catch (EntityNotFoundException e) {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
@@ -78,13 +82,12 @@ public class PostsMvcController {
 
     @PostMapping("/{id}")
     public String commentOnPost(@Valid @ModelAttribute("comment") CommentDto commentDto,
-                                BindingResult bindingResult,
                                 Model model, HttpSession session,
                                 @PathVariable int id) {
         User user;
         try {
             user = authenticationHelper.tryGetUser(session);
-        } catch (UnauthorizedOperationException e) {
+        } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         }
         try {
@@ -96,6 +99,32 @@ public class PostsMvcController {
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
         }
+    }
+
+    @PostMapping("/{Id}/reply")
+    public String postCommentReply(@ModelAttribute CommentDto commentDto,
+                                   HttpSession session,
+                                   Model model,
+                                   RedirectAttributes redirectAttributes,
+                                   @PathVariable int Id,
+                                   HttpServletRequest request) {
+        try {
+            User user = authenticationHelper.tryGetUser(session);
+            int commentId = Integer.parseInt(request.getParameter("commentId"));
+           Comment comment = commentService.getById(commentId);
+           Comment reply = commentMapper.fromDto(commentDto, user,Id);
+           comment.addReply(reply);
+            redirectAttributes.addFlashAttribute("message", "Reply posted successfully.");
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+
+        }
+
+        return "redirect:/post/" + Id; // Redirect back to the post view page
     }
 //    @GetMapping()
 //    public String PostsView(@ModelAttribute("filterOptions") FilterDto filterDto, Model model) {

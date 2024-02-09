@@ -26,8 +26,6 @@ public class View_RepositoryImpl implements View_Repository {
             Query<PostView> query = session.createQuery("from PostView where postId = :post_id AND userId = :user_id order by timestamp desc", PostView.class);
             query.setParameter("post_id", postId);
             query.setParameter("user_id", userId);
-            query.setMaxResults(1);
-
             List<PostView> results = query.list();
 
             if (results.isEmpty()) {

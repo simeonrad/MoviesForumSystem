@@ -75,7 +75,7 @@ public class PostServiceImpl implements PostService {
     public void tryViewingPost(int postId, int userId) {
         try {
             PostView view = viewRepository.getMostRecentViewByPostAndUserId(postId, userId);
-            if (LocalDateTime.now().isAfter(view.getTimestamp().plusMinutes(5))) {
+            if (!view.getTimestamp().plusMinutes(5).isAfter(LocalDateTime.now())) {
                 viewRepository.viewAPost(postId, userId);
             }
         } catch (EntityNotFoundException e) {
