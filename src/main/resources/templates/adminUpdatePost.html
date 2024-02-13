@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Post</title>
+  <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="~{fragments.html :: header}"></div>
+
+<main class="content-container">
+  <div class="form-container">
+    <h2>Update Post Tags</h2>
+    <form th:action="@{/posts/update/{postId}(postId=${postDto.id})}" th:object="${postDto}" method="post">
+      <div class="form-group">
+        <label for="tags">Tags (separate with commas)</label>
+        <input type="text" id="tags" name="tags" th:value="${tags}"/>
+      </div>
+      <button type="submit">Update Post</button>
+    </form>
+  </div>
+</main>
+
+<div th:replace="~{fragments.html :: footer}"></div>
+</body>
+</html>

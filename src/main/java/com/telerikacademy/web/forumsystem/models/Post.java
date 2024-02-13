@@ -91,6 +91,10 @@ public class Post {
         return tags;
     }
 
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -137,9 +141,5 @@ public class Post {
 
     public Set<User> getLikedByUsers() {
         return likedByUsers;
-    }
-
-    public void setTags(Set<Tag> tags) {
-        this.tags = tags;
     }
 }
