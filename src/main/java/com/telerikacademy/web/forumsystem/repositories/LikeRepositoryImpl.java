@@ -31,15 +31,13 @@ public class LikeRepositoryImpl implements LikeRepository {
         try (Session session = sessionFactory.openSession()) {
             Query<Like> query = session.createQuery("from Like where postId = :post_id", Like.class);
             query.setParameter("post_id", postId);
-            if (query.list().isEmpty()) {
-                throw new EntityNotFoundException("Like", postId);
-            }
             return query.list().size();
         }
     }
     @Override
     public void likeAPost(int postId, int userId) {
         try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
             Like like = new Like();
             like.setPostId(postId);
             like.setUserId(userId);
@@ -50,6 +48,7 @@ public class LikeRepositoryImpl implements LikeRepository {
     @Override
     public void unlikeAPost(int postId, int userId) {
         try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
             Like like = new Like();
             like.setPostId(postId);
             like.setUserId(userId);

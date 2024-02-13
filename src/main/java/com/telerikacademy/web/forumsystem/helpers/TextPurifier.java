@@ -9,14 +9,14 @@ import java.util.List;
 @Component
 public class TextPurifier {
     public static final String THE_CONTENT_CONTAINS_FORBIDDEN_WORD = "The content contains forbidden word/s your account has been banned!";
-    private static final List<String> nonAllowedWords = List.of("arse", "ass", "ballsack", "balls", "bastard",
+    private static final List<String> nonAllowedWords = List.of("arse", " ass ", "ballsack", "balls", "bastard",
             "bitch", "biatch", "bloody", "blowjob", "blow job", "bollock", "bollok", "boner",
             "boob", "bugger", "bum", "butt", "buttplug", "clitoris", "cock", "coon", "crap",
             "cunt", "damn", "dick", "dildo", "dyke", "fag", "feck", "fellate", "fellatio", "felching",
             "fuck", "f u c k", "fudgepacker", "fudge packer", "flange", "Goddamn", "God damn", "hell",
             "homo", "jerk", "jizz", "knobend", "knob end", "labia", "lmao", "lmfao", "muff", "nigger",
             "nigga", "omg", "penis", "piss", "poop", "prick", "pube", "pussy", "queer", "scrotum", "sex",
-            "shit", "s hit", "sh1t", "slut", "smegma", "spunk", "tit", "tosser", "turd", "twat", "vagina",
+            "shit", " s hit ", "sh1t", "slut", "smegma", "spunk", " tit ", "tosser", "turd", "twat", "vagina",
             "wank", "whore", "wtf");
 
             public void checkTextAndBan(String text, User user) throws NotAllowedContentException {

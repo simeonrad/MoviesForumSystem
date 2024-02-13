@@ -33,7 +33,7 @@
                     <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title"></a>
                     <div class="post-details">
                         <form th:action="@{/admin/delete-post/{id}(id=${post.id})}" method="post">
-                            <button type="submit">Delete Post</button>
+                            <button class="button" type="submit">Delete Post</button>
                         </form>
                     </div>
                 </li>
@@ -48,11 +48,11 @@
                     <div class="post-details">
                         <!-- Block Status Button -->
                         <form th:action="@{${user.isBlocked ? '/admin/toggle-block/' + user.id : '/admin/toggle-block/' + user.id}}" method="post" class="user-action-form">
-                            <button type="submit" th:text="${user.isBlocked ? 'Unblock User' : 'Block User'}"></button>
+                            <button class="button" type="submit" th:text="${user.isBlocked ? 'Unblock User' : 'Block User'}"></button>
                         </form>
                         <!-- Admin Status Button -->
                         <form th:action="@{/admin/toggle-admin/{id}(id=${user.id})}" method="post" class="user-action-form">
-                            <button type="submit" th:text="${user.isAdmin ? 'Remove Admin' : 'Make Admin'}"></button>
+                            <button class="button" type="submit" th:text="${user.isAdmin ? 'Remove Admin' : 'Make Admin'}"></button>
                         </form>
                     </div>
                 </li>

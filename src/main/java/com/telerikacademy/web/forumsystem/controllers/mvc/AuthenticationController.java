@@ -7,7 +7,6 @@ import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import com.telerikacademy.web.forumsystem.models.LoginDto;
 import com.telerikacademy.web.forumsystem.models.RegisterDto;
 import com.telerikacademy.web.forumsystem.models.User;
-import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 import com.telerikacademy.web.forumsystem.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/auth")
@@ -25,13 +25,11 @@ public class AuthenticationController {
 
     private final AuthenticationHelper authenticationHelper;
     private final UserMapper userMapper;
-    private final UserRepository userRepository;
     private final UserService userService;
 
-    public AuthenticationController(AuthenticationHelper authenticationHelper, UserMapper userMapper, UserRepository userRepository, UserService userService) {
+    public AuthenticationController(AuthenticationHelper authenticationHelper, UserMapper userMapper, UserService userService) {
         this.authenticationHelper = authenticationHelper;
         this.userMapper = userMapper;
-        this.userRepository = userRepository;
         this.userService = userService;
     }
 
@@ -44,7 +42,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     public String handleLogin(@Valid @ModelAttribute("login") LoginDto dto,
                               BindingResult bindingResult,
-                              HttpSession session) {
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "login";
         }
@@ -52,14 +51,15 @@ public class AuthenticationController {
             User user = authenticationHelper.verifyAuthentication(dto.getUsername(), dto.getPassword());
             session.setAttribute("currentUser", user);
             if (user.isAdmin()) {
-                return "redirect:/admin"; // Redirect to admin dashboard if the user is an admin
+                return "redirect:/admin";
             }
             return "redirect:/";
         } catch (AuthenticationFailureException e) {
-            bindingResult.rejectValue("username", "auth_error", e.getMessage());
-            return "login";
+            redirectAttributes.addFlashAttribute("loginError", e.getMessage());
+            return "redirect:/auth/login";
         }
     }
+
 
     @GetMapping("/logout")
     public String handleLogout(HttpSession session) {
