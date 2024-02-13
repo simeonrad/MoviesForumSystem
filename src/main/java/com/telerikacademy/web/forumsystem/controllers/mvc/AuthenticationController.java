@@ -49,7 +49,7 @@ public class AuthenticationController {
         }
         try {
             User user = authenticationHelper.verifyAuthentication(dto.getUsername(), dto.getPassword());
-            session.setAttribute("currentUser", dto.getUsername());
+            session.setAttribute("currentUser", user);
             if (user.isAdmin()) {
                 return "redirect:/admin";
             }
