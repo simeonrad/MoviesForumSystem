@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/posts")
@@ -68,6 +69,11 @@ public class PostMvcController {
             User currentUser = authenticationHelper.tryGetUser(session);
             Post post = postService.getById(postId);
 
+            String tags = post.getTags().stream()
+                    .map(Tag::getName)
+                    .collect(Collectors.joining(", "));
+            model.addAttribute("tags", tags);
+
             model.addAttribute("postDto", postMapper.toDto(post));
             if (currentUser.isAdmin() && post.getAuthor().equals(currentUser)) {
                 return "updatePost";
@@ -102,7 +108,7 @@ public class PostMvcController {
             postMapper.updateFromDto(postDto, existingPost);
 
             Set<Tag> processTags = processTags(tags);
-            existingPost.setTags(processTags);
+            tagService.addTagsToPost(processTags, existingPost);
 
             postService.update(existingPost, currentUser, processTags);
 
@@ -119,12 +125,13 @@ public class PostMvcController {
         if (tagInput != null && !tagInput.isEmpty()) {
             String[] tagNames = tagInput.split(",\\s*");
             for (String tagName : tagNames) {
-                Tag tag = tagService.getByName(tagName.trim().toLowerCase());
-                if (tag == null) {
+                try {
+                    Tag tag = tagService.getByName(tagName.trim().toLowerCase());
+                } catch (EntityNotFoundException e) {
                     tagService.create(tagName.trim().toLowerCase());
-                    tag = tagService.getByName(tagName.trim().toLowerCase());
+                    Tag tag = tagService.getByName(tagName.trim().toLowerCase());
+                    tags.add(tag);
                 }
-                tags.add(tag);
             }
         }
         return tags;
