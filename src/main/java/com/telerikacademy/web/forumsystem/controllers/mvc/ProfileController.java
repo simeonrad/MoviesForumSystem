@@ -17,9 +17,29 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileController {
 
     private final UserService userService;
+    private final ImageStorageService imageStorageService;
+
     @Autowired
-    public ProfileController(UserService userService, ImageStorageService imageStorageService) {
+    public ProfileController(UserService userService, ImageStorageService imageStorageService, ImageStorageService imageStorageService1) {
         this.userService = userService;
+        this.imageStorageService = imageStorageService;
+    }
+
+    @ModelAttribute("isAdmin")
+    public boolean populateIsAdmin(HttpSession session) {
+        boolean isAdmin = false;
+        if (populateIsAuthenticated(session)) {
+            User currentUser = (User) session.getAttribute("currentUser");
+            if (currentUser.isAdmin()) {
+                isAdmin = true;
+            }
+        }
+        return isAdmin;
+    }
+
+    @ModelAttribute("isAuthenticated")
+    public boolean populateIsAuthenticated(HttpSession session) {
+        return session.getAttribute("currentUser") != null;
     }
 
     @GetMapping()
@@ -160,6 +180,26 @@ public class ProfileController {
         }
 
         return "redirect:/auth/login";
+    }
+
+    @PostMapping("/upload-image")
+    public String uploadProfileImage(@ModelAttribute ProfileImageForm form, HttpSession session, Model model) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            return "redirect:/auth/login";
+        }
+
+        try {
+            User currentUser = (User) session.getAttribute("currentUser");
+            String imageUrl = imageStorageService.saveImage(form.getImage());
+            currentUser.setProfilePhotoUrl(imageUrl);
+            userService.addProfilePhoto(imageUrl, currentUser);
+            model.addAttribute("message", "Profile image updated successfully.");
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to upload image.");
+        }
+
+        return "redirect:/profile";
     }
 
 

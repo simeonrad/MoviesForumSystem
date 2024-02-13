@@ -52,6 +52,18 @@ public class PostsMvcController {
         return session.getAttribute("currentUser") != null;
     }
 
+    @ModelAttribute("isAdmin")
+    public boolean populateIsAdmin(HttpSession session) {
+        boolean isAdmin = false;
+        if (populateIsAuthenticated(session)) {
+            User currentUser = (User) session.getAttribute("currentUser");
+            if (currentUser.isAdmin()) {
+                isAdmin = true;
+            }
+        }
+        return isAdmin;
+    }
+
     @Autowired
     public PostsMvcController(PostService postService, View_Repository viewRepository, CommentRepository commentRepository, CommentMapper commentMapper, CommentService commentService, AuthenticationHelper authenticationHelper, LikeRepository likeRepository, TextPurifier textPurifier) {
         this.postService = postService;
@@ -227,18 +239,4 @@ public class PostsMvcController {
 
         return "redirect:/posts/" + Id;
     }
-//    @GetMapping()
-//    public String PostsView(@ModelAttribute("filterOptions") FilterDto filterDto, Model model) {
-//        FilterOptions filterOptions = new FilterOptions(
-//                filterDto.getName(),
-//                filterDto.getMinAbv(),
-//                filterDto.getMaxAbv(),
-//                filterDto.getStyleId(),
-//                filterDto.getSortBy(),
-//                filterDto.getSortOrder());
-//        List<Post> posts = postService.get(filterOptions);
-//        model.addAttribute("filterOptions", filterDto);
-//        model.addAttribute("posts", posts);
-//        return "PostsView";
-//    }
 }

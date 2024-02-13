@@ -6,23 +6,7 @@
     <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
 </head>
 <body>
-<header>
-    <header>
-        <div class="header-container">
-            <img src="/logo.webp" class="logo" alt="Logo">
-            <h1 class="title">Admin Dashboard</h1>
-            <div class="navigation-links">
-                <div  class="auth-links">
-                    <a th:href="@{/profile}" class="button">Profile Page</a>
-                    <a th:href="@{/posts/new}" class="button">Create New Post</a>
-                    <a th:href="@{/posts}" class="button">All Posts</a>
-                    <a th:href="@{/admin/search-user}" class="button">Search User</a>
-                    <a th:href="@{/auth/logout}" class="button">Logout</a>
-                </div>
-            </div>
-        </div>
-    </header>
-</header>
+<div th:replace="~{fragments.html :: header}"></div>
 <main>
     <div class="content-container">
         <!-- Recent Posts -->

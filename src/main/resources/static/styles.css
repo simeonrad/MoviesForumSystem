@@ -78,6 +78,8 @@ table {
 .title {
     margin: 0;
     flex-grow: 1;
+    font-size: xx-large;
+    font-family: "Bell MT", serif;
     text-align: center;
 }
 

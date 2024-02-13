@@ -2,24 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>All Posts</title>
+    <title>All Posts | Movie Forum</title>
     <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
 </head>
 <body>
-<header>
-    <div class="header-container">
-        <img src="/logo.webp" class="logo" alt="Logo">
-        <h1 class="title">Movie Forum</h1>
-        <div class="navigation-links">
-            <div class="auth-links">
-                <a th:href="@{/}">Home</a>
-                <a th:href="@{/profile.html}" class="button">Profile Page</a>
-                <a th:href="@{/posts/new}" class="button">Create New Post</a>
-                <a th:href="@{/auth/logout}" class="button">Logout</a>
-            </div>
-        </div>
-    </div>
-</header>
+<div th:replace="~{fragments.html :: header}"></div>
 <div class="body-content">
     <form action="#" th:action="@{/posts}" method="get" th:object="${postFilterOptions}">
         <label>Posts Search and Filter Options</label>
@@ -61,30 +48,6 @@
         </div>
     </div>
 </div>
+<div th:replace="~{fragments.html :: footer}"></div>
 </body>
-<footer>
-    <div class="footer-container">
-        <div class="footer-content">
-            <div class="footer-section about">
-                <h3>About Film Forum</h3>
-                <p>A place to share and discuss your favorite movies and series.</p>
-            </div>
-            <div class="footer-section links">
-                <h3>Quick Links</h3>
-                <ul>
-                    <div>
-                        <li><a th:href="@{/}">Home</a></li>
-                        <li><a th:href="@{/posts/new}">Create New Post</a></li>
-                        <li><a th:href="@{/posts}">All Posts</a></li>
-                        <li><a th:href="@{/profile}">Profile Page</a></li>
-                    </div>
-                </ul>
-            </div>
-            <div class="footer-section contact">
-                <h3>Contact Us</h3>
-                <p>Email: support@filmforum.com</p>
-            </div>
-        </div>
-    </div>
-</footer>
 </html>

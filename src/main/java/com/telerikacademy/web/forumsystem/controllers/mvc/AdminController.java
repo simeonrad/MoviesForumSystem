@@ -34,6 +34,24 @@ public class AdminController {
         this.userRepository = userRepository;
     }
 
+    @ModelAttribute("isAuthenticated")
+    public boolean populateIsAuthenticated(HttpSession session) {
+        return session.getAttribute("currentUser") != null;
+    }
+
+    @ModelAttribute("isAdmin")
+    public boolean populateIsAdmin(HttpSession session) {
+        boolean isAdmin = false;
+        if (populateIsAuthenticated(session)) {
+            User currentUser = (User) session.getAttribute("currentUser");
+            if (currentUser.isAdmin()) {
+                isAdmin = true;
+            }
+        }
+        return isAdmin;
+    }
+
+
     @GetMapping()
     public String adminDashboard(HttpSession session, Model model) {
         User currentUser = (User) session.getAttribute("currentUser");
@@ -128,37 +146,21 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/upload-image")
-    public String uploadProfileImage(@ModelAttribute ProfileImageForm form, HttpSession session, Model model) {
-        User user = (User) session.getAttribute("currentUser");
-        if (user == null) {
+    @GetMapping("/search-user")
+    public String showSearchUserPage(@ModelAttribute("filterOptions") FilterDto filterDto, Model model, HttpSession session) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser != null && currentUser.isAdmin()) {
+            List<User> users = userService.get(new FilterOptions(
+                    filterDto.getUsername(),
+                    filterDto.getEmail(),
+                    filterDto.getFirstName(),
+                    filterDto.getSortBy(),
+                    filterDto.getSortOrder()));
+            model.addAttribute("filterOptions", filterDto);
+            model.addAttribute("users", users);
+            return "searchUserView";
+        } else {
             return "redirect:/auth/login";
         }
-
-        try {
-            User currentUser = (User) session.getAttribute("currentUser");
-            String imageUrl = imageStorageService.saveImage(form.getImage());
-            currentUser.setProfilePhotoUrl(imageUrl);
-            userService.addProfilePhoto(imageUrl, currentUser);
-            model.addAttribute("message", "Profile image updated successfully.");
-        } catch (Exception e) {
-            model.addAttribute("error", "Failed to upload image.");
-        }
-
-        return "redirect:/profile";
     }
-
-    @GetMapping("/search-user")
-    public String showSearchUserPage(@ModelAttribute("filterOptions") FilterDto filterDto, Model model) {
-        List<User> users = userService.get(new FilterOptions(
-                filterDto.getUsername(),
-                filterDto.getEmail(),
-                filterDto.getFirstName(),
-                filterDto.getSortBy(),
-                filterDto.getSortOrder()));
-        model.addAttribute("filterOptions", filterDto);
-        model.addAttribute("users", users);
-        return "searchUserView";
-    }
-
 }
