@@ -43,7 +43,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void update(Post post, User user, Set<Tag> tags) {
         if (!post.getAuthor().equals(user)) {
-            throw new UnauthorizedOperationException("Only the user can modify it's data!");
+            throw new UnauthorizedOperationException("Only the author can modify it's data!");
         } else {
             postRepository.update(post);
             if (tags != null) {
@@ -54,8 +54,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void delete(Post post, User user) {
-        if (!post.getAuthor().equals(user) || !user.isAdmin()) {
-            throw new UnauthorizedOperationException("Only the user can modify it's data!");
+        if (!post.getAuthor().equals(user) && !user.isAdmin()) {
+            throw new UnauthorizedOperationException("Only the author can modify it's data!");
         } else {
             postRepository.delete(post);
         }

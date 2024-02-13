@@ -39,7 +39,7 @@
             <option value="desc">Descending</option>
         </select>
         <br/><br/>
-        <input type="submit" value="Search"/>
+        <input class="button" type="submit" value="Search"/>
     </form>
 
     <div th:if="${users.isEmpty()}">
@@ -60,10 +60,10 @@
                 <div class="cell" th:text="${user.firstName}"></div>
                 <div class="cell">
                     <form th:action="@{/admin/toggle-block/{id}(id=${user.id})}" class="user-action-form" method="post">
-                        <button type="submit" th:text="${user.isBlocked ? 'Unblock' : 'Block'}"></button>
+                        <button class="button" type="submit" th:text="${user.isBlocked ? 'Unblock' : 'Block'}"></button>
                     </form>
                     <form th:action="@{/admin/toggle-admin/{id}(id=${user.id})}" class="user-action-form" method="post">
-                        <button type="submit" th:text="${user.isAdmin() ? 'Remove Admin' : 'Make Admin'}"></button>
+                        <button class="button" type="submit" th:text="${user.isAdmin() ? 'Remove Admin' : 'Make Admin'}"></button>
                     </form>
                 </div>
             </div>
