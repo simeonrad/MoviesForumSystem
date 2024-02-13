@@ -2,13 +2,9 @@ package com.telerikacademy.web.forumsystem.controllers.mvc;
 
 import com.telerikacademy.web.forumsystem.exceptions.AuthenticationFailureException;
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
-import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
 import com.telerikacademy.web.forumsystem.helpers.AuthenticationHelper;
 import com.telerikacademy.web.forumsystem.helpers.CommentMapper;
-import com.telerikacademy.web.forumsystem.models.Comment;
-import com.telerikacademy.web.forumsystem.models.CommentDto;
-import com.telerikacademy.web.forumsystem.models.Post;
-import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.models.*;
 import com.telerikacademy.web.forumsystem.repositories.CommentRepository;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
 import com.telerikacademy.web.forumsystem.services.CommentService;
@@ -20,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -50,6 +45,19 @@ public class PostsMvcController {
         this.commentMapper = commentMapper;
         this.commentService = commentService;
         this.authenticationHelper = authenticationHelper;
+    }
+
+    @GetMapping
+    public String showAllPosts(Model model, @ModelAttribute("postFilterOptions") PostFilterDto postFilterDto) {
+        List<Post> posts = postService.get(new PostsFilterOptions(
+                postFilterDto.getTitle(),
+                postFilterDto.getContent(),
+                postFilterDto.getUserCreator(),
+                postFilterDto.getSortBy(),
+                postFilterDto.getSortOrder()));
+        model.addAttribute("postFilterOptions", postFilterDto);
+        model.addAttribute("posts", posts);
+        return "allPostsView";
     }
 
     @GetMapping("/{id}")
@@ -111,9 +119,9 @@ public class PostsMvcController {
         try {
             User user = authenticationHelper.tryGetUser(session);
             int commentId = Integer.parseInt(request.getParameter("commentId"));
-           Comment comment = commentService.getById(commentId);
-           Comment reply = commentMapper.replyFromDto(commentDto, user, commentId);
-           comment.addReply(reply);
+            Comment comment = commentService.getById(commentId);
+            Comment reply = commentMapper.replyFromDto(commentDto, user, commentId);
+            comment.addReply(reply);
             redirectAttributes.addFlashAttribute("message", "Reply posted successfully.");
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
@@ -124,20 +132,6 @@ public class PostsMvcController {
 
         }
 
-        return "redirect:/posts/" + Id; // Redirect back to the post view page
+        return "redirect:/posts/" + Id;
     }
-//    @GetMapping()
-//    public String PostsView(@ModelAttribute("filterOptions") FilterDto filterDto, Model model) {
-//        FilterOptions filterOptions = new FilterOptions(
-//                filterDto.getName(),
-//                filterDto.getMinAbv(),
-//                filterDto.getMaxAbv(),
-//                filterDto.getStyleId(),
-//                filterDto.getSortBy(),
-//                filterDto.getSortOrder());
-//        List<Post> posts = postService.get(filterOptions);
-//        model.addAttribute("filterOptions", filterDto);
-//        model.addAttribute("posts", posts);
-//        return "PostsView";
-//    }
 }

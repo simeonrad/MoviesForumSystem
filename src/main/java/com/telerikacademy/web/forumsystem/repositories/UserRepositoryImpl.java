@@ -129,21 +129,6 @@ public class UserRepositoryImpl implements UserRepository {
             default -> "";
         };
 
-//        String orderBy = "";
-//        switch (filterOptions.getSortBy().get()) {
-//            case "email":
-//                orderBy = "email";
-//                break;
-//            case "fistName":
-//                orderBy = "firstName";
-//                break;
-//            case "username":
-//                orderBy = "username";
-//                break;
-//            default:
-//                return "";
-//        }
-
         if (orderBy.isEmpty()) {
             return "";
         }

@@ -2,10 +2,7 @@ package com.telerikacademy.web.forumsystem.services;
 
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
-import com.telerikacademy.web.forumsystem.models.Post;
-import com.telerikacademy.web.forumsystem.models.PostView;
-import com.telerikacademy.web.forumsystem.models.Tag;
-import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.models.*;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepository;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepositoryImpl;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
@@ -91,6 +88,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<Post> getAll() {
         return postRepository.getAll();
+    }
+
+    @Override
+    public List<Post> get(PostsFilterOptions filterOptions) {
+        return postRepository.get(filterOptions);
     }
 
     @Override
