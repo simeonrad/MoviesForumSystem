@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Post | Movie Forum</title>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="~{fragments.html :: header}"></div>
+<main class="content-container">
+    <div class="form-container">
+        <h2>Create New Post</h2>
+        <form th:action="@{/posts}" th:object="${postDto}" method="post">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" name="title" th:field="*{title}" required="required" minlength="16" maxlength="64"/>
+            </div>
+            <div class="form-group">
+                <label for="content">Content</label>
+                <textarea id="content" name="content" th:field="*{content}" required="required" minlength="32" maxlength="8192"></textarea>
+            </div>
+            <button type="submit" class="button">Submit Post</button>
+        </form>
+    </div>
+</main>
+<div th:replace="~{fragments.html :: footer}"></div>
+</body>
+</html>

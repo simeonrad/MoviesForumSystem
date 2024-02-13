@@ -53,6 +53,23 @@ header {
     margin-bottom: 20px;
 }
 
+/* CREATE/UPDATE FORMS */
+
+.form-container {
+    margin: 0 auto;
+    width: 80%;
+    max-width: 800px;
+    padding: 20px 50px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.form-group textarea {
+    height: 200px;
+    width: 102%;
+    font-size: 1em;
+    resize: none;
+}
+
 .content {
     width: 80%;
     margin: 0 auto;
@@ -66,7 +83,7 @@ header {
 .form-group input[type="text"],
 .form-group select {
     width: 100%;
-    padding: 8px;
+
 }
 
 .left-align {
