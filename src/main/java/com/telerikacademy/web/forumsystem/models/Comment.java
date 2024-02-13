@@ -1,8 +1,13 @@
 package com.telerikacademy.web.forumsystem.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "comments")
@@ -20,7 +25,7 @@ public class Comment {
     private String content;
 
     @Column(name = "date_created")
-    private LocalDate timeStamp;
+    private LocalDateTime timeStamp;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -30,13 +35,16 @@ public class Comment {
     @JoinColumn(name = "repliedTo_id")
     private Comment repliedTo;
 
+    @OneToMany(mappedBy = "repliedTo", fetch = FetchType.EAGER)
+    private List<Comment> replies = new ArrayList<>();
+
     public Comment() {
-        this.timeStamp = LocalDate.now();
+        this.timeStamp = LocalDateTime.now();
     }
 
     public Comment(String content) {
         this.content = content;
-        this.timeStamp = LocalDate.now();
+        this.timeStamp = LocalDateTime.now();
     }
 
     public int getId() {
@@ -71,11 +79,11 @@ public class Comment {
         this.content = content;
     }
 
-    public LocalDate getTimeStamp() {
+    public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(LocalDate timeStamp) {
+    public void setTimeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 
@@ -85,5 +93,17 @@ public class Comment {
 
     public void setPost(Post post) {
         this.post = post;
+    }
+    public List<Comment> getReplies() {
+        return new ArrayList<>(replies);
+    }
+
+    public void setReplies(List<Comment> replies) {
+        this.replies = replies;
+    }
+
+    public void addReply(Comment reply) {
+        this.replies.add(reply);
+        reply.setRepliedTo(this);
     }
 }

@@ -34,6 +34,7 @@ public class AuthenticationHelper {
                     "You need to log in in order to retrieve the required resource!");
         }
 
+
         try {
             String username = headers.getFirst(USERNAME_HEADER_NAME);
             String password = headers.getFirst(PASSWORD_HEADER_NAME);
@@ -50,13 +51,12 @@ public class AuthenticationHelper {
         }
     }
     public User tryGetUser(HttpSession session) {
-        String currentUser = (String) session.getAttribute("currentUser");
+        User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser == null) {
             throw new AuthenticationFailureException("No user logged in");
         }
-        return repository.getByUsername(currentUser);
+        return currentUser;
     }
-
     public User verifyAuthentication(String username, String password) {
         try {
             User user = repository.getByUsername(username);

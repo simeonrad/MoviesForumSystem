@@ -1,10 +1,8 @@
 package com.telerikacademy.web.forumsystem.controllers.mvc;
 
 
-import com.telerikacademy.web.forumsystem.models.User;
-import com.telerikacademy.web.forumsystem.models.UserEmailUpdateDto;
-import com.telerikacademy.web.forumsystem.models.UserPasswordUpdateDto;
-import com.telerikacademy.web.forumsystem.models.UserProfileDto;
+import com.telerikacademy.web.forumsystem.models.*;
+import com.telerikacademy.web.forumsystem.services.ImageStorageService;
 import com.telerikacademy.web.forumsystem.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -20,16 +18,19 @@ public class ProfileController {
 
     private final UserService userService;
     @Autowired
-    public ProfileController(UserService userService) {
+    public ProfileController(UserService userService, ImageStorageService imageStorageService) {
         this.userService = userService;
     }
 
     @GetMapping()
     public String showProfile(Model model, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
-        if (currentUser.getUsername() == null) {
-            return "redirect:/login";
+        if (currentUser == null) {
+            return "redirect:/auth/login";
         }
+
+        boolean isAdmin = currentUser.isAdmin();
+        model.addAttribute("isAdmin", isAdmin);
 
         UserProfileDto namesDto = new UserProfileDto();
         namesDto.setFirstName(currentUser.getFirstName());

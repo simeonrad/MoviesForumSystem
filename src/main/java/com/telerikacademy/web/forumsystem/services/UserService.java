@@ -15,12 +15,18 @@ public interface UserService {
     void update(User user);
 
     List<User> get(FilterOptions filterOptions, User user);
+    List<User> get(FilterOptions filterOptions);
+    User get(String email);
 
     void blockUser(String username, User admin);
 
     void unblockUser(String username, User admin);
 
     void makeAdmin(String username, String phoneNumber, User admin);
+
+    void addPhoneNumber(String phoneNumber, User user);
+
+    void addProfilePhoto(String photoUrl, User user);
 
     void makeAdmin(String username);
 

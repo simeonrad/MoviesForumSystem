@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Users</title>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<header>
+    <div class="header-container">
+        <img src="/logo.webp" class="logo" alt="Logo">
+        <h1 class="title">Movie Forum</h1>
+        <div class="navigation-links">
+            <div class="auth-links">
+                <a th:href="@{/profile}" class="button">Profile Page</a>
+                <a th:href="@{/posts/new}" class="button">Create New Post</a>
+                <a th:href="@{/posts}" class="button">All Posts</a>
+                <a th:href="@{/auth/logout}" class="button">Logout</a>
+            </div>
+        </div>
+    </div>
+</header>
+<div class="body-content">
+    <form action="#" th:action="@{/admin/search-user}" method="get" th:object="${filterOptions}">
+        <label>Search and Filter Options</label>
+        <br/><br/>
+        <input type="text" placeholder="Username" th:field="*{username}"/>
+        <input type="text" placeholder="Email" th:field="*{email}"/>
+        <input type="text" placeholder="Name" th:field="*{firstName}"/>
+        <select th:field="*{sortBy}">
+            <option value="">Sort By</option>
+            <option value="username">Username</option>
+            <option value="email">Email</option>
+            <option value="name">Name</option>
+        </select>
+        <select th:field="*{sortOrder}">
+            <option value="">Sort Order</option>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+        <br/><br/>
+        <input type="submit" value="Search"/>
+    </form>
+
+    <div th:if="${users.isEmpty()}">
+        <h2>No Users Found</h2>
+    </div>
+    <div th:unless="${users.isEmpty()}">
+        <h2>All Users</h2>
+        <div class="table">
+            <div class="header">
+                <div class="cell">Username</div>
+                <div class="cell">Email</div>
+                <div class="cell">Name</div>
+                <div class="cell">Actions</div>
+            </div>
+            <div class="row" th:each="user : ${users}">
+                <div class="cell" th:text="${user.username}"></div>
+                <div class="cell" th:text="${user.email}"></div>
+                <div class="cell" th:text="${user.firstName}"></div>
+                <div class="cell">
+                    <form th:action="@{/admin/toggle-block/{id}(id=${user.id})}" class="user-action-form" method="post">
+                        <button type="submit" th:text="${user.isBlocked ? 'Unblock' : 'Block'}"></button>
+                    </form>
+                    <form th:action="@{/admin/toggle-admin/{id}(id=${user.id})}" class="user-action-form" method="post">
+                        <button type="submit" th:text="${user.isAdmin() ? 'Remove Admin' : 'Make Admin'}"></button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="footer-container">
+        <div class="footer-content">
+            <div class="footer-section about">
+                <h3>About Film Forum</h3>
+                <p>A place to share and discuss your favorite movies and series.</p>
+            </div>
+            <div class="footer-section links">
+                <h3>Quick Links</h3>
+                <ul>
+                    <div>
+                        <li><a th:href="@{/admin}">Home</a></li>
+                        <li><a th:href="@{/posts/new}">Create New Post</a></li>
+                        <li><a th:href="@{/posts}">All Posts</a></li>
+                        <li><a th:href="@{/profile}">Profile Page</a></li>
+                    </div>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h3>Contact Us</h3>
+                <p>Email: support@filmforum.com</p>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

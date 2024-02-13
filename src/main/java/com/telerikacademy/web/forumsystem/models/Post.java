@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -23,7 +24,7 @@ public class Post {
     @Column(name = "likes")
     private int likes;
     @Column(name = "date_created")
-    private LocalDate timeStamp;
+    private LocalDateTime timeStamp;
     @Column(name = "title")
     private String title;
     @OneToMany
@@ -50,12 +51,12 @@ public class Post {
     public Post(String content, String title) {
         this.title = title;
         this.content = content;
-        this.timeStamp = LocalDate.now();
+        this.timeStamp = LocalDateTime.now();
         this.likes = 0;
     }
 
     public Post() {
-
+        this.timeStamp = LocalDateTime.now();
     }
 
     public int getId() {
@@ -126,11 +127,11 @@ public class Post {
         this.likes = likes;
     }
 
-    public LocalDate getTimeStamp() {
+    public LocalDateTime getTimeStamp() {
         return timeStamp;
     }
 
-    public void setTimeStamp(LocalDate timeStamp) {
+    public void setTimeStamp(LocalDateTime timeStamp) {
         this.timeStamp = timeStamp;
     }
 

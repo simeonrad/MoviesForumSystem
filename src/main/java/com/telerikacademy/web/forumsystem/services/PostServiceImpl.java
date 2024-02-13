@@ -9,6 +9,7 @@ import com.telerikacademy.web.forumsystem.models.User;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepository;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepositoryImpl;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.PostRepository;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
+@Transactional
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final TagService tagService;
@@ -61,26 +63,25 @@ public class PostServiceImpl implements PostService {
 
     public void likePost(int postId, User user) {
         try {
-           likeRepository.getByPostAndUserId(postId, user.getId());
-           likeRepository.unlikeAPost(postId, user.getId());
-        }
-        catch (EntityNotFoundException e){
+            likeRepository.getByPostAndUserId(postId, user.getId());
+            likeRepository.unlikeAPost(postId, user.getId());
+        } catch (EntityNotFoundException e) {
             likeRepository.likeAPost(postId, user.getId());
         }
     }
 
     @Override
-    public void tryViewingPost(int postId, int userId){
-        if (viewRepository.getViewsCountOnPost(postId) == 0){
+    @Transactional
+    public void tryViewingPost(int postId, int userId) {
+        try {
+            PostView view = viewRepository.getMostRecentViewByPostAndUserId(postId, userId);
+            if (!view.getTimestamp().plusMinutes(5).isAfter(LocalDateTime.now())) {
+                viewRepository.viewAPost(postId, userId);
+            }
+        } catch (EntityNotFoundException e) {
             viewRepository.viewAPost(postId, userId);
         }
-        else {
-            PostView view = viewRepository.getMostRecentViewByPostAndUserId(postId, userId);
-            if (view.getTimestamp().isBefore(LocalDateTime.now().plusMinutes(5))) {
-                viewRepository.viewAPost(postId, userId);
-                }
-            }
-        }
+    }
 
     @Override
     public Post getById(int id) {
