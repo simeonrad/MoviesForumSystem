@@ -26,6 +26,7 @@ public class ImageStorageServiceImpl implements ImageStorageService {
 
     @Override
     public String saveImage(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
         String filename = UUID.randomUUID().toString() + "." + getExtension(file.getOriginalFilename());
         //generating unique name, so it prevents overwriting existing files.
         try {
@@ -33,11 +34,9 @@ public class ImageStorageServiceImpl implements ImageStorageService {
                 throw new RuntimeException("Failed to store empty file " + filename);
                 //checks if the file is empty or has a problematic filename
             }
-            if (filename.contains("..")) {
+            if (originalFilename.contains("..")) {
                 //checks if it is navigating up in the directory. Checks for Directory Traversal.
-                throw new RuntimeException(
-                        "Cannot store file with relative path outside current directory "
-                                + filename);
+                throw new RuntimeException("Cannot store file with relative path outside current directory " + filename);
             }
             Files.copy(file.getInputStream(), this.rootLocation.resolve(filename));
             //Saves the file to the uploaded-images directory. If something is wrong it throws an error.
