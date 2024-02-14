@@ -3,12 +3,16 @@ package com.telerikacademy.web.forumsystem.repositories;
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.models.Post;
 import com.telerikacademy.web.forumsystem.models.PostsFilterOptions;
+import com.telerikacademy.web.forumsystem.models.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -78,6 +82,23 @@ public class PostRepositoryImpl implements PostRepository {
             }
             return query.list();
         }
+    }
+
+    @Override
+    public Page<Post> findUserPosts(User currentUser, Pageable pageable) {
+        String query = "SELECT p FROM Post p WHERE p.author = :currentUser";
+        List<Post> posts = entityManager.createQuery(query, Post.class)
+                .setParameter("currentUser", currentUser)
+                .setFirstResult((int) pageable.getOffset())
+                .setMaxResults(pageable.getPageSize())
+                .getResultList();
+
+        String countQuery = "SELECT COUNT(p) FROM Post p WHERE p.author = :currentUser";
+        long totalPostsCount = entityManager.createQuery(countQuery, Long.class)
+                .setParameter("currentUser", currentUser)
+                .getSingleResult();
+
+        return new PageImpl<>(posts, pageable, totalPostsCount);
     }
 
     @Override

@@ -21,6 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -116,6 +117,22 @@ public class PostsMvcController {
             return "ErrorView";
         }
 
+    }
+
+    @GetMapping("/my-posts")
+    public String showMyPostsAndCommentedPosts(Model model, HttpSession session, @RequestParam(defaultValue = "0", name = "postPage") int postPage,
+                                               @RequestParam(defaultValue = "5", name = "postSize") int postSize,
+                                               @RequestParam(defaultValue = "0", name = "commentPage") int commentPage,
+                                               @RequestParam(defaultValue = "5", name = "commentSize") int commentSize) {
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return "redirect:/auth/login";
+        }
+        Page<Post> userPosts = postService.getUsersPosts(currentUser, postPage, postSize);
+        Page<Comment> userComments = commentService.getUserComments(currentUser, commentPage, commentSize);
+        model.addAttribute("userPosts", userPosts);
+        model.addAttribute("userComments", userComments);
+        return "myPostsView";
     }
     @PostMapping("/{id}/delete")
     public String deletePost(Model model, @PathVariable int id, HttpSession session) {

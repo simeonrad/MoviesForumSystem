@@ -1,6 +1,7 @@
 package com.telerikacademy.web.forumsystem.services;
 
 import com.telerikacademy.web.forumsystem.models.*;
+import org.springframework.data.domain.Page;
 
 
 import java.util.List;
@@ -21,8 +22,10 @@ public interface PostService {
 
     void likePost(int postId, User user);
 
-     List<Post> getMostRecentPosts(int limit);
+    List<Post> getMostRecentPosts(int limit);
 
-     List<Post> getMostCommentedPosts(int limit);
+    List<Post> getMostCommentedPosts(int limit);
+
+    Page<Post> getUsersPosts(User currentUser, int page, int size);
     void tryViewingPost(int postId, int userId);
 }

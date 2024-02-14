@@ -191,9 +191,6 @@ public class UserServiceImpl implements UserService {
         userRepository.update(user);
     }
 
-
-
-
     @Override
     public void unmakeAdmin(String username, User admin) {
         User user = userRepository.getByUsername(username);

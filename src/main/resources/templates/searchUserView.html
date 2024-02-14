@@ -6,22 +6,10 @@
     <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
 </head>
 <body>
-<header>
-    <div class="header-container">
-        <img src="/logo.webp" class="logo" alt="Logo">
-        <h1 class="title">Movie Forum</h1>
-        <div class="navigation-links">
-            <div class="auth-links">
-                <a th:href="@{/profile}" class="button">Profile Page</a>
-                <a th:href="@{/posts/new}" class="button">Create New Post</a>
-                <a th:href="@{/posts}" class="button">All Posts</a>
-                <a th:href="@{/auth/logout}" class="button">Logout</a>
-            </div>
-        </div>
-    </div>
-</header>
-<div class="body-content">
-    <form action="#" th:action="@{/admin/search-user}" method="get" th:object="${filterOptions}">
+<div th:replace="~{fragments.html :: header}"></div>
+
+<div class="body-content user-page">
+    <form action="#" th:action="@{/search-user}" method="get" th:object="${filterOptions}">
         <label>Search and Filter Options</label>
         <br/><br/>
         <input type="text" placeholder="Username" th:field="*{username}"/>
@@ -52,7 +40,6 @@
                 <div class="cell">Username</div>
                 <div class="cell">Email</div>
                 <div class="cell">Name</div>
-                <div class="cell">Actions</div>
             </div>
             <div class="row" th:each="user : ${users}">
                 <div class="cell" th:text="${user.username}"></div>

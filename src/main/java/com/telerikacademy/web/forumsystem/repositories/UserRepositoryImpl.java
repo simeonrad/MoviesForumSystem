@@ -126,7 +126,7 @@ public class UserRepositoryImpl implements UserRepository {
             case "email" -> "email";
             case "firstName" -> "firstName";
             case "username" -> "username";
-            default -> "";
+            default -> "id";
         };
 
         if (orderBy.isEmpty()) {

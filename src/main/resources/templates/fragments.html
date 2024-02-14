@@ -10,12 +10,13 @@
 
             <!-- For Authenticated Users -->
             <div th:if="${isAuthenticated}" class="auth-links">
-                <a th:href="@{/profile}" class="button">Profile Page</a>
                 <a th:href="@{/posts/new}" class="button">Create New Post</a>
                 <a th:href="@{/posts}" class="button">All Posts</a>
-                <div th:if="${isAdmin}" class="auth-links">
-                    <a th:href="@{/admin/search-user}" class="button">Search User</a>
-                </div>
+            </div>
+            <div th:if="${isAuthenticated}" class="auth-links">
+                <a th:href="@{/profile}" class="button">Profile Page</a>
+                <a th:href="@{/posts/my-posts}" class="button">My Dashboard</a>
+                <a th:href="@{/search-user}" class="button">Search User</a>
                 <a th:href="@{/auth/logout}" class="button">Logout</a>
             </div>
         </div>

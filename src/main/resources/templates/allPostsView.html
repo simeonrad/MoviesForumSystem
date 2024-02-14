@@ -33,17 +33,19 @@
         <h2>No Posts Found</h2>
     </div>
     <div th:unless="${posts.isEmpty()}">
-        <h2>All Posts</h2>
-        <div class="table">
-            <div class="header">
-                <div class="cell">Title</div>
-                <div class="cell">Created By</div>
-                <div class="cell">Date Created</div>
-            </div>
-            <div class="row" th:each="post : ${posts}">
-                <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title">Post Title</a>
-                <div class="cell" th:text="${post.getAuthor().username}"></div>
-                <div class="cell" th:text="${post.timeStamp}"></div>
+        <div class="posts-container">
+            <h2>All Posts</h2>
+            <div class="posts-table">
+                <div class="posts-header">
+                    <div class="post-title">TITLE</div>
+                    <div class="posts-cell">CREATED BY</div>
+                    <div class="posts-cell">DATE CREATED</div>
+                </div>
+                <div class="posts-row" th:each="post : ${posts}">
+                    <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title"></a>
+                    <div class="posts-cell" th:text="${post.getAuthor().username}">Username</div>
+                    <div class="posts-cell" th:text="${#temporals.format(post.timeStamp, 'yyyy-MM-dd HH:mm')}">Date</div>
+                </div>
             </div>
         </div>
     </div>

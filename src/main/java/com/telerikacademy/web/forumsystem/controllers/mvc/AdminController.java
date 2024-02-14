@@ -110,7 +110,7 @@ public class AdminController {
     }
 
     @PostMapping("/toggle-admin/{id}")
-    public String toggleAdminStatus(@PathVariable("id") int userId, HttpSession session, Model model) {
+    public String toggleAdminStatus(@PathVariable("id") int userId, HttpSession session, Model model, HttpServletRequest request) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser != null && currentUser.isAdmin()) {
             User userToToggle = userRepository.getById(userId);
@@ -125,7 +125,8 @@ public class AdminController {
             } catch (Exception e) {
                 model.addAttribute("error", "Error toggling admin status.");
             }
-            return "redirect:/admin";
+            String refererUrl = request.getHeader("Referer");
+            return "redirect:" + refererUrl;
         } else {
             return "redirect:/auth/login";
         }
@@ -141,24 +142,6 @@ public class AdminController {
                 model.addAttribute("error", "Error toggling admin status.");
             }
             return "redirect:/profile";
-        } else {
-            return "redirect:/auth/login";
-        }
-    }
-
-    @GetMapping("/search-user")
-    public String showSearchUserPage(@ModelAttribute("filterOptions") FilterDto filterDto, Model model, HttpSession session) {
-        User currentUser = (User) session.getAttribute("currentUser");
-        if (currentUser != null && currentUser.isAdmin()) {
-            List<User> users = userService.get(new FilterOptions(
-                    filterDto.getUsername(),
-                    filterDto.getEmail(),
-                    filterDto.getFirstName(),
-                    filterDto.getSortBy(),
-                    filterDto.getSortOrder()));
-            model.addAttribute("filterOptions", filterDto);
-            model.addAttribute("users", users);
-            return "searchUserView";
         } else {
             return "redirect:/auth/login";
         }

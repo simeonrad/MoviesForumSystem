@@ -2,7 +2,9 @@ package com.telerikacademy.web.forumsystem.controllers.mvc;
 
 
 import com.telerikacademy.web.forumsystem.models.*;
+import com.telerikacademy.web.forumsystem.services.CommentService;
 import com.telerikacademy.web.forumsystem.services.ImageStorageService;
+import com.telerikacademy.web.forumsystem.services.PostService;
 import com.telerikacademy.web.forumsystem.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -17,12 +19,16 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileController {
 
     private final UserService userService;
+    private final PostService postService;
+    private final CommentService commentService;
     private final ImageStorageService imageStorageService;
 
     @Autowired
-    public ProfileController(UserService userService, ImageStorageService imageStorageService, ImageStorageService imageStorageService1) {
+    public ProfileController(UserService userService, ImageStorageService imageStorageService, ImageStorageService imageStorageService1, PostService postService, CommentService commentService) {
         this.userService = userService;
         this.imageStorageService = imageStorageService;
+        this.postService = postService;
+        this.commentService = commentService;
     }
 
     @ModelAttribute("isAdmin")

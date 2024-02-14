@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>My Posts and Comments</title>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="~{fragments.html :: header}"></div>
+<main>
+    <h1>My Dashboard</h1>
+    <div class="content-container">
+
+        <!-- Posts Section with Pagination -->
+        <div class="column user-posts">
+            <h2>My Posts</h2>
+            <ul class="comments-list">
+                <li th:each="post : ${userPosts.content}" class="comment-item">
+                    <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="comment-post-link"></a>
+                    <div class="comment-content">
+                        <span th:text="${#temporals.format(post.timeStamp, 'dd/MM/yyyy HH:mm')}"
+                              class="post-date"></span>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- Pagination Controls -->
+            <div class="pagination-controls">
+                <a th:if="${userPosts.hasPrevious()}" th:href="@{/posts/my-posts(postPage=${userPosts.number - 1}, postSize=${userPosts.size})}">Previous</a>
+                <span>Page <span th:text="${userPosts.number + 1}"></span> of <span th:text="${userPosts.totalPages}"></span></span>
+                <a th:if="${userPosts.hasNext()}" th:href="@{/posts/my-posts(postPage=${userPosts.number + 1}, postSize=${userPosts.size})}">Next</a>
+            </div>
+
+
+        </div>
+
+        <!-- Comments Section with Pagination -->
+        <div class="column my-comments">
+            <h2>Comments I've Made</h2>
+            <ul class="comments-list">
+                <li th:each="comment : ${userComments.content}" class="comment-item">
+                    <div th:text="${comment.content}" class="comment-content">Comment Content</div>
+                    <div>On Post:
+                        <a th:href="@{'/posts/' + ${comment.post.id}}" th:text="${comment.post.title}"
+                           class="comment-post-link">Post Title</a>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- Pagination Controls for Comments -->
+            <div class="pagination-controls">
+                <a th:if="${userComments.hasPrevious()}" th:href="@{/posts/my-posts(commentPage=${userComments.number - 1}, commentSize=${userComments.size})}">Previous</a>
+                <span>Page <span th:text="${userComments.number + 1}"></span> of <span th:text="${userComments.totalPages}"></span></span>
+                <a th:if="${userComments.hasNext()}" th:href="@{/posts/my-posts(commentPage=${userComments.number + 1}, commentSize=${userComments.size})}">Next</a>
+            </div>
+
+        </div>
+    </div>
+</main>
+<div th:replace="~{fragments.html :: footer}"></div>
+</body>
+</html>

@@ -8,6 +8,9 @@ import com.telerikacademy.web.forumsystem.repositories.LikeRepositoryImpl;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.PostRepository;
 
@@ -104,4 +107,11 @@ public class PostServiceImpl implements PostService {
     public List<Post> getMostCommentedPosts(int limit) {
         return postRepository.findMostCommentedPosts(limit);
     }
+
+    @Override
+    public Page<Post> getUsersPosts(User currentUser, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return postRepository.findUserPosts(currentUser, pageable);
+    }
+
 }

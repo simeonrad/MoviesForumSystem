@@ -6,26 +6,7 @@
     <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
 </head>
 <body>
-<header>
-    <div class="header-container">
-        <img src="/logo.webp" class="logo" alt="Logo">
-        <h1 class="title">Movie Forum</h1>
-        <div class="navigation-links">
-
-            <!-- For Non-Authenticated Users -->
-            <a th:unless="${isAuthenticated}" th:href="@{/auth/register}" class="button">Register</a>
-            <a th:unless="${isAuthenticated}" th:href="@{/auth/login}" class="button">Login</a>
-
-            <!-- For Authenticated Users -->
-            <div th:if="${isAuthenticated}" class="auth-links">
-                <a th:href="@{/profile}" class="button">Profile Page</a>
-                <a th:href="@{/posts/new}" class="button">Create New Post</a>
-                <a th:href="@{/posts}" class="button">All Posts</a>
-                <a th:href="@{/auth/logout}" class="button">Logout</a>
-            </div>
-        </div>
-    </div>
-</header>
+<div th:replace="~{fragments.html :: header}"></div>
 <main>
     <div class="content-container">
         <!-- Recent Posts -->
