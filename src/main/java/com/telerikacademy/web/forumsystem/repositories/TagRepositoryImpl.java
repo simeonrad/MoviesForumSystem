@@ -1,6 +1,7 @@
 package com.telerikacademy.web.forumsystem.repositories;
 
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
+import com.telerikacademy.web.forumsystem.models.Comment;
 import com.telerikacademy.web.forumsystem.models.Post;
 import com.telerikacademy.web.forumsystem.models.Tag;
 import org.hibernate.Session;
@@ -78,6 +79,17 @@ public class TagRepositoryImpl implements TagRepository {
                 throw new EntityNotFoundException("Tag", id);
             }
             return tag;
+        }
+    }
+    @Override
+    public List<Tag> getTagsForPost(Post post) {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Tag> query = session.createQuery(
+                    "select t from Tag t " +
+                            "join t.posts p " +
+                            "where p.id = :postId", Tag.class);
+            query.setParameter("postId", post.getId());
+            return query.list();
         }
     }
 

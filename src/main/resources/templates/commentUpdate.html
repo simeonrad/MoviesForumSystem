@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<style>
+    body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    resize: vertical;
+    min-height: 150px;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}</style>
+<head>
+    <title>Edit Comment</title>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet">
+</head>
+<body>
+<div th:replace="~{fragments.html :: header}"></div>
+
+<div class="container">
+    <h2>Edit Comment</h2>
+    <form th:action="@{update/{commentId}(commentId=${comment.id})}" th:object="${comment}" method="post">
+        <textarea th:field="*{content}" placeholder="Write your comment here..."></textarea>
+        <button type="submit">Update Comment</button>
+    </form>
+</div>
+<div th:replace="~{fragments.html :: footer}"></div>
+
+</body>
+</html>

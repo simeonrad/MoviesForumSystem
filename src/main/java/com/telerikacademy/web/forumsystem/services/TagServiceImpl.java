@@ -7,6 +7,7 @@ import com.telerikacademy.web.forumsystem.models.Tag;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.TagRepository;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -47,6 +48,10 @@ public class TagServiceImpl implements TagService {
     @Override
     public void addTagsToPost(Set<Tag> tags, Post post) {
         tagRepository.addTagsToPost(tags, post);
+    }
+  @Override
+    public List<Tag> getTagsForPost(Post post) {
+        return tagRepository.getTagsForPost(post);
     }
 
     @Override

@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.CommentRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -36,6 +37,7 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public void update(Comment comment, User user) {
+        comment.setTimeStamp(LocalDateTime.now());
         if (!comment.getAuthor().equals(user))
             throw new UnauthorizedOperationException("Only authors can edit their comments");
         commentRepository.update(comment);

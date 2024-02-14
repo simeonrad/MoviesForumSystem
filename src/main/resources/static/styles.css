@@ -1,3 +1,4 @@
+/*RESET*/
 /* http://meyerweb.com/eric/tools/css/reset/
    v2.0 | 20110126
    License: none (public domain)
@@ -33,7 +34,6 @@ footer, header, hgroup, menu, nav, section {
 body {
     line-height: 1;
 }
-
 ol, ul {
     list-style: none;
 }
@@ -399,6 +399,24 @@ footer {
     display: flex;
     align-items: center;
     margin-left: auto;
+}
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center; /* This ensures vertical alignment is centered, especially if 'Tags:' text is present */
+    margin-bottom: 10px; /* Adds some space below the tags container */
+}
+
+/* Style for each tag button */
+.tag-button {
+    display: inline-block; /* Allows inline display with block properties */
+    padding: 5px 10px; /* Adds padding inside the tag buttons */
+    background-color: #f0f0f0; /* Light grey background */
+    color: #333; /* Dark text color for contrast */
+    border-radius: 5px; /* Rounded corners for a modern look */
+    text-decoration: none; /* Removes underline from links */
+    margin-right: 5px; /* Adds a margin to the right of each tag for spacing */
+    margin-bottom: 5px; /* Adds a margin below each tag for when they wrap */
 }
 
 .comments-list {
