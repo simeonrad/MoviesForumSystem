@@ -9,7 +9,7 @@
 <div th:replace="~{fragments.html :: header}"></div>
 <main>
     <div class="content-container">
-        <!-- Recent Posts -->
+        <!-- All Posts -->
         <div class="column recent-posts" id="recent-posts-section">
             <h2>All Posts</h2>
             <ul class="posts-list">
@@ -26,12 +26,12 @@
             <button onclick="changePage(-1)" class="button pagination-btn">Previous</button>
             <button onclick="changePage(1)" class="button pagination-btn">Next</button>
         </div>
-        <!-- Admin Users List -->
+        <!-- Users List -->
         <div class="column recent-posts" id="users-section">
             <h2>All Users</h2>
             <ul class="posts-list">
                 <li th:each="user, iterStat : ${allUsers}" class="post-item" th:classappend="${iterStat.index} >= 5 ? 'hidden' : ''">
-                    <span class="post-title" th:text="${user.username}"></span>
+                    <a th:href="@{/posts/posted-by/{username}(username=${user.username})}" class="post-title" th:text="${user.username}"></a>
                     <div class="post-details">
                         <form th:action="@{${user.isBlocked ? '/admin/toggle-block/' + user.id : '/admin/toggle-block/' + user.id}}" method="post" class="user-action-form">
                             <button class="button" type="submit" th:text="${user.isBlocked ? 'Unblock User' : 'Block User'}"></button>

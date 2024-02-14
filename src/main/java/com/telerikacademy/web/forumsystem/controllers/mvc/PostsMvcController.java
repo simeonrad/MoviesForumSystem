@@ -14,6 +14,7 @@ import com.telerikacademy.web.forumsystem.models.User;
 import com.telerikacademy.web.forumsystem.models.*;
 import com.telerikacademy.web.forumsystem.repositories.CommentRepository;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepository;
+import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
 import com.telerikacademy.web.forumsystem.services.CommentService;
 import com.telerikacademy.web.forumsystem.services.PostService;
@@ -44,6 +45,7 @@ public class PostsMvcController {
     private final LikeRepository likeRepository;
     private final TextPurifier textPurifier;
     private final TagService tagService;
+    private final UserRepository userRepository;
 
     @ModelAttribute("requestURI")
     public String requestURI(final HttpServletRequest request) {
@@ -68,7 +70,10 @@ public class PostsMvcController {
     }
 
     @Autowired
-    public PostsMvcController(PostService postService, View_Repository viewRepository, CommentRepository commentRepository, CommentMapper commentMapper, CommentService commentService, AuthenticationHelper authenticationHelper, LikeRepository likeRepository, TextPurifier textPurifier, TagService tagService) {
+    public PostsMvcController(PostService postService, View_Repository viewRepository, CommentRepository commentRepository,
+                              CommentMapper commentMapper, CommentService commentService,
+                              AuthenticationHelper authenticationHelper, LikeRepository likeRepository,
+                              TextPurifier textPurifier, TagService tagService, UserRepository userRepository) {
         this.postService = postService;
         this.viewRepository = viewRepository;
         this.commentRepository = commentRepository;
@@ -78,6 +83,7 @@ public class PostsMvcController {
         this.likeRepository = likeRepository;
         this.textPurifier = textPurifier;
         this.tagService = tagService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -86,6 +92,7 @@ public class PostsMvcController {
                 postFilterDto.getTitle(),
                 postFilterDto.getContent(),
                 postFilterDto.getUserCreator(),
+                postFilterDto.getTag(),
                 postFilterDto.getSortBy(),
                 postFilterDto.getSortOrder()));
         model.addAttribute("postFilterOptions", postFilterDto);
@@ -141,6 +148,29 @@ public class PostsMvcController {
         model.addAttribute("userComments", userComments);
         return "myPostsView";
     }
+
+    @GetMapping("/posted-by/{username}")
+    public String showUserPostsAndComments(@PathVariable String username, Model model,
+                                           @RequestParam(defaultValue = "0", name = "postPage") int postPage,
+                                           @RequestParam(defaultValue = "5", name = "postSize") int postSize,
+                                           @RequestParam(defaultValue = "0", name = "commentPage") int commentPage,
+                                           @RequestParam(defaultValue = "5", name = "commentSize") int commentSize) {
+        User user = userRepository.getByUsername(username);
+
+        Page<Post> userPosts = postService.getUsersPosts(user, postPage, postSize);
+        Page<Comment> userComments = commentService.getUserComments(user, commentPage, commentSize);
+        String dashboardTitle = user.getUsername() + "'s Dashboard";
+
+        model.addAttribute("dashboardTitle", dashboardTitle);
+        model.addAttribute("userPosts", userPosts);
+        model.addAttribute("userComments", userComments);
+        model.addAttribute("profileUser", user);
+
+        return "userDashboardView";
+    }
+
+
+
     @PostMapping("/{id}/delete")
     public String deletePost(Model model, @PathVariable int id, HttpSession session) {
         try {

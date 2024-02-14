@@ -128,10 +128,20 @@ public class PostRepositoryImpl implements PostRepository {
                 }
             });
 
-            StringBuilder queryString = new StringBuilder("select p from Post p join p.author a");
+            boolean hasTagFilter = filterOptions.getTag().isPresent() && !filterOptions.getTag().get().isBlank();
+            if (hasTagFilter) {
+                filters.add("t.name like :tagName");
+                params.put("tagName", "%" + filterOptions.getTag().get() + "%");
+            }
+
+            StringBuilder queryString = new StringBuilder("select p from Post p join p.author a ");
+
+            if (hasTagFilter) {
+                queryString.append("join p.tags t ");
+            }
 
             if (!filters.isEmpty()) {
-                queryString.append(" where ").append(String.join(" and ", filters));
+                queryString.append("where ").append(String.join(" and ", filters));
             }
             queryString.append(generateOrderBy(filterOptions));
 
@@ -140,6 +150,7 @@ public class PostRepositoryImpl implements PostRepository {
             return query.list();
         }
     }
+
 
 
     private String generateOrderBy(PostsFilterOptions filterOptions) {

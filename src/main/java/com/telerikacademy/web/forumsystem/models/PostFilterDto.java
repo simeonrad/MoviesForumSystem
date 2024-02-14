@@ -4,6 +4,7 @@ public class PostFilterDto {
     private String title;
     private String content;
     private String userCreator;
+    private String tag;
     private String sortBy;
     private String sortOrder;
 
@@ -32,6 +33,14 @@ public class PostFilterDto {
 
     public void setUserCreator(String userCreator) {
         this.userCreator = userCreator;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
     }
 
     public String getSortBy() {

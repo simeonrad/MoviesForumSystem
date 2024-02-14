@@ -9,11 +9,12 @@
 <div th:replace="~{fragments.html :: header}"></div>
 <div class="body-content">
     <form action="#" th:action="@{/posts}" method="get" th:object="${postFilterOptions}">
-        <label>Posts Search and Filter Options</label>
+        <h2>Posts Search and Filter Options</h2>
         <br/><br/>
         <input type="text" placeholder="Title" th:field="*{title}"/>
         <input type="text" placeholder="Content" th:field="*{content}"/>
         <input type="text" placeholder="User Creator" th:field="*{userCreator}"/>
+        <input type="text" placeholder="Tag" th:field="*{tag}" />
         <select th:field="*{sortBy}">
             <option value="">Sort By</option>
             <option value="title">Title</option>
@@ -43,7 +44,9 @@
                 </div>
                 <div class="posts-row" th:each="post : ${posts}">
                     <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title"></a>
-                    <div class="posts-cell" th:text="${post.getAuthor().username}">Username</div>
+                    <div class="posts-cell">
+                        <a th:href="@{/posts/posted-by/{username}(username=${post.getAuthor().username})}" th:text="${post.getAuthor().username}"></a>
+                    </div>
                     <div class="posts-cell" th:text="${#temporals.format(post.timeStamp, 'yyyy-MM-dd HH:mm')}">Date</div>
                 </div>
             </div>

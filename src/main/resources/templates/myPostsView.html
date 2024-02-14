@@ -8,7 +8,7 @@
 <body>
 <div th:replace="~{fragments.html :: header}"></div>
 <main>
-    <h1>My Dashboard</h1>
+    <h2>My Dashboard</h2>
     <div class="content-container">
 
         <!-- Posts Section with Pagination -->
@@ -24,7 +24,7 @@
                 </li>
             </ul>
 
-            <!-- Pagination Controls -->
+            <!-- Pagination Controls for Posts -->
             <div class="pagination-controls">
                 <a th:if="${userPosts.hasPrevious()}" th:href="@{/posts/my-posts(postPage=${userPosts.number - 1}, postSize=${userPosts.size})}">Previous</a>
                 <span>Page <span th:text="${userPosts.number + 1}"></span> of <span th:text="${userPosts.totalPages}"></span></span>

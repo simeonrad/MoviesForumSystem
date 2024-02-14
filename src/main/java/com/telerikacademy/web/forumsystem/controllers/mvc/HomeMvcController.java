@@ -34,6 +34,18 @@ public class HomeMvcController {
         return session.getAttribute("currentUser") != null;
     }
 
+    @ModelAttribute("isAdmin")
+    public boolean populateIsAdmin(HttpSession session) {
+        boolean isAdmin = false;
+        if (populateIsAuthenticated(session)) {
+            User currentUser = (User) session.getAttribute("currentUser");
+            if (currentUser.isAdmin()) {
+                isAdmin = true;
+            }
+        }
+        return isAdmin;
+    }
+
     @GetMapping
     public String showHomePage(Model model, HttpSession session) {
         List<Post> mostRecentPosts = postService.getMostRecentPosts(10);

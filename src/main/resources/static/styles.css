@@ -403,20 +403,20 @@ footer {
 .tags {
     display: flex;
     flex-wrap: wrap;
-    align-items: center; /* This ensures vertical alignment is centered, especially if 'Tags:' text is present */
-    margin-bottom: 10px; /* Adds some space below the tags container */
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 /* Style for each tag button */
 .tag-button {
-    display: inline-block; /* Allows inline display with block properties */
-    padding: 5px 10px; /* Adds padding inside the tag buttons */
-    background-color: #f0f0f0; /* Light grey background */
-    color: #333; /* Dark text color for contrast */
-    border-radius: 5px; /* Rounded corners for a modern look */
-    text-decoration: none; /* Removes underline from links */
-    margin-right: 5px; /* Adds a margin to the right of each tag for spacing */
-    margin-bottom: 5px; /* Adds a margin below each tag for when they wrap */
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    color: #333;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-right: 5px;
+    margin-bottom: 5px;
 }
 
 .comments-list {
@@ -551,12 +551,12 @@ footer {
 }
 
 .posts-container {
-    max-width: 800px; /* Maximum width of the container */
-    margin: 20px auto; /* Center the container with automatic horizontal margins */
+    max-width: 800px;
+    margin: 20px auto;
     padding: 20px;
-    background: #fff; /* White background for the container */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .posts-table {
@@ -568,23 +568,23 @@ footer {
     display: flex;
     justify-content: space-between;
     text-transform: uppercase;
-    padding: 0 10px; /* Adjust the padding to align with your post rows */
-    margin-bottom: 20px; /* Provides space between the header and the post rows */
-    border-bottom: 2px solid #eaeaea; /* A solid line to separate the header from content */
+    padding: 0 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eaeaea;
 }
 
 .posts-cell {
-    flex: 1; /* Each cell will take up equal space in the flex container */
-    text-align: left; /* Align the text to the left */
-    padding: 5px 0; /* Padding for the cell content */
+    flex: 1;
+    text-align: left;
+    padding: 5px 0;
 }
 
 .posts-row {
-    display: flex; /* Align row items in a single line */
-    justify-content: space-around; /* Distribute space around items */
-    align-items: center; /* Center items vertically */
-    padding: 10px 0; /* Padding above and below each row */
-    border-bottom: 1px solid #eaeaea; /* Light border between rows */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eaeaea;
 }
 
 .posts-row:hover {
@@ -593,21 +593,21 @@ footer {
 
 .posts-header .post-title,
 .posts-header .posts-cell {
-    color: #000; /* Black color for the text */
-    font-weight: bold; /* Makes the text bold */
+    color: #000;
+    font-weight: bold;
 }
 
 .post-title {
-    flex: 2; /* Gives the title twice as much space as the other cells */
-    text-align: left; /* Align the title text to the left */
-    margin-right: 20px; /* Right margin for spacing */
-    color: #007bff; /* Blue color for the post titles */
-    font-weight: 600; /* Thicker font weight for the post titles */
-    text-decoration: none; /* Removes the underline */
+    flex: 2;
+    text-align: left;
+    margin-right: 20px;
+    color: #007bff;
+    font-weight: 600;
+    text-decoration: none;
 }
 
 .post-title, .posts-cell {
-    padding: 0 10px; /* Padding on the sides of each element */
+    padding: 0 10px;
 }
 
 .post-title:hover {
@@ -615,22 +615,56 @@ footer {
 }
 
 .post-title a {
-    color: #007bff; /* Blue color for the post title links */
-    font-weight: 600; /* Thicker font weight for the post title links */
-    text-decoration: none; /* Removes the underline */
+    color: #007bff;
+    font-weight: 600;
+    text-decoration: none;
 }
 
-/* Adds underline on hover for the post title links for better user interaction */
+
 .post-title a:hover {
     text-decoration: underline;
 }
 
 h2 {
-    font-weight: bold; /* Makes the text bold */
-    text-transform: uppercase; /* Converts the text to uppercase */
-    color: #000; /* Sets the text color to black */
-    text-align: center; /* Center the text */
-    font-size: 24px; /* Adjust the size as needed */
-    margin-top: 20px; /* Adjust spacing as needed */
-    margin-bottom: 20px; /* Adjust spacing as needed */
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #000;
+    text-align: center;
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.pagination-controls a.button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 0 10px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-controls a.button:hover {
+    background-color: #0056b3;
+}
+
+.pagination-controls span {
+    margin: 0 15px;
+    font-size: 16px;
+}
+
+
+.pagination-controls a.button.disabled,
+.pagination-controls a.button[disabled] {
+    background-color: #cccccc;
+    pointer-events: none;
+    cursor: default;
 }

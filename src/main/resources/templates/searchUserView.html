@@ -42,10 +42,12 @@
                 <div class="cell">Name</div>
             </div>
             <div class="row" th:each="user : ${users}">
-                <div class="cell" th:text="${user.username}"></div>
+                <div class="cell">
+                    <a th:href="@{/posts/posted-by/{username}(username=${user.getUsername()})}" th:text="${user.getUsername()}"></a>
+                </div>
                 <div class="cell" th:text="${user.email}"></div>
                 <div class="cell" th:text="${user.firstName}"></div>
-                <div class="cell">
+                <div th:if="${isAdmin}" class="cell">
                     <form th:action="@{/admin/toggle-block/{id}(id=${user.id})}" class="user-action-form" method="post">
                         <button class="button" type="submit" th:text="${user.isBlocked ? 'Unblock' : 'Block'}"></button>
                     </form>
