@@ -13,6 +13,9 @@
                 <a th:href="@{/profile}" class="button">Profile Page</a>
                 <a th:href="@{/posts/new}" class="button">Create New Post</a>
                 <a th:href="@{/posts}" class="button">All Posts</a>
+                <div th:if="${isAdmin}" class="auth-links">
+                    <a th:href="@{/admin/search-user}" class="button">Search User</a>
+                </div>
                 <a th:href="@{/auth/logout}" class="button">Logout</a>
             </div>
         </div>
@@ -34,7 +37,12 @@
 
                     <!-- For Authenticated Users -->
                     <div th:if="${isAuthenticated}">
-                        <li><a th:href="@{/}">Home</a></li>
+                        <div th:if="${isAdmin}">
+                            <li><a th:href="@{/admin}">Home</a></li>
+                        </div>
+                        <div th:unless="${isAdmin}">
+                            <li><a th:href="@{/}">Home</a></li>
+                        </div>
                         <li><a th:href="@{/posts/new}">Create New Post</a></li>
                         <li><a th:href="@{/posts}">All Posts</a></li>
                         <li><a th:href="@{/profile}">Profile Page</a></li>

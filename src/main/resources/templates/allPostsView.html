@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Posts | Movie Forum</title>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="~{fragments.html :: header}"></div>
+<div class="body-content">
+    <form action="#" th:action="@{/posts}" method="get" th:object="${postFilterOptions}">
+        <label>Posts Search and Filter Options</label>
+        <br/><br/>
+        <input type="text" placeholder="Title" th:field="*{title}"/>
+        <input type="text" placeholder="Content" th:field="*{content}"/>
+        <input type="text" placeholder="User Creator" th:field="*{userCreator}"/>
+        <select th:field="*{sortBy}">
+            <option value="">Sort By</option>
+            <option value="title">Title</option>
+            <option value="userCreator">User Creator</option>
+            <option value="timeStamp">Date Created</option>
+        </select>
+        <select th:field="*{sortOrder}">
+            <option value="">Sort Order</option>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+        <br/><br/>
+        <input type="submit" value="Search"/>
+    </form>
+
+    <div th:if="${posts.isEmpty()}">
+        <h2>No Posts Found</h2>
+    </div>
+    <div th:unless="${posts.isEmpty()}">
+        <h2>All Posts</h2>
+        <div class="table">
+            <div class="header">
+                <div class="cell">Title</div>
+                <div class="cell">Created By</div>
+                <div class="cell">Date Created</div>
+            </div>
+            <div class="row" th:each="post : ${posts}">
+                <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title">Post Title</a>
+                <div class="cell" th:text="${post.getAuthor().username}"></div>
+                <div class="cell" th:text="${post.timeStamp}"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments.html :: footer}"></div>
+</body>
+</html>

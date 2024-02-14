@@ -46,8 +46,22 @@ public class PostMvcController {
         return session.getAttribute("currentUser") != null;
     }
 
+    @ModelAttribute("isAdmin")
+    public boolean populateIsAdmin(HttpSession session) {
+        boolean isAdmin = false;
+        if (populateIsAuthenticated(session)) {
+            User currentUser = (User) session.getAttribute("currentUser");
+            if (currentUser.isAdmin()) {
+                isAdmin = true;
+            }
+        }
+        return isAdmin;
+    }
     @GetMapping("/new")
-    public String showCreatePostForm(Model model) {
+    public String showCreatePostForm(Model model, HttpSession session) {
+        if (!populateIsAuthenticated(session)) {
+            return "redirect:/auth/login";
+        }
         model.addAttribute("postDto", new PostDto());
         return "createPost";
     }

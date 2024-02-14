@@ -11,6 +11,7 @@ import com.telerikacademy.web.forumsystem.models.Comment;
 import com.telerikacademy.web.forumsystem.models.CommentDto;
 import com.telerikacademy.web.forumsystem.models.Post;
 import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.models.*;
 import com.telerikacademy.web.forumsystem.repositories.CommentRepository;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepository;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
@@ -53,6 +54,18 @@ public class PostsMvcController {
         return session.getAttribute("currentUser") != null;
     }
 
+    @ModelAttribute("isAdmin")
+    public boolean populateIsAdmin(HttpSession session) {
+        boolean isAdmin = false;
+        if (populateIsAuthenticated(session)) {
+            User currentUser = (User) session.getAttribute("currentUser");
+            if (currentUser.isAdmin()) {
+                isAdmin = true;
+            }
+        }
+        return isAdmin;
+    }
+
     @Autowired
     public PostsMvcController(PostService postService, View_Repository viewRepository, CommentRepository commentRepository, CommentMapper commentMapper, CommentService commentService, AuthenticationHelper authenticationHelper, LikeRepository likeRepository, TextPurifier textPurifier, TagService tagService) {
         this.postService = postService;
@@ -64,6 +77,19 @@ public class PostsMvcController {
         this.likeRepository = likeRepository;
         this.textPurifier = textPurifier;
         this.tagService = tagService;
+    }
+
+    @GetMapping
+    public String showAllPosts(Model model, @ModelAttribute("postFilterOptions") PostFilterDto postFilterDto) {
+        List<Post> posts = postService.get(new PostsFilterOptions(
+                postFilterDto.getTitle(),
+                postFilterDto.getContent(),
+                postFilterDto.getUserCreator(),
+                postFilterDto.getSortBy(),
+                postFilterDto.getSortOrder()));
+        model.addAttribute("postFilterOptions", postFilterDto);
+        model.addAttribute("posts", posts);
+        return "allPostsView";
     }
 
     @GetMapping("/{id}")
@@ -211,6 +237,7 @@ public class PostsMvcController {
             int commentId = Integer.parseInt(request.getParameter("commentId"));
             Comment comment = commentService.getById(commentId);
             Comment reply = commentMapper.replyFromDto(commentDto, user, commentId);
+            comment.addReply(reply);
             commentService.create(reply, user);
             comment.addReply(reply);
             redirectAttributes.addFlashAttribute("message", "Reply posted successfully.");

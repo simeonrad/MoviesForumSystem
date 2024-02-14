@@ -1,8 +1,6 @@
 package com.telerikacademy.web.forumsystem.services;
 
-import com.telerikacademy.web.forumsystem.models.Post;
-import com.telerikacademy.web.forumsystem.models.Tag;
-import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.models.*;
 
 
 import java.util.List;
@@ -18,6 +16,8 @@ public interface PostService {
     Post getById(int id);
 
     List<Post> getAll();
+
+    List<Post> get(PostsFilterOptions filterOptions);
 
     void likePost(int postId, User user);
 
