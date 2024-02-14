@@ -14,8 +14,8 @@ public interface PostRepository {
     void delete (Post post);
     Post getById (int id);
     List <Post> getAll();
-
     List<Post> get(PostsFilterOptions filterOptions);
+    Page<Post> get(PostsFilterOptions filterOptions, Pageable pageable);
     Page<Post> findUserPosts(User currentUser, Pageable pageable);
     List<Post> findMostRecentPosts(int limit);
 

@@ -57,6 +57,18 @@
                 </div>
             </div>
         </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-controls">
+            <ul class="pagination">
+                <li th:if="${users.hasPrevious()}">
+                    <a th:if="${users.hasPrevious()}" th:href="@{/search-user(page=${users.number - 1}, size=${users.size})}" class="button">Previous</a>
+                </li>
+                <span>Page <span th:text="${users.number + 1}"></span> of <span th:text="${users.totalPages}"></span></span>
+                <li th:if="${users.hasNext()}">
+                    <a th:if="${users.hasNext()}" th:href="@{/search-user(page=${users.number + 1}, size=${users.size})}" class="button">Next</a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 <div th:replace="~{fragments.html :: footer}"></div>

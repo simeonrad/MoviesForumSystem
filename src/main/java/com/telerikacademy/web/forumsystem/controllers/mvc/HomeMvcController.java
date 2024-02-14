@@ -8,11 +8,13 @@ import com.telerikacademy.web.forumsystem.services.PostService;
 import com.telerikacademy.web.forumsystem.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -58,15 +60,16 @@ public class HomeMvcController {
     }
 
     @GetMapping("/search-user")
-    public String showSearchUserPage(@ModelAttribute("filterOptions") FilterDto filterDto, Model model, HttpSession session) {
+    public String showSearchUserPage(@ModelAttribute("filterOptions") FilterDto filterDto, Model model, @RequestParam(defaultValue = "0", name = "page") int page,
+                                     @RequestParam(defaultValue = "5", name = "size") int size, HttpSession session) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser != null) {
-            List<User> users = userService.get(new FilterOptions(
+            Page<User> users = userService.get(new FilterOptions(
                     filterDto.getUsername(),
                     filterDto.getEmail(),
                     filterDto.getFirstName(),
                     filterDto.getSortBy(),
-                    filterDto.getSortOrder()));
+                    filterDto.getSortOrder()), page, size);
             model.addAttribute("filterOptions", filterDto);
             model.addAttribute("users", users);
             return "searchUserView";

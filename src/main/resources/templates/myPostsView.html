@@ -26,9 +26,9 @@
 
             <!-- Pagination Controls for Posts -->
             <div class="pagination-controls">
-                <a th:if="${userPosts.hasPrevious()}" th:href="@{/posts/my-posts(postPage=${userPosts.number - 1}, postSize=${userPosts.size})}">Previous</a>
+                <a th:if="${userPosts.hasPrevious()}" th:href="@{/posts/my-posts(postPage=${userPosts.number - 1}, postSize=${userPosts.size})}" class="button">Previous</a>
                 <span>Page <span th:text="${userPosts.number + 1}"></span> of <span th:text="${userPosts.totalPages}"></span></span>
-                <a th:if="${userPosts.hasNext()}" th:href="@{/posts/my-posts(postPage=${userPosts.number + 1}, postSize=${userPosts.size})}">Next</a>
+                <a th:if="${userPosts.hasNext()}" th:href="@{/posts/my-posts(postPage=${userPosts.number + 1}, postSize=${userPosts.size})}" class="button">Next</a>
             </div>
 
 
@@ -49,9 +49,9 @@
 
             <!-- Pagination Controls for Comments -->
             <div class="pagination-controls">
-                <a th:if="${userComments.hasPrevious()}" th:href="@{/posts/my-posts(commentPage=${userComments.number - 1}, commentSize=${userComments.size})}">Previous</a>
+                <a th:if="${userComments.hasPrevious()}" th:href="@{/posts/my-posts(commentPage=${userComments.number - 1}, commentSize=${userComments.size})}" class="button">Previous</a>
                 <span>Page <span th:text="${userComments.number + 1}"></span> of <span th:text="${userComments.totalPages}"></span></span>
-                <a th:if="${userComments.hasNext()}" th:href="@{/posts/my-posts(commentPage=${userComments.number + 1}, commentSize=${userComments.size})}">Next</a>
+                <a th:if="${userComments.hasNext()}" th:href="@{/posts/my-posts(commentPage=${userComments.number + 1}, commentSize=${userComments.size})}" class="button">Next</a>
             </div>
 
         </div>

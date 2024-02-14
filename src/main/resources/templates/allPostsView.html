@@ -51,6 +51,18 @@
                 </div>
             </div>
         </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-controls">
+            <ul class="pagination">
+                <li th:if="${posts.hasPrevious()}">
+                    <a th:if="${posts.hasPrevious()}" th:href="@{/posts(page=${posts.number - 1}, size=${posts.size})}" class="button">Previous</a>
+                </li>
+                <span>Page <span th:text="${posts.number + 1}"></span> of <span th:text="${posts.totalPages}"></span></span>
+                <li th:if="${posts.hasNext()}">
+                    <a th:if="${posts.hasNext()}" th:href="@{/posts(page=${posts.number + 1}, size=${posts.size})}" class="button">Next</a>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
 <div th:replace="~{fragments.html :: footer}"></div>
