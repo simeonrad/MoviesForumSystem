@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -37,7 +38,7 @@ public class Post {
             joinColumns = @JoinColumn(name = "post_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private Set<Tag> tags;
+    private Set<Tag> tags = new HashSet<>();
 
     @JsonIgnore
     @ManyToMany(fetch = FetchType.LAZY)

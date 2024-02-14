@@ -16,6 +16,7 @@ import com.telerikacademy.web.forumsystem.repositories.LikeRepository;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
 import com.telerikacademy.web.forumsystem.services.CommentService;
 import com.telerikacademy.web.forumsystem.services.PostService;
+import com.telerikacademy.web.forumsystem.services.TagService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -40,6 +41,7 @@ public class PostsMvcController {
     private final AuthenticationHelper authenticationHelper;
     private final LikeRepository likeRepository;
     private final TextPurifier textPurifier;
+    private final TagService tagService;
 
     @ModelAttribute("requestURI")
     public String requestURI(final HttpServletRequest request) {
@@ -52,7 +54,7 @@ public class PostsMvcController {
     }
 
     @Autowired
-    public PostsMvcController(PostService postService, View_Repository viewRepository, CommentRepository commentRepository, CommentMapper commentMapper, CommentService commentService, AuthenticationHelper authenticationHelper, LikeRepository likeRepository, TextPurifier textPurifier) {
+    public PostsMvcController(PostService postService, View_Repository viewRepository, CommentRepository commentRepository, CommentMapper commentMapper, CommentService commentService, AuthenticationHelper authenticationHelper, LikeRepository likeRepository, TextPurifier textPurifier, TagService tagService) {
         this.postService = postService;
         this.viewRepository = viewRepository;
         this.commentRepository = commentRepository;
@@ -61,13 +63,17 @@ public class PostsMvcController {
         this.authenticationHelper = authenticationHelper;
         this.likeRepository = likeRepository;
         this.textPurifier = textPurifier;
+        this.tagService = tagService;
     }
 
     @GetMapping("/{id}")
     public String singlePostView(Model model, @PathVariable int id, HttpSession session) {
+        User user = null;
         try {
-            postService.getById(id);
-            User user = authenticationHelper.tryGetUser(session);
+           Post post = postService.getById(id);
+            model.addAttribute("tags", tagService.getTagsForPost(post));
+            user = authenticationHelper.tryGetUser(session);
+            model.addAttribute("currentUser", user);
             postService.tryViewingPost(id, user.getId());
         } catch (AuthenticationFailureException ignored) {
         } catch (EntityNotFoundException e) {
@@ -79,6 +85,7 @@ public class PostsMvcController {
             Post post = postService.getById(id);
             List<Comment> comments = commentRepository.getByPostId(id);
             model.addAttribute("post", post);
+            model.addAttribute("currentUser", user);
             model.addAttribute("likesCount", likeRepository.getLikesCountOnPost(id));
             model.addAttribute("commentDto", new CommentDto());
             model.addAttribute("viewCount", viewRepository.getViewsCountOnPost(id));
@@ -111,19 +118,30 @@ public class PostsMvcController {
             return "ErrorView";
         }
     }
-    @PostMapping("/{id}/update")
-    public String updatePost(Model model, @PathVariable int id, HttpSession session) {
+    @PostMapping("/{id}")
+    public String commentOnPost(@Valid @ModelAttribute("comment") CommentDto commentDto,
+                                Model model, HttpSession session,
+                                @PathVariable int id) {
+        User user;
         try {
-           Post post = postService.getById(id);
-            User user = authenticationHelper.tryGetUser(session);
-            //postService.update(post, user);
-            return "index";
+            user = authenticationHelper.tryGetUser(session);
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
+        }
+        try {
+            textPurifier.checkTextAndBan(commentDto.getContent(), user);
+            Comment comment = commentMapper.fromDto(commentDto, user, id);
+            commentService.create(comment, user);
+            return "redirect:/posts/" + id;
         } catch (EntityNotFoundException e) {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
+        }
+        catch (NotAllowedContentException e){
+            model.addAttribute("statusCode", HttpStatus.FORBIDDEN.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "bannedView";
         }
         catch (UnauthorizedOperationException e){
             model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
@@ -131,9 +149,8 @@ public class PostsMvcController {
             return "ErrorView";
         }
     }
-
-    @PostMapping("/{id}")
-    public String commentOnPost(@Valid @ModelAttribute("comment") CommentDto commentDto,
+ @PostMapping("/{id}/edit-comment")
+    public String editCommentOnPost(@Valid @ModelAttribute("comment") CommentDto commentDto,
                                 Model model, HttpSession session,
                                 @PathVariable int id) {
         User user;
@@ -211,5 +228,24 @@ public class PostsMvcController {
         }
 
         return "redirect:/posts/" + Id;
+    }
+
+    @GetMapping("/comment/{commentId}")
+    public String showEditCommentForm(@PathVariable("commentId") int commentId, Model model) {
+        Comment comment = commentService.getById(commentId);
+        model.addAttribute("comment", comment);
+        return "commentUpdate";
+    }
+
+    @PostMapping("/comment/update/{commentId}")
+    public String updateComment(@PathVariable("commentId") int commentId,
+                                @ModelAttribute("comment") Comment updatedComment,
+                                HttpSession session) {
+        User user = authenticationHelper.tryGetUser(session);
+        Comment existingComment = commentService.getById(commentId);
+        existingComment.setContent(updatedComment.getContent());
+        commentService.update(existingComment, user);
+
+        return "redirect:/posts/" + existingComment.getPost().getId();
     }
 }
