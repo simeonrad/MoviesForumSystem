@@ -15,8 +15,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,12 +40,35 @@ public class UserServiceTests {
     @Mock
     private UserMapper userMapper;
 
+    private User user;
+
+    private User deletedUser;
+
+    private FilterOptions filterOptions;
+    private List<User> userList;
+    private Page<User> expectedPage;
+    private String username = "testUser";
+    private String email = "user@example.com";
+
 
     @BeforeEach
     public void setUp() {
         userRepository = mock(UserRepository.class);
         UserMapper userMapper = mock(UserMapper.class);
         userService = new UserServiceImpl(userRepository, userMapper);
+        user = new User();
+        user.setId(1);
+        user.setUsername("testUser");
+        user.setEmail("test@user.com");
+        user.setAdmin(false);
+        user.setDeleted(false);
+        userList = new ArrayList<>();
+        userList.add(new User());
+        expectedPage = new PageImpl<>(userList);
+        deletedUser = new User();
+        deletedUser.setUsername(username);
+        deletedUser.setEmail(email);
+        deletedUser.setDeleted(true);
     }
 
 
@@ -56,22 +85,13 @@ public class UserServiceTests {
         verify(userRepository).create(mockUser);
     }
 
-//    @Test
-//    public void createUser_WhenUserExistsAndIsDeleted_UpdatesUser() {
-//        User existingUser = new User();
-//        existingUser.setDeleted(true);
-//        User newUser = new User();
-//        newUser.setUsername("username");
-//
-//        when(userRepository.getByUsername(newUser.getUsername())).thenReturn(existingUser);
-//
-//        when(userMapper.fromDtoUpdate(newUser)).thenReturn(existingUser);
-//
-//        userService.create(newUser);
-//
-//        verify(userMapper).fromDtoUpdate(newUser);
-//        verify(userRepository).update(existingUser);
-//    }
+    @Test
+    void addPhoneNumber_ToUser_SavesPhoneNumber() {
+        String phoneNumber = "123456789";
+        userService.addPhoneNumber(phoneNumber, user);
+
+        verify(userRepository).addPhone(any(PhoneNumber.class));
+    }
 
     @Test
     public void createUser_WhenUsernameExistsAndNotDeleted_ThrowsException() {
@@ -84,6 +104,196 @@ public class UserServiceTests {
 
         assertThrows(DuplicateExistsException.class, () -> userService.create(newUser));
     }
+
+    @Test
+    void createUser_WhenUserIsDeletedAndEmailDoesNotExist_UpdatesUser() {
+        // Assuming deletedUser is properly initialized in setUp()
+
+        // Ensure mocks return the expected objects
+        when(userRepository.getByUsername(username)).thenReturn(deletedUser);
+        when(userRepository.getByEmail(email)).thenThrow(new EntityNotFoundException("User", "email", email));
+
+        // Ensure the updated user is properly initialized and not null
+        User updatedUser = new User();
+        updatedUser.setUsername(username);
+        updatedUser.setEmail(email);
+        updatedUser.setDeleted(false);
+
+        // Ensure the mapper mock correctly simulates behavior
+        when(userMapper.fromDtoUpdate(any(User.class))).thenReturn(updatedUser);
+
+        // Act
+        userService.create(updatedUser);
+
+        // Assertions to ensure correct behavior
+        verify(userMapper, times(1)).fromDtoUpdate(any(User.class));
+        verify(userRepository, times(1)).update(updatedUser);
+        assertFalse(updatedUser.isDeleted());
+    }
+
+    @Test
+    void createUser_WhenUserIsDeletedButEmailExists_ThrowsDuplicateExistsException() {
+        // Assuming deletedUser and other necessary objects are properly initialized
+        String username = "existingUser";
+        String email = "existingEmail@example.com";
+        User deletedUser = new User(); // Proper initialization with username, email, etc.
+        deletedUser.setDeleted(true);
+
+        when(userRepository.getByUsername(username)).thenReturn(deletedUser);
+        when(userRepository.getByEmail(email)).thenReturn(new User()); // Simulate existing email
+
+        assertThrows(DuplicateExistsException.class, () -> userService.create(deletedUser));
+
+        // Verify that update is not called due to the exception
+        verify(userRepository, never()).update(deletedUser);
+    }
+
+    @Test
+    public void getUserByEmail_WhenUserExists_ReturnsUser() {
+        // Arrange
+        String email = "user@example.com";
+        User expectedUser = new User();
+        expectedUser.setEmail(email);
+        when(userRepository.getByEmail(email)).thenReturn(expectedUser);
+
+        // Act
+        User actualUser = userService.get(email);
+
+        // Assert
+        assertNotNull(actualUser);
+        assertEquals(expectedUser.getEmail(), actualUser.getEmail());
+        verify(userRepository).getByEmail(email);
+    }
+
+    @Test
+    public void getUserByEmail_WhenUserDoesNotExist_ThrowsEntityNotFoundException() {
+        // Arrange
+        String email = "nonexistent@example.com";
+        when(userRepository.getByEmail(email)).thenThrow(new EntityNotFoundException("User", "email", email));
+
+        // Act & Assert
+        assertThrows(EntityNotFoundException.class, () -> userService.get(email));
+        verify(userRepository).getByEmail(email);
+    }
+
+
+
+    @Test
+    public void addProfilePhoto_ToUser_UpdatesUserWithPhotoUrl() {
+        String photoUrl = "http://example.com/photo.jpg";
+        userService.addProfilePhoto(photoUrl, user);
+
+        assertEquals(photoUrl, user.getProfilePhotoUrl());
+        verify(userRepository).update(user);
+    }
+
+    @Test
+    public void getAllUsers_ReturnsListOfAllUsers() {
+        List<User> expectedUsers = Collections.singletonList(user);
+        when(userRepository.getAll()).thenReturn(expectedUsers);
+
+        List<User> actualUsers = userService.getAll();
+
+        assertEquals(expectedUsers, actualUsers);
+        verify(userRepository).getAll();
+    }
+
+    @Test
+    public void update_WithValidEmail_UpdatesUser() {
+        when(userRepository.updateEmail(user.getEmail())).thenReturn(false);
+        userService.update(user);
+        verify(userRepository).update(user);
+    }
+
+    @Test
+    public void update_WithInvalidEmail_ThrowsInvalidEmailException() {
+        User invalidEmailUser = new User();
+        invalidEmailUser.setEmail("invalidemail");
+        assertThrows(InvalidEmailException.class, () -> userService.update(invalidEmailUser));
+    }
+
+    @Test
+    public void update_WithDuplicateEmail_ThrowsDuplicateExistsException() {
+        when(userRepository.updateEmail(user.getEmail())).thenReturn(true);
+        assertThrows(DuplicateExistsException.class, () -> userService.update(user));
+    }
+
+    @Test
+    void update_WhenUsernameIsChanged_ThrowsUnauthorizedOperationException() {
+        // Setup
+        User user = new User();
+        user.setId(1); // Assuming ID is part of equals/hashCode
+        user.setUsername("originalUsername");
+        user.setEmail("user@example.com");
+
+        User updatedBy = new User();
+        updatedBy.setId(1); // Same ID to pass initial equals check
+        updatedBy.setUsername("originalUsername"); // Initially, same username
+        updatedBy.setEmail("user@example.com");
+
+        updatedBy.setUsername("newUsername");
+
+        UnauthorizedOperationException exception = assertThrows(UnauthorizedOperationException.class,
+                () -> userService.update(user, updatedBy), "Expected update to throw, but it didn't");
+
+        assertTrue(exception.getMessage().contains("Username cannot be changed"));
+    }
+
+
+    @Test
+    public void delete_UserNotDeleted_MarksUserAsDeleted() {
+        assertFalse(user.isDeleted());
+
+        userService.delete(user);
+
+        assertTrue(user.isDeleted());
+        verify(userRepository).delete(user);
+    }
+
+    @Test
+    public void delete_UserAlreadyDeleted_ThrowsEntityNotFoundException() {
+        user.setDeleted(true);
+
+        assertThrows(EntityNotFoundException.class, () -> userService.delete(user));
+
+        verify(userRepository, never()).delete(user);
+    }
+
+    @Test
+    public void deleteUser_ByAdmin_DeletesUser() {
+        User admin = new User();
+        admin.setAdmin(true);
+        User user = new User();
+        user.setUsername("testUser");
+        user.setEmail("test@user.com");
+        user.setDeleted(false);
+
+        when(userRepository.getByUsername(user.getUsername())).thenReturn(user);
+        doAnswer(invocation -> {
+            User argUser = invocation.getArgument(0);
+            argUser.setDeleted(true);
+            return null;
+        }).when(userRepository).delete(any(User.class));
+
+        userService.delete(user, admin);
+
+        assertTrue(user.isDeleted(), "User should be marked as deleted");
+        verify(userRepository).delete(user);
+    }
+
+    @Test
+    public void deleteUser_WhenAlreadyDeleted_ThrowsEntityNotFoundException() {
+        User user = new User();
+        user.setUsername("existingUser");
+        user.setDeleted(true);
+
+        when(userRepository.getByUsername(user.getUsername())).thenReturn(user);
+
+        assertThrows(EntityNotFoundException.class, () -> userService.delete(user, user));
+    }
+
+
+
 
 //    @Test
 //    public void createUser_WhenEmailExists_ThrowsException() {
@@ -199,6 +409,29 @@ public class UserServiceTests {
         FilterOptions filterOptions = new FilterOptions(null, null, null, null, null);
 
         assertThrows(UnauthorizedOperationException.class, () -> userService.get(filterOptions, nonAdmin));
+    }
+
+    @Test
+    void get_WithValidPagination_ReturnsPageOfUsers() {
+        int page = 0;
+        int size = 5;
+        Pageable pageable = PageRequest.of(page, size);
+
+        when(userRepository.get(filterOptions, pageable)).thenReturn(expectedPage);
+
+        Page<User> actualPage = userService.get(filterOptions, page, size);
+
+        assertEquals(expectedPage.getTotalElements(), actualPage.getTotalElements());
+        assertEquals(expectedPage.getContent(), actualPage.getContent());
+    }
+
+    @Test
+    public void makeAdmin_WithValidUsername_UpdatesUserToAdmin() {
+        when(userRepository.getByUsername(username)).thenReturn(user);
+        userService.makeAdmin(username);
+        verify(userRepository, times(1)).getByUsername(username);
+        assert(user.isAdmin());
+        verify(userRepository, times(1)).update(user);
     }
 
     @Test

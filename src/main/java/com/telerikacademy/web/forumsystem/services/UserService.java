@@ -2,6 +2,7 @@ package com.telerikacademy.web.forumsystem.services;
 
 import com.telerikacademy.web.forumsystem.models.FilterOptions;
 import com.telerikacademy.web.forumsystem.models.User;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface UserService {
     void update(User user);
 
     List<User> get(FilterOptions filterOptions, User user);
-    List<User> get(FilterOptions filterOptions);
+    Page<User> get(FilterOptions filterOptions, int page, int size);
     User get(String email);
 
     void blockUser(String username, User admin);

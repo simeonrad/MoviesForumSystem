@@ -9,11 +9,12 @@
 <div th:replace="~{fragments.html :: header}"></div>
 <div class="body-content">
     <form action="#" th:action="@{/posts}" method="get" th:object="${postFilterOptions}">
-        <label>Posts Search and Filter Options</label>
+        <h2>Posts Search and Filter Options</h2>
         <br/><br/>
         <input type="text" placeholder="Title" th:field="*{title}"/>
         <input type="text" placeholder="Content" th:field="*{content}"/>
         <input type="text" placeholder="User Creator" th:field="*{userCreator}"/>
+        <input type="text" placeholder="Tag" th:field="*{tag}" />
         <select th:field="*{sortBy}">
             <option value="">Sort By</option>
             <option value="title">Title</option>
@@ -33,18 +34,34 @@
         <h2>No Posts Found</h2>
     </div>
     <div th:unless="${posts.isEmpty()}">
-        <h2>All Posts</h2>
-        <div class="table">
-            <div class="header">
-                <div class="cell">Title</div>
-                <div class="cell">Created By</div>
-                <div class="cell">Date Created</div>
+        <div class="posts-container">
+            <h2>All Posts</h2>
+            <div class="posts-table">
+                <div class="posts-header">
+                    <div class="post-title">TITLE</div>
+                    <div class="posts-cell">CREATED BY</div>
+                    <div class="posts-cell">DATE CREATED</div>
+                </div>
+                <div class="posts-row" th:each="post : ${posts}">
+                    <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title"></a>
+                    <div class="posts-cell">
+                        <a th:href="@{/posts/posted-by/{username}(username=${post.getAuthor().username})}" th:text="${post.getAuthor().username}"></a>
+                    </div>
+                    <div class="posts-cell" th:text="${#temporals.format(post.timeStamp, 'yyyy-MM-dd HH:mm')}">Date</div>
+                </div>
             </div>
-            <div class="row" th:each="post : ${posts}">
-                <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title">Post Title</a>
-                <div class="cell" th:text="${post.getAuthor().username}"></div>
-                <div class="cell" th:text="${post.timeStamp}"></div>
-            </div>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-controls">
+            <ul class="pagination">
+                <li th:if="${posts.hasPrevious()}">
+                    <a th:if="${posts.hasPrevious()}" th:href="@{/posts(page=${posts.number - 1}, size=${posts.size})}" class="button">Previous</a>
+                </li>
+                <span>Page <span th:text="${posts.number + 1}"></span> of <span th:text="${posts.totalPages}"></span></span>
+                <li th:if="${posts.hasNext()}">
+                    <a th:if="${posts.hasNext()}" th:href="@{/posts(page=${posts.number + 1}, size=${posts.size})}" class="button">Next</a>
+                </li>
+            </ul>
         </div>
     </div>
 </div>

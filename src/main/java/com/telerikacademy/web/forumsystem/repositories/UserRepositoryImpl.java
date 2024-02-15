@@ -8,6 +8,9 @@ import com.telerikacademy.web.forumsystem.models.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -117,6 +120,59 @@ public class UserRepositoryImpl implements UserRepository {
         }
     }
 
+    @Override
+    public Page<User> get(FilterOptions filterOptions, Pageable pageable) {
+        try (Session session = sessionFactory.openSession()) {
+            List<String> filters = new ArrayList<>();
+            Map<String, Object> params = new HashMap<>();
+
+            filterOptions.getUsername().ifPresent(value -> {
+                if (!value.isBlank()) {
+                    filters.add("u.username like :username");
+                    params.put("username", "%" + value + "%");
+                }
+            });
+
+            filterOptions.getEmail().ifPresent(value -> {
+                if (!value.isBlank()) {
+                    filters.add("u.email = :email");
+                    params.put("email", value);
+                }
+            });
+
+            filterOptions.getFirstName().ifPresent(value -> {
+                if (!value.isBlank()) {
+                    filters.add("u.firstName like :firstName");
+                    params.put("firstName", "%" + value + "%");
+                }
+            });
+
+            StringBuilder queryString = new StringBuilder("from User u");
+            StringBuilder countQueryString = new StringBuilder("select count(u) from User u");
+
+            if (!filters.isEmpty()) {
+                String whereClause = " where " + String.join(" and ", filters);
+                queryString.append(whereClause);
+                countQueryString.append(whereClause);
+            }
+
+            queryString.append(generateOrderBy(filterOptions));
+
+            Query<Long> countQuery = session.createQuery(countQueryString.toString(), Long.class);
+            countQuery.setProperties(params);
+            long total = countQuery.uniqueResult();
+
+            Query<User> query = session.createQuery(queryString.toString(), User.class);
+            query.setProperties(params);
+            query.setFirstResult((int) pageable.getOffset());
+            query.setMaxResults(pageable.getPageSize());
+
+            List<User> users = query.list();
+            return new PageImpl<>(users, pageable, total);
+        }
+    }
+
+
     private String generateOrderBy(FilterOptions filterOptions) {
         if (filterOptions.getSortBy().isEmpty()) {
             return "";
@@ -126,7 +182,7 @@ public class UserRepositoryImpl implements UserRepository {
             case "email" -> "email";
             case "firstName" -> "firstName";
             case "username" -> "username";
-            default -> "";
+            default -> "id";
         };
 
         if (orderBy.isEmpty()) {

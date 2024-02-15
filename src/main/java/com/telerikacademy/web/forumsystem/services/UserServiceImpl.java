@@ -10,6 +10,9 @@ import com.telerikacademy.web.forumsystem.models.FilterOptions;
 import com.telerikacademy.web.forumsystem.models.PhoneNumber;
 import com.telerikacademy.web.forumsystem.models.User;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 
@@ -131,8 +134,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> get(FilterOptions filterOptions) {
-        return userRepository.get(filterOptions);
+    public Page<User> get(FilterOptions filterOptions, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.get(filterOptions, pageable);
     }
 
     @Override
@@ -191,9 +195,6 @@ public class UserServiceImpl implements UserService {
         user.setAdmin(true);
         userRepository.update(user);
     }
-
-
-
 
     @Override
     public void unmakeAdmin(String username, User admin) {

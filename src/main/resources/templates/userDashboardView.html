@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="~{fragments :: header}"></div>
+<main>
+    <div class="user-info">
+        <div class="user-details">
+            <img th:if="${profileUser.profilePhotoUrl}"
+                 th:src="@{'/uploaded-images/' + ${profileUser.profilePhotoUrl}}"
+                 alt="User Photo" class="user-photo"/>
+            <h1 th:text="${profileUser.username}">Username</h1>
+            <p th:text="${profileUser.firstName + ' ' + profileUser.lastName}">Full Name</p>
+            <p th:text="${profileUser.email}">Email</p>
+        </div>
+    </div>
+
+    <h2 th:text="${dashboardTitle}">User Dashboard</h2>
+    <div class="content-container">
+
+        <!-- Posts Section with Pagination -->
+        <div class="column user-posts">
+            <h3 th:text="${profileUser.username} + '’s Posts'">User's Posts</h3>
+            <ul class="comments-list">
+                <li th:each="post : ${userPosts.content}" class="comment-item">
+                    <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="comment-post-link"></a>
+                    <div class="comment-content">
+                        <span th:text="${#temporals.format(post.timeStamp, 'dd/MM/yyyy HH:mm')}" class="post-date"></span>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- Pagination Controls for Posts -->
+            <div class="pagination-controls">
+                <a th:if="${userPosts.hasPrevious()}" th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, postPage=${userPosts.number - 1}, postSize=${userPosts.size}, commentPage=${commentPage}, commentSize=${commentSize})}" class="button">Previous</a>
+                <span>Page <span th:text="${userPosts.number + 1}"></span> of <span th:text="${userPosts.totalPages}"></span></span>
+                <a th:if="${userPosts.hasNext()}" th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, postPage=${userPosts.number + 1}, postSize=${userPosts.size}, commentPage=${commentPage}, commentSize=${commentSize})}" class="button">Next</a>
+            </div>
+
+        </div>
+
+        <!-- Comments Section with Pagination -->
+        <div class="column my-comments">
+            <h3 th:text="${profileUser.username} + '’s Comments'">User's Comments</h3>
+            <ul class="comments-list">
+                <li th:each="comment : ${userComments.content}" class="comment-item">
+                    <div th:text="${comment.content}" class="comment-content"></div>
+                    <div>On Post:
+                        <a th:href="@{/posts/{id}(id=${comment.post.id})}" th:text="${comment.post.title}" class="comment-post-link"></a>
+                    </div>
+                </li>
+            </ul>
+
+            <!-- Pagination Controls for Comments -->
+            <div class="pagination-controls">
+                <a th:if="${userComments.hasPrevious()}" th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, commentPage=${userComments.number - 1}, commentSize=${userComments.size}, postPage=${postPage}, postSize=${postSize})}" class="button">Previous</a>
+                <span>Page <span th:text="${userComments.number + 1}"></span> of <span th:text="${userComments.totalPages}"></span></span>
+                <a th:if="${userComments.hasNext()}" th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, commentPage=${userComments.number + 1}, commentSize=${userComments.size}, postPage=${postPage}, postSize=${postSize})}" class="button">Next</a>
+            </div>
+
+
+        </div>
+    </div>
+</main>
+<div th:replace="~{fragments :: footer}"></div>
+</body>
+</html>

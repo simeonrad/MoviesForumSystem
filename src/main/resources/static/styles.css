@@ -24,25 +24,30 @@ time, mark, audio, video {
     font: inherit;
     vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure,
 footer, header, hgroup, menu, nav, section {
     display: block;
 }
+
 body {
     line-height: 1;
 }
 ol, ul {
     list-style: none;
 }
+
 blockquote, q {
     quotes: none;
 }
+
 blockquote:before, blockquote:after,
 q:before, q:after {
     content: '';
     content: none;
 }
+
 table {
     border-collapse: collapse;
     border-spacing: 0;
@@ -51,7 +56,8 @@ table {
 /*ACTUAL CSS*/
 
 .table {
-    display: table;
+    width: 100%;
+    margin: 0 auto;
 }
 
 .header {
@@ -101,18 +107,18 @@ table {
     transition: all 0.3s ease 0s;
     cursor: pointer;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .button:hover, button:focus {
     background-color: #0056b3;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     transform: translateY(-2px);
 }
 
 .button:active {
     background-color: #004094;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transform: translateY(0);
 }
 
@@ -138,7 +144,7 @@ header {
     width: 80%;
     max-width: 800px;
     padding: 20px 50px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .form-group textarea {
@@ -397,18 +403,268 @@ footer {
 .tags {
     display: flex;
     flex-wrap: wrap;
-    align-items: center; /* This ensures vertical alignment is centered, especially if 'Tags:' text is present */
-    margin-bottom: 10px; /* Adds some space below the tags container */
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 /* Style for each tag button */
 .tag-button {
-    display: inline-block; /* Allows inline display with block properties */
-    padding: 5px 10px; /* Adds padding inside the tag buttons */
-    background-color: #f0f0f0; /* Light grey background */
-    color: #333; /* Dark text color for contrast */
-    border-radius: 5px; /* Rounded corners for a modern look */
-    text-decoration: none; /* Removes underline from links */
-    margin-right: 5px; /* Adds a margin to the right of each tag for spacing */
-    margin-bottom: 5px; /* Adds a margin below each tag for when they wrap */
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #f0f0f0;
+    color: #333;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-right: 5px;
+    margin-bottom: 5px;
+}
+
+.comments-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+.comment-item {
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.comment-content {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.comment-post-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.comment-post-link:hover {
+    text-decoration: underline;
+}
+
+.users-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.user-item {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 10px 0;
+    width: 80%;
+}
+
+.actions {
+    margin-top: 10px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.pagination .button {
+    margin: 0 5px;
+}
+
+.user-page .body-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.user-page .user-info {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-page .table {
+    margin: 0 auto;
+    display: table;
+}
+
+.user-page .cell {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 5px;
+}
+
+.user-page .header .cell {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+.user-page .row {
+    border: 2px solid #000;
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #fff;
+    box-sizing: border-box;
+}
+
+.user-page .row:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+.user-page .row:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.user-page .button {
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: white;
+}
+
+.user-page .button:hover {
+    background-color: #0056b3;
+}
+
+.posts-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.posts-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.posts-header {
+    display: flex;
+    justify-content: space-between;
+    text-transform: uppercase;
+    padding: 0 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eaeaea;
+}
+
+.posts-cell {
+    flex: 1;
+    text-align: left;
+    padding: 5px 0;
+}
+
+.posts-row {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.posts-row:hover {
+    background-color: #f4f4f4;
+}
+
+.posts-header .post-title,
+.posts-header .posts-cell {
+    color: #000;
+    font-weight: bold;
+}
+
+.post-title {
+    flex: 2;
+    text-align: left;
+    margin-right: 20px;
+    color: #007bff;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.post-title, .posts-cell {
+    padding: 0 10px;
+}
+
+.post-title:hover {
+    text-decoration: underline;
+}
+
+.post-title a {
+    color: #007bff;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+
+.post-title a:hover {
+    text-decoration: underline;
+}
+
+h2 {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #000;
+    text-align: center;
+    font-size: 20px;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.pagination-controls a.button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 0 10px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination-controls a.button:hover {
+    background-color: #0056b3;
+}
+
+.pagination-controls span {
+    margin: 0 15px;
+    font-size: 16px;
+}
+
+
+.pagination-controls a.button.disabled,
+.pagination-controls a.button[disabled] {
+    background-color: #cccccc;
+    pointer-events: none;
+    cursor: default;
 }

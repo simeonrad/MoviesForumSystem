@@ -6,13 +6,15 @@ public class PostsFilterOptions {
     private Optional<String> title;
     private Optional<String> content;
     private Optional<String> userCreator;
+    private Optional<String> tag;
     private Optional<String> sortBy;
     private Optional<String> sortOrder;
 
-    public PostsFilterOptions(String title, String content, String userCreator, String sortBy, String sortOrder) {
+    public PostsFilterOptions(String title, String content, String userCreator, String tag, String sortBy, String sortOrder) {
         this.title = Optional.ofNullable(title);
         this.content = Optional.ofNullable(content);
         this.userCreator = Optional.ofNullable(userCreator);
+        this.tag = Optional.ofNullable(tag);
         this.sortBy = Optional.ofNullable(sortBy);
         this.sortOrder = Optional.ofNullable(sortOrder);
     }
@@ -27,6 +29,10 @@ public class PostsFilterOptions {
 
     public Optional<String> getUserCreator() {
         return userCreator;
+    }
+
+    public Optional<String> getTag() {
+        return tag;
     }
 
     public Optional<String> getSortBy() {
