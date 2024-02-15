@@ -134,7 +134,7 @@
 <div class="post-view">
     <h1 th:text="${post.title}">Post Title</h1>
     <p th:text="${post.content}">Post content goes here...</p>
-    <p>Posted by <span th:text="${post.author.username}">Author Username</span> on <span th:text="${#temporals.format(post.timeStamp, 'yyyy-MM-dd HH:mm')}">Timestamp</span></p>
+    <p>Posted by <span th:text="${post.author.username}">Author Username</span> on <span th:text="${#temporals.format(post.timeStamp, 'yyyy-MM-dd HH:mm')}">Timestamp</span><span th:unless="${post.getEditTimeStamp() == null}"> last edited: </span> <span th:unless="${post.getEditTimeStamp() == null}" th:text="${#temporals.format(post.editTimeStamp, 'yyyy-MM-dd HH:mm')}">Post edit Timestamp</span></p>
     <p><strong>Views:</strong> <span th:text="${viewCount}">0</span></p>
     <div>
         <div th:unless="${tags.isEmpty()}" class="tags">
@@ -162,7 +162,7 @@
 <div class="comments-section">
     <h2>Comments</h2>
     <div class="comment" th:each="comment : ${post_comments}">
-        <p><span th:text="${comment.author.username}">Comment Author</span> on <span th:text="${#temporals.format(comment.timeStamp, 'yyyy-MM-dd HH:mm')}">Comment Timestamp</span></p>
+        <p><span th:text="${comment.author.username}">Comment Author</span> on <span th:text="${#temporals.format(comment.timeStamp, 'yyyy-MM-dd HH:mm')}">Comment Timestamp</span> <span th:unless="${comment.getEditTimeStamp() == null}"> last edited: </span> <span th:unless="${comment.getEditTimeStamp() == null}" th:text="${#temporals.format(comment.editTimeStamp, 'yyyy-MM-dd HH:mm')}">Comment edit Timestamp</span></p>
         <p th:text="${comment.content}">Comment content goes here...</p>
         <form th:if="${currentUser == comment.author}" method="get" class="delete-div" th:action="@{/posts/comment/{commentId}(commentId=${comment.id})}">
             <button type="submit" class="button">
@@ -173,11 +173,12 @@
         <div class="reply" th:if="${comment.replies.size() > 0}">
             <h4>Replies</h4>
             <div th:each="reply : ${comment.replies}">
-                <p><span th:text="${reply.author.username}">Reply Author</span> on <span th:text="${#temporals.format(reply.timeStamp, 'yyyy-MM-dd HH:mm')}">Reply Timestamp</span></p>
+                <p><span th:text="${reply.author.username}">Reply Author</span> on <span th:text="${#temporals.format(reply.timeStamp, 'yyyy-MM-dd HH:mm')}">Reply Timestamp</span><span th:unless="${reply.getEditTimeStamp() == null}"> last edited: </span> <span th:unless="${reply.getEditTimeStamp() == null}" th:text="${#temporals.format(reply.editTimeStamp, 'yyyy-MM-dd HH:mm')}">Reply edit Timestamp</span></p>
                 <p th:text="${reply.content}">Reply content goes here...</p>
-                <form th:if="${currentUser == reply.author}" method="post" class="delete-div" th:action="@{/posts/{postId}/delete(postId=${post.id})}">
+                <form th:if="${currentUser == reply.author}" method="get" class="delete-div" th:action="@{/posts/comment/{commentId}(commentId=${reply.id})}">
+                    <input type="hidden" name="replyId" th:value="${reply.getId()}" />
                     <button type="submit" class="button">
-                        <span>Edit</span>
+                        <span>Edit reply</span>
                     </button>
                 </form>
             </div>

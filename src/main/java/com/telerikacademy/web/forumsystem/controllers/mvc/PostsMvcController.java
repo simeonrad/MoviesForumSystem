@@ -96,7 +96,7 @@ public class PostsMvcController {
     public String singlePostView(Model model, @PathVariable int id, HttpSession session) {
         User user = null;
         try {
-           Post post = postService.getById(id);
+            Post post = postService.getById(id);
             model.addAttribute("tags", tagService.getTagsForPost(post));
             user = authenticationHelper.tryGetUser(session);
             model.addAttribute("currentUser", user);
@@ -124,10 +124,11 @@ public class PostsMvcController {
         }
 
     }
+
     @PostMapping("/{id}/delete")
     public String deletePost(Model model, @PathVariable int id, HttpSession session) {
         try {
-           Post post = postService.getById(id);
+            Post post = postService.getById(id);
             User user = authenticationHelper.tryGetUser(session);
             postService.delete(post, user);
             return "index";
@@ -137,13 +138,13 @@ public class PostsMvcController {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
-        }
-        catch (UnauthorizedOperationException e){
+        } catch (UnauthorizedOperationException e) {
             model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
         }
     }
+
     @PostMapping("/{id}")
     public String commentOnPost(@Valid @ModelAttribute("comment") CommentDto commentDto,
                                 Model model, HttpSession session,
@@ -163,22 +164,21 @@ public class PostsMvcController {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
-        }
-        catch (NotAllowedContentException e){
+        } catch (NotAllowedContentException e) {
             model.addAttribute("statusCode", HttpStatus.FORBIDDEN.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "bannedView";
-        }
-        catch (UnauthorizedOperationException e){
+        } catch (UnauthorizedOperationException e) {
             model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
         }
     }
- @PostMapping("/{id}/edit-comment")
+
+    @PostMapping("/{id}/edit-comment")
     public String editCommentOnPost(@Valid @ModelAttribute("comment") CommentDto commentDto,
-                                Model model, HttpSession session,
-                                @PathVariable int id) {
+                                    Model model, HttpSession session,
+                                    @PathVariable int id) {
         User user;
         try {
             user = authenticationHelper.tryGetUser(session);
@@ -194,13 +194,11 @@ public class PostsMvcController {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
-        }
-        catch (NotAllowedContentException e){
+        } catch (NotAllowedContentException e) {
             model.addAttribute("statusCode", HttpStatus.FORBIDDEN.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "bannedView";
-        }
-        catch (UnauthorizedOperationException e){
+        } catch (UnauthorizedOperationException e) {
             model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
@@ -247,8 +245,7 @@ public class PostsMvcController {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
-        }
-        catch (UnauthorizedOperationException e){
+        } catch (UnauthorizedOperationException e) {
             model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
@@ -263,7 +260,6 @@ public class PostsMvcController {
         model.addAttribute("comment", comment);
         return "commentUpdate";
     }
-
     @PostMapping("/comment/update/{commentId}")
     public String updateComment(@PathVariable("commentId") int commentId,
                                 @ModelAttribute("comment") Comment updatedComment,
@@ -272,7 +268,10 @@ public class PostsMvcController {
         Comment existingComment = commentService.getById(commentId);
         existingComment.setContent(updatedComment.getContent());
         commentService.update(existingComment, user);
+        if (existingComment.getPost() == null) {
+            return "redirect:/posts/" + existingComment.getRepliedTo().getPost().getId();
 
+        }
         return "redirect:/posts/" + existingComment.getPost().getId();
     }
 }

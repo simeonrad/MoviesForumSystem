@@ -42,6 +42,7 @@ public class PostServiceImpl implements PostService {
         if (!post.getAuthor().equals(user)) {
             throw new UnauthorizedOperationException("Only the author can modify it's data!");
         } else {
+            post.setEditTimeStamp(LocalDateTime.now());
             postRepository.update(post);
             if (tags != null) {
                 tagService.addTagsToPost(tags, post);

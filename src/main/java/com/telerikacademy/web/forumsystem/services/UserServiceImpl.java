@@ -89,6 +89,7 @@ public class UserServiceImpl implements UserService {
     public void update(User user) {
         boolean emailExists = userRepository.updateEmail(user.getEmail());
         emailValidator(user.getEmail());
+
         if (emailExists) {
             throw new DuplicateExistsException("User", "email", user.getEmail());
         }
