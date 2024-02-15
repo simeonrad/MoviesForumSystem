@@ -4,6 +4,7 @@ import com.telerikacademy.web.forumsystem.models.FilterDto;
 import com.telerikacademy.web.forumsystem.models.FilterOptions;
 import com.telerikacademy.web.forumsystem.models.Post;
 import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.services.CommentService;
 import com.telerikacademy.web.forumsystem.services.PostService;
 import com.telerikacademy.web.forumsystem.services.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -24,11 +25,13 @@ public class HomeMvcController {
 
     private final PostService postService;
     private final UserService userService;
+    private final CommentService commentService;
 
     @Autowired
-    public HomeMvcController(PostService postService, UserService userService) {
+    public HomeMvcController(PostService postService, UserService userService, CommentService commentService) {
         this.postService = postService;
         this.userService = userService;
+        this.commentService = commentService;
     }
 
     @ModelAttribute("isAuthenticated")
@@ -52,10 +55,14 @@ public class HomeMvcController {
     public String showHomePage(Model model, HttpSession session) {
         List<Post> mostRecentPosts = postService.getMostRecentPosts(10);
         List<Post> mostCommentedPosts = postService.getMostCommentedPosts(10);
-
+        int totalUsers = userService.getAllNotDeleted().size();
+        int totalPosts = postService.getAll().size();
+        int totalComments = commentService.getAll().size();
         model.addAttribute("mostRecentPosts", mostRecentPosts);
         model.addAttribute("mostCommentedPosts", mostCommentedPosts);
-
+        model.addAttribute("totalUsers", totalUsers);
+        model.addAttribute("totalPosts", totalPosts);
+        model.addAttribute("totalComments", totalComments);
         return "index";
     }
 

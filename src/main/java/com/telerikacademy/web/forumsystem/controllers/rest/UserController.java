@@ -124,7 +124,7 @@ public class UserController {
     }
 
     @PutMapping("/unmakeAdmin")
-    public UserShowAdmin unmakeUserAdmin(@RequestBody String username,
+    public UserShowAdmin unmakeUserAdmin(@RequestParam String username,
                                          @RequestHeader HttpHeaders headers) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);

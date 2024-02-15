@@ -668,3 +668,74 @@ h2 {
     pointer-events: none;
     cursor: default;
 }
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+.alert {
+    text-align: center;
+}
+
+.success-message {
+    padding: 10px;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    margin: 10px 0;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.denied-message {
+    padding: 10px;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: red;
+    margin: 10px 0;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.statistics-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.statistic {
+    margin: 0 15px;
+    text-align: center;
+}
+
+.statistic-value {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.statistic-label {
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.user-deleted-message p {
+    color: red;
+    font-weight: bold;
+}

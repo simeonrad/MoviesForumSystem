@@ -8,6 +8,21 @@
 <body>
 <div th:replace="~{fragments.html :: header}"></div>
 <main>
+    <!-- Statistics Section -->
+    <div class="statistics-container">
+        <div class="statistic">
+            <span class="statistic-value" th:text="${totalUsers}">0</span>
+            <span class="statistic-label">Users</span>
+        </div>
+        <div class="statistic">
+            <span class="statistic-value" th:text="${totalPosts}">0</span>
+            <span class="statistic-label">Posts</span>
+        </div>
+        <div class="statistic">
+            <span class="statistic-value" th:text="${totalComments}">0</span>
+            <span class="statistic-label">Comments</span>
+        </div>
+    </div>
     <div class="content-container">
         <!-- Recent Posts -->
         <div class="column recent-posts">

@@ -210,9 +210,13 @@ public class UserServiceImpl implements UserService {
         return userRepository.getAll();
     }
 
+    @Override
+    public List<User> getAllNotDeleted() {
+        return userRepository.getAllNotDeleted();
+    }
 
-    String emailValidator(String email) {
-        String MAIL_REGEX = "^[a-zA-Z]+@[a-zA-Z]+\\.[a-z]+$";
+    public String emailValidator(String email) {
+        String MAIL_REGEX = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z]+\\.[a-z]+$";
         Pattern MAIL_PATTERN = Pattern.compile(MAIL_REGEX);
 
         Matcher matcher = MAIL_PATTERN.matcher(email);

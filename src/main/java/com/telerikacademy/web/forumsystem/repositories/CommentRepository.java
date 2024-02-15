@@ -13,6 +13,7 @@ public interface CommentRepository {
     void delete (Comment comment);
     Comment getById (int id);
     List<Comment> getByPostId(int id);
+    List<Comment> getAll();
     List<Comment> getByCommentId(int id);
     Page<Comment> getUserComments(User user, Pageable pageable);
 }

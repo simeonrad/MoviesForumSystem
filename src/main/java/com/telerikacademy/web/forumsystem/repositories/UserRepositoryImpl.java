@@ -218,6 +218,14 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
+    public List<User> getAllNotDeleted() {
+        try (Session session = sessionFactory.openSession()) {
+            Query<User> query = session.createQuery("from User u where u.isDeleted = false", User.class);
+            return query.list();
+        }
+    }
+
+    @Override
     public User getByUsername(String username) {
         try (Session session = sessionFactory.openSession()) {
             Query<User> query = session.createQuery("from User where username = :username", User.class);

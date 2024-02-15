@@ -55,10 +55,11 @@ public class AuthenticationController {
             }
             return "redirect:/";
         } catch (AuthenticationFailureException e) {
-            redirectAttributes.addFlashAttribute("loginError", e.getMessage());
+            redirectAttributes.addFlashAttribute("loginError", "Login was not possible due to wrong username or password.");
             return "redirect:/auth/login";
         }
     }
+
 
 
     @GetMapping("/logout")

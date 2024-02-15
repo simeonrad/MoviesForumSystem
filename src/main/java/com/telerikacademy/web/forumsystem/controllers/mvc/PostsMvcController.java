@@ -164,7 +164,9 @@ public class PostsMvcController {
                                            @RequestParam(defaultValue = "0", name = "commentPage") int commentPage,
                                            @RequestParam(defaultValue = "5", name = "commentSize") int commentSize) {
         User user = userRepository.getByUsername(username);
-
+        if (user.isDeleted()) {
+            model.addAttribute("isDeleted", true);
+        }
         Page<Post> userPosts = postService.getUsersPosts(user, postPage, postSize);
         Page<Comment> userComments = commentService.getUserComments(user, commentPage, commentSize);
         String dashboardTitle = user.getUsername() + "'s Dashboard";
@@ -185,7 +187,7 @@ public class PostsMvcController {
            Post post = postService.getById(id);
             User user = authenticationHelper.tryGetUser(session);
             postService.delete(post, user);
-            return "index";
+            return "redirect:/posts/my-posts";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         } catch (EntityNotFoundException e) {
@@ -327,7 +329,10 @@ public class PostsMvcController {
         Comment existingComment = commentService.getById(commentId);
         existingComment.setContent(updatedComment.getContent());
         commentService.update(existingComment, user);
+        if (existingComment.getPost() == null) {
+            return "redirect:/posts/" + existingComment.getRepliedTo().getPost().getId();
 
+        }
         return "redirect:/posts/" + existingComment.getPost().getId();
     }
 }

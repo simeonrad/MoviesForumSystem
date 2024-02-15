@@ -139,7 +139,7 @@
     <div>
         <div th:unless="${tags.isEmpty()}" class="tags">
             <p>Tags:</p>
-            <a th:each="tag : ${post.tags}" th:href="@{/posts/(filter=${tag.name})}" class="tag-button" th:text="${tag.name}">Tag Name</a>
+            <a th:each="tag : ${post.tags}" th:href="@{/posts?title=&content=&userCreator=&tag={filter}&sortBy=&sortOrder=(filter=${tag.name})}" class="tag-button" th:text="${tag.name}">Tag Name</a>
         </div>
         <form method="post" th:action="@{/posts/{postId}/like(postId=${post.id})}">
             <button type="submit" class="like-button">
