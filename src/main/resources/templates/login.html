@@ -20,6 +20,10 @@
     <label class="error" th:errors="*{password}">Password error placeholder</label>
     <br/><br/>
 
+    <div th:if="${loginError}" class="alert alert-danger" th:text="${loginError}">
+        Login error placeholder
+    </div>
+
     <input class="button" type="submit" value="Login">
 </form>
 <div th:replace="~{fragments.html :: footer}"></div>

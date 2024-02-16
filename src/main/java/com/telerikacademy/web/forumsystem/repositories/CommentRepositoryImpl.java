@@ -82,6 +82,14 @@ public class CommentRepositoryImpl implements CommentRepository {
     }
 
     @Override
+    public List<Comment> getAll() {
+        try (Session session = sessionFactory.openSession()) {
+            Query<Comment> query = session.createQuery("from Comment", Comment.class);
+            return query.list();
+        }
+    }
+
+    @Override
     public Page<Comment> getUserComments(User currentUser, Pageable pageable) {
         String fetchQuery = "SELECT c FROM Comment c WHERE c.author = :currentUser ORDER BY c.timeStamp DESC";
         List<Comment> comments = entityManager.createQuery(fetchQuery, Comment.class)
@@ -95,7 +103,6 @@ public class CommentRepositoryImpl implements CommentRepository {
                 .setParameter("currentUser", currentUser)
                 .getSingleResult();
 
-        // Return a page of comments using PageImpl
         return new PageImpl<>(comments, pageable, totalCommentsCount);
     }
 

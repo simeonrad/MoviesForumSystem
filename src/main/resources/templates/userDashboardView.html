@@ -9,13 +9,16 @@
 <div th:replace="~{fragments :: header}"></div>
 <main>
     <div class="user-info">
-        <div class="user-details">
-            <img th:if="${profileUser.profilePhotoUrl}"
-                 th:src="@{'/uploaded-images/' + ${profileUser.profilePhotoUrl}}"
-                 alt="User Photo" class="user-photo"/>
-            <h1 th:text="${profileUser.username}">Username</h1>
-            <p th:text="${profileUser.firstName + ' ' + profileUser.lastName}">Full Name</p>
-            <p th:text="${profileUser.email}">Email</p>
+<!--        <div class="user-details">-->
+<!--            <img th:unless="${profileUser.profilePhotoUrl == null}"-->
+<!--                 th:href="../../uploaded-images/" th:href="@{${profileUser.profilePhotoUrl}}"-->
+<!--                 alt="User Photo" class="user-photo"/>-->
+<!--            <h1 th:text="${profileUser.username}">Username</h1>-->
+<!--            <p th:text="${profileUser.firstName + ' ' + profileUser.lastName}">Full Name</p>-->
+<!--            <p th:text="${profileUser.email}">Email</p>-->
+<!--        </div>-->
+        <div th:if="${isDeleted}" class="user-deleted-message">
+            <p>This user profile is deleted!</p>
         </div>
     </div>
 

@@ -25,6 +25,8 @@ public interface UserRepository {
 
     List<User> getAll();
 
+    List<User> getAllNotDeleted();
+
     User getByUsername(String username);
 
     User getByEmail(String email);

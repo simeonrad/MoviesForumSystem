@@ -14,6 +14,7 @@ import com.telerikacademy.web.forumsystem.models.User;
 import com.telerikacademy.web.forumsystem.models.*;
 import com.telerikacademy.web.forumsystem.repositories.CommentRepository;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepository;
+import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
 import com.telerikacademy.web.forumsystem.services.CommentService;
 import com.telerikacademy.web.forumsystem.services.PostService;
@@ -46,6 +47,7 @@ public class PostsMvcController {
     private final LikeRepository likeRepository;
     private final TextPurifier textPurifier;
     private final TagService tagService;
+    private final UserRepository userRepository;
 
     @ModelAttribute("requestURI")
     public String requestURI(final HttpServletRequest request) {
@@ -70,7 +72,10 @@ public class PostsMvcController {
     }
 
     @Autowired
-    public PostsMvcController(PostService postService, View_Repository viewRepository, CommentRepository commentRepository, CommentMapper commentMapper, CommentService commentService, AuthenticationHelper authenticationHelper, LikeRepository likeRepository, TextPurifier textPurifier, TagService tagService) {
+    public PostsMvcController(PostService postService, View_Repository viewRepository, CommentRepository commentRepository,
+                              CommentMapper commentMapper, CommentService commentService,
+                              AuthenticationHelper authenticationHelper, LikeRepository likeRepository,
+                              TextPurifier textPurifier, TagService tagService, UserRepository userRepository) {
         this.postService = postService;
         this.viewRepository = viewRepository;
         this.commentRepository = commentRepository;
@@ -80,26 +85,7 @@ public class PostsMvcController {
         this.likeRepository = likeRepository;
         this.textPurifier = textPurifier;
         this.tagService = tagService;
-    }
-
-    @GetMapping
-    public String showAllPosts(Model model,
-                               @ModelAttribute("postFilterOptions") PostFilterDto postFilterDto,
-                               @RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue = "5") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Post> posts = postService.get(
-                new PostsFilterOptions(
-                        postFilterDto.getTitle(),
-                        postFilterDto.getContent(),
-                        postFilterDto.getUserCreator(),
-                        postFilterDto.getTag(),
-                        postFilterDto.getSortBy(),
-                        postFilterDto.getSortOrder()),
-                pageable);
-        model.addAttribute("postFilterOptions", postFilterDto);
-        model.addAttribute("posts", posts);
-        return "allPostsView";
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/{id}")
@@ -135,13 +121,93 @@ public class PostsMvcController {
 
     }
 
+    @GetMapping
+    public String showAllPosts(Model model,
+                               @ModelAttribute("postFilterOptions") PostFilterDto postFilterDto,
+                               @RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> posts = postService.get(
+                new PostsFilterOptions(
+                        postFilterDto.getTitle(),
+                        postFilterDto.getContent(),
+                        postFilterDto.getUserCreator(),
+                        postFilterDto.getTag(),
+                        postFilterDto.getSortBy(),
+                        postFilterDto.getSortOrder()),
+                pageable);
+        model.addAttribute("postFilterOptions", postFilterDto);
+        model.addAttribute("posts", posts);
+        return "allPostsView";
+    }
+
+    @GetMapping("/my-posts")
+    public String showMyPostsAndCommentedPosts(Model model, HttpSession session,
+                                               @RequestParam(defaultValue = "0", name = "postPage") int postPage,
+                                               @RequestParam(defaultValue = "5", name = "postSize") int postSize,
+                                               @RequestParam(defaultValue = "0", name = "commentPage") int commentPage,
+                                               @RequestParam(defaultValue = "5", name = "commentSize") int commentSize,
+                                               @ModelAttribute("postFilterOptions") PostFilterDto postFilterDto) {
+
+        User currentUser = (User) session.getAttribute("currentUser");
+        if (currentUser == null) {
+            return "redirect:/auth/login";
+        }
+        postFilterDto.setUserCreator(currentUser.getUsername());
+
+        Pageable postPageable = PageRequest.of(postPage, postSize);
+
+        Page<Post> userPosts = postService.get(
+                new PostsFilterOptions(
+                        postFilterDto.getTitle(),
+                        postFilterDto.getContent(),
+                        postFilterDto.getUserCreator(),
+                        postFilterDto.getTag(),
+                        postFilterDto.getSortBy(),
+                        postFilterDto.getSortOrder()),
+                postPageable);
+
+
+        Page<Comment> userComments = commentService.getUserComments(currentUser, commentPage, commentSize);
+
+        model.addAttribute("postFilterOptions", postFilterDto);
+        model.addAttribute("userPosts", userPosts);
+        model.addAttribute("userComments", userComments);
+
+        return "myPostsView";
+    }
+
+    @GetMapping("/posted-by/{username}")
+    public String showUserPostsAndComments(@PathVariable String username, Model model,
+                                           @RequestParam(defaultValue = "0", name = "postPage") int postPage,
+                                           @RequestParam(defaultValue = "5", name = "postSize") int postSize,
+                                           @RequestParam(defaultValue = "0", name = "commentPage") int commentPage,
+                                           @RequestParam(defaultValue = "5", name = "commentSize") int commentSize,
+                                           @ModelAttribute("postFilterOptions") PostFilterDto postFilterDto) {
+        User user = userRepository.getByUsername(username);
+        if (user.isDeleted()) {
+            model.addAttribute("isDeleted", true);
+        }
+
+        Page<Post> userPosts = postService.getUsersPosts(user, postPage, postSize);
+        Page<Comment> userComments = commentService.getUserComments(user, commentPage, commentSize);
+        String dashboardTitle = user.getUsername() + "'s Dashboard";
+
+        model.addAttribute("dashboardTitle", dashboardTitle);
+        model.addAttribute("userPosts", userPosts);
+        model.addAttribute("userComments", userComments);
+        model.addAttribute("profileUser", user);
+        return "userDashboardView";
+    }
+
+
     @PostMapping("/{id}/delete")
     public String deletePost(Model model, @PathVariable int id, HttpSession session) {
         try {
             Post post = postService.getById(id);
             User user = authenticationHelper.tryGetUser(session);
             postService.delete(post, user);
-            return "index";
+            return "redirect:/posts/my-posts";
         } catch (AuthenticationFailureException e) {
             return "redirect:/auth/login";
         } catch (EntityNotFoundException e) {
@@ -270,6 +336,7 @@ public class PostsMvcController {
         model.addAttribute("comment", comment);
         return "commentUpdate";
     }
+
     @PostMapping("/comment/update/{commentId}")
     public String updateComment(@PathVariable("commentId") int commentId,
                                 @ModelAttribute("comment") Comment updatedComment,

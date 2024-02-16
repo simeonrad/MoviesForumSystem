@@ -9,6 +9,22 @@
 <div th:replace="~{fragments.html :: header}"></div>
 <main>
     <h2>My Dashboard</h2>
+    <form action="#" th:action="@{/posts/my-posts}" method="get" th:object="${postFilterOptions}">
+        <h2>Filter My Posts</h2>
+        <input type="text" placeholder="Title" th:field="*{title}"/>
+        <input type="text" placeholder="Tag" th:field="*{tag}" />
+        <select th:field="*{sortBy}">
+            <option value="">Sort By</option>
+            <option value="title">Title</option>
+            <option value="timeStamp">Date Created</option>
+        </select>
+        <select th:field="*{sortOrder}">
+            <option value="">Sort Order</option>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+        <input type="submit" value="Search"/>
+    </form>
     <div class="content-container">
 
         <!-- Posts Section with Pagination -->
@@ -41,8 +57,12 @@
                 <li th:each="comment : ${userComments.content}" class="comment-item">
                     <div th:text="${comment.content}" class="comment-content">Comment Content</div>
                     <div>On Post:
-                        <a th:href="@{'/posts/' + ${comment.post.id}}" th:text="${comment.post.title}"
-                           class="comment-post-link">Post Title</a>
+                        <div th:if="${comment.post != null}">
+                            <a th:href="@{'/posts/' + ${comment.post.id}}" th:text="${comment.post.title}" class="comment-post-link">Post Title</a>
+                        </div>
+                        <div th:if="${comment.post.id == null}">
+                            <a th:href="@{'/posts/' + ${comment.repliedTo.post.id}}" th:text="${comment.repliedTo.post.title}" class="comment-post-link">Post Title</a>
+                        </div>
                     </div>
                 </li>
             </ul>

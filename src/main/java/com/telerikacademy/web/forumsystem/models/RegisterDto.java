@@ -1,16 +1,21 @@
 package com.telerikacademy.web.forumsystem.models;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 public class RegisterDto extends LoginDto {
 
     @NotEmpty
     private String passwordConfirm;
     @NotEmpty
+    @Size(min = 4, max = 32, message = "First name should be between 4 and 32 symbols!")
     private String firstName;
     @NotEmpty
+    @Size(min = 2, max = 32, message = "Last name should be between 2 and 32 symbols!")
     private String lastName;
     @NotEmpty
+    @Email
     private String email;
 
     public String getPasswordConfirm() {

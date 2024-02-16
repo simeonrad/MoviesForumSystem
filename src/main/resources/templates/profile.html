@@ -30,6 +30,9 @@
             <div th:if="${#fields.hasErrors('confirmNewPassword')}" class="error"
                  th:errors="*{confirmNewPassword}"></div>
         </div>
+        <div th:if="${passwordUpdateSuccess}" class="success-message">
+            <p th:text="${passwordUpdateSuccess}"></p>
+        </div>
         <button type="submit" class="submit-btn">Update Password</button>
     </form>
 
@@ -46,6 +49,9 @@
             <input type="text" name="lastName" th:errorclass="error">
             <div th:if="${#fields.hasErrors('lastName')}" class="error" th:errors="*{lastName}"></div>
         </div>
+        <div th:if="${namesUpdateSuccess}" class="success-message">
+            <p th:text="${namesUpdateSuccess}"></p>
+        </div>
         <button type="submit" class="submit-btn">Update Names</button>
     </form>
 
@@ -55,6 +61,12 @@
             <label>Email</label>
             <input type="email" name="email" th:errorclass="error">
             <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}"></div>
+        </div>
+        <div th:if="${emailUpdateSuccess}" class="success-message">
+            <p th:text="${emailUpdateSuccess}"></p>
+        </div>
+        <div th:if="${emailUpdateDenied}" class="denied-message">
+            <p th:text="${emailUpdateDenied}"></p>
         </div>
         <button type="submit" class="submit-btn">Update Email</button>
     </form>

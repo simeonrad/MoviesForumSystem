@@ -8,10 +8,8 @@ import java.util.List;
 
 public interface UserService {
     void create(User user);
-
     void delete(User user, User deletedBy);
     void delete(User user);
-
     void update(User user, User updatedBy);
     void update(User user);
 
@@ -34,4 +32,5 @@ public interface UserService {
     void unmakeAdmin(String username, User admin);
 
     List<User> getAll();
+    List<User> getAllNotDeleted();
 }

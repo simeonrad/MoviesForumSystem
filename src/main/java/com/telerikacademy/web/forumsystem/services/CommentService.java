@@ -12,6 +12,7 @@ public interface CommentService {
     void delete (Comment comment, User user);
     Comment getById (int id);
     List<Comment> getByPostId(int id);
+    List<Comment> getAll();
     List<Comment> getByCommentId(int commentId);
     Page<Comment> getUserComments(User user, int page, int size);
 }
