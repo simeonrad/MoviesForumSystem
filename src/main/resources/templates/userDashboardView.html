@@ -8,26 +8,24 @@
 <body>
 <div th:replace="~{fragments :: header}"></div>
 <main>
-    <div class="user-info">
-<!--        <div class="user-details">-->
-<!--            <img th:unless="${profileUser.profilePhotoUrl == null}"-->
-<!--                 th:href="../../uploaded-images/" th:href="@{${profileUser.profilePhotoUrl}}"-->
-<!--                 alt="User Photo" class="user-photo"/>-->
-<!--            <h1 th:text="${profileUser.username}">Username</h1>-->
-<!--            <p th:text="${profileUser.firstName + ' ' + profileUser.lastName}">Full Name</p>-->
-<!--            <p th:text="${profileUser.email}">Email</p>-->
-<!--        </div>-->
+        <div class="user-details-card">
+        <img th:if="${profileUser.profilePhotoUrl != null}"
+             th:src="${profileUser.profilePhotoUrl}"
+             alt="User Photo" class="user-photo"/>
+        <div class="user-info">
+            <p th:text="${profileUser.firstName + ' ' + profileUser.lastName}">Full Name</p>
+            <p th:text="${profileUser.username}" class="username">Username</p>
+            <p th:text="${profileUser.email}" class="email">user@example.com</p>
+        </div>
         <div th:if="${isDeleted}" class="user-deleted-message">
             <p>This user profile is deleted!</p>
         </div>
     </div>
-
-    <h2 th:text="${dashboardTitle}">User Dashboard</h2>
-
-    <form action="#" th:action="@{/posts/posted-by/{username}(username=${username})}" method="get" th:object="${postFilterOptions}">
+    <form action="#" th:action="@{/posts/posted-by/{username}(username=${username})}" method="get"
+          th:object="${postFilterOptions}">
         <h2>Filter Posts</h2>
         <input type="text" placeholder="Title" th:field="*{title}"/>
-        <input type="text" placeholder="Tag" th:field="*{tag}" />
+        <input type="text" placeholder="Tag" th:field="*{tag}"/>
         <select th:field="*{sortBy}">
             <option value="">Sort By</option>
             <option value="title">Title</option>
@@ -50,16 +48,22 @@
                 <li th:each="post : ${userPosts.content}" class="comment-item">
                     <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="comment-post-link"></a>
                     <div class="comment-content">
-                        <span th:text="${#temporals.format(post.timeStamp, 'dd/MM/yyyy HH:mm')}" class="post-date"></span>
+                        <span th:text="${#temporals.format(post.timeStamp, 'dd/MM/yyyy HH:mm')}"
+                              class="post-date"></span>
                     </div>
                 </li>
             </ul>
 
             <!-- Pagination Controls for Posts -->
             <div class="pagination-controls">
-                <a th:if="${userPosts.hasPrevious()}" th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, postPage=${userPosts.number - 1}, postSize=${userPosts.size}, commentPage=${commentPage}, commentSize=${commentSize})}" class="button">Previous</a>
-                <span>Page <span th:text="${userPosts.number + 1}"></span> of <span th:text="${userPosts.totalPages}"></span></span>
-                <a th:if="${userPosts.hasNext()}" th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, postPage=${userPosts.number + 1}, postSize=${userPosts.size}, commentPage=${commentPage}, commentSize=${commentSize})}" class="button">Next</a>
+                <a th:if="${userPosts.hasPrevious()}"
+                   th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, postPage=${userPosts.number - 1}, postSize=${userPosts.size}, commentPage=${commentPage}, commentSize=${commentSize})}"
+                   class="button">Previous</a>
+                <span>Page <span th:text="${userPosts.number + 1}"></span> of <span
+                        th:text="${userPosts.totalPages}"></span></span>
+                <a th:if="${userPosts.hasNext()}"
+                   th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, postPage=${userPosts.number + 1}, postSize=${userPosts.size}, commentPage=${commentPage}, commentSize=${commentSize})}"
+                   class="button">Next</a>
             </div>
 
         </div>
@@ -71,16 +75,22 @@
                 <li th:each="comment : ${userComments.content}" class="comment-item">
                     <div th:text="${comment.content}" class="comment-content"></div>
                     <div>On Post:
-                        <a th:href="@{/posts/{id}(id=${comment.post.id})}" th:text="${comment.post.title}" class="comment-post-link"></a>
+                        <a th:href="@{/posts/{id}(id=${comment.post.id})}" th:text="${comment.post.title}"
+                           class="comment-post-link"></a>
                     </div>
                 </li>
             </ul>
 
             <!-- Pagination Controls for Comments -->
             <div class="pagination-controls">
-                <a th:if="${userComments.hasPrevious()}" th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, commentPage=${userComments.number - 1}, commentSize=${userComments.size}, postPage=${postPage}, postSize=${postSize})}" class="button">Previous</a>
-                <span>Page <span th:text="${userComments.number + 1}"></span> of <span th:text="${userComments.totalPages}"></span></span>
-                <a th:if="${userComments.hasNext()}" th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, commentPage=${userComments.number + 1}, commentSize=${userComments.size}, postPage=${postPage}, postSize=${postSize})}" class="button">Next</a>
+                <a th:if="${userComments.hasPrevious()}"
+                   th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, commentPage=${userComments.number - 1}, commentSize=${userComments.size}, postPage=${postPage}, postSize=${postSize})}"
+                   class="button">Previous</a>
+                <span>Page <span th:text="${userComments.number + 1}"></span> of <span
+                        th:text="${userComments.totalPages}"></span></span>
+                <a th:if="${userComments.hasNext()}"
+                   th:href="@{/posts/posted-by/{username}(username=${profileUser.username}, commentPage=${userComments.number + 1}, commentSize=${userComments.size}, postPage=${postPage}, postSize=${postSize})}"
+                   class="button">Next</a>
             </div>
 
 

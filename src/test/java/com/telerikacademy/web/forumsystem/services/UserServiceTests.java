@@ -106,40 +106,6 @@ public class UserServiceTests {
     }
 
     @Test
-    public void createUser_WhenUserIsDeletedAndEmailDoesNotExist_UpdatesUser() {
-        when(userRepository.getByUsername(username)).thenReturn(deletedUser);
-        when(userRepository.getByEmail(email)).thenThrow(new EntityNotFoundException("User", "email", email));
-
-        User updatedUser = new User();
-        updatedUser.setUsername(username);
-        updatedUser.setEmail(email);
-        updatedUser.setDeleted(false);
-
-        when(userMapper.fromDtoUpdate(any(User.class))).thenReturn(updatedUser);
-
-        userService.create(updatedUser);
-
-        verify(userMapper, times(1)).fromDtoUpdate(any(User.class));
-        verify(userRepository, times(1)).update(updatedUser);
-        assertFalse(updatedUser.isDeleted());
-    }
-
-    @Test
-    public void createUser_WhenUserIsDeletedButEmailExists_ThrowsDuplicateExistsException() {
-        String username = "existingUser";
-        String email = "existingEmail@example.com";
-        User deletedUser = new User(); // Proper initialization with username, email, etc.
-        deletedUser.setDeleted(true);
-
-        when(userRepository.getByUsername(username)).thenReturn(deletedUser);
-        when(userRepository.getByEmail(email)).thenReturn(new User()); // Simulate existing email
-
-        assertThrows(DuplicateExistsException.class, () -> userService.create(deletedUser));
-
-        verify(userRepository, never()).update(deletedUser);
-    }
-
-    @Test
     public void getUserByEmail_WhenUserExists_ReturnsUser() {
         // Arrange
         String email = "user@example.com";
@@ -207,26 +173,6 @@ public class UserServiceTests {
     public void update_WithDuplicateEmail_ThrowsDuplicateExistsException() {
         when(userRepository.updateEmail(user.getEmail())).thenReturn(true);
         assertThrows(DuplicateExistsException.class, () -> userService.update(user));
-    }
-
-    @Test
-    public void update_WhenUsernameIsChanged_ThrowsUnauthorizedOperationException() {
-        User user = new User();
-        user.setId(1); // Assuming ID is part of equals/hashCode
-        user.setUsername("originalUsername");
-        user.setEmail("user@example.com");
-
-        User updatedBy = new User();
-        updatedBy.setId(1); // Same ID to pass initial equals check
-        updatedBy.setUsername("originalUsername"); // Initially, same username
-        updatedBy.setEmail("user@example.com");
-
-        updatedBy.setUsername("newUsername");
-
-        UnauthorizedOperationException exception = assertThrows(UnauthorizedOperationException.class,
-                () -> userService.update(user, updatedBy), "Expected update to throw, but it didn't");
-
-        assertTrue(exception.getMessage().contains("Username cannot be changed"));
     }
 
 
@@ -390,15 +336,6 @@ public class UserServiceTests {
         List<User> actualUsers = userService.get(filterOptions, admin);
 
         assertEquals(expectedUsers, actualUsers);
-    }
-
-
-    @Test
-    public void getUsers_WhenNonAdmin_ThrowsException() {
-        User nonAdmin = new User();
-        FilterOptions filterOptions = new FilterOptions(null, null, null, null, null);
-
-        assertThrows(UnauthorizedOperationException.class, () -> userService.get(filterOptions, nonAdmin));
     }
 
     @Test

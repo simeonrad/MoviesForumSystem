@@ -206,12 +206,12 @@ public class ProfileController {
     }
 
     @PostMapping("/upload-image")
-    public String uploadProfileImage(@ModelAttribute ProfileImageForm form, HttpSession session, Model model) {
+    public String uploadProfileImage(@ModelAttribute ProfileImageForm form, HttpSession session, Model model,
+                                     RedirectAttributes redirectAttributes) {
         User user = (User) session.getAttribute("currentUser");
         if (user == null) {
             return "redirect:/auth/login";
         }
-
         try {
             User currentUser = (User) session.getAttribute("currentUser");
             String imageUrl = imageStorageService.saveImage(form.getImage());
@@ -221,9 +221,7 @@ public class ProfileController {
         } catch (Exception e) {
             model.addAttribute("error", "Failed to upload image.");
         }
-
+        redirectAttributes.addFlashAttribute("photoSuccess", "Profile photo successfully updated!");
         return "redirect:/profile";
     }
-
-
 }
