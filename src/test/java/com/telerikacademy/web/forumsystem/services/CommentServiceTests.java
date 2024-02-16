@@ -65,8 +65,8 @@ public class CommentServiceTests {
         admin.setAdmin(true);
         Comment comment = new Comment();
         comment.setAuthor(author);
-        commentService.delete(comment, author); // by author
-        commentService.delete(comment, admin); // by admin
+        commentService.delete(comment, author);
+        commentService.delete(comment, admin);
         verify(commentRepository, times(2)).delete(comment);
     }
 
