@@ -86,7 +86,7 @@ public class UserServiceTests {
     }
 
     @Test
-    void addPhoneNumber_ToUser_SavesPhoneNumber() {
+    public void addPhoneNumber_ToUser_SavesPhoneNumber() {
         String phoneNumber = "123456789";
         userService.addPhoneNumber(phoneNumber, user);
 
@@ -229,22 +229,6 @@ public class UserServiceTests {
     }
 
 
-
-
-//    @Test
-//    public void createUser_WhenEmailExists_ThrowsException() {
-//        User newUser = new User();
-//        newUser.setEmail("email@example.com");
-//        newUser.setUsername("username");
-//
-//        lenient().when(userRepository.getByUsername(newUser.getUsername())).thenReturn(newUser);
-//
-//        lenient().when(userRepository.getByEmail(newUser.getEmail())).thenReturn(new User());
-//
-//        assertThrows(DuplicateExistsException.class, () -> userService.create(newUser));
-//    }
-
-
     @Test
     public void updateUser_WhenAuthorized_UserIsUpdated() {
         User user = new User();
@@ -339,7 +323,7 @@ public class UserServiceTests {
     }
 
     @Test
-    void get_WithValidPagination_ReturnsPageOfUsers() {
+    public void get_WithValidPagination_ReturnsPageOfUsers() {
         int page = 0;
         int size = 5;
         Pageable pageable = PageRequest.of(page, size);
