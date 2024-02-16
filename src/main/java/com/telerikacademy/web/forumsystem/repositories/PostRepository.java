@@ -16,6 +16,7 @@ public interface PostRepository {
     List <Post> getAll();
     List<Post> get(PostsFilterOptions filterOptions);
     Page<Post> get(PostsFilterOptions filterOptions, Pageable pageable);
+    Page<Post> getMyPosts(PostsFilterOptions filterOptions, Pageable pageable);
     Page<Post> findUserPosts(User currentUser, Pageable pageable);
     List<Post> findMostRecentPosts(int limit);
 

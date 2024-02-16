@@ -215,6 +215,69 @@ public class PostRepositoryImpl implements PostRepository {
         }
     }
 
+    @Override
+    public Page<Post> getMyPosts(PostsFilterOptions filterOptions, Pageable pageable) {
+        try (Session session = sessionFactory.openSession()) {
+            List<String> filters = new ArrayList<>();
+            Map<String, Object> params = new HashMap<>();
+
+            filterOptions.getTitle().ifPresent(value -> {
+                if (!value.isBlank()) {
+                    filters.add("p.title like :title");
+                    params.put("title", "%" + value + "%");
+                }
+            });
+
+            filterOptions.getContent().ifPresent(value -> {
+                if (!value.isBlank()) {
+                    filters.add("p.content like :content");
+                    params.put("content", "%" + value + "%");
+                }
+            });
+
+            filterOptions.getUserCreator().ifPresent(value -> {
+                if (!value.isBlank()) {
+                    filters.add("a.username = :username");
+                    params.put("username", String.format("%s", value));
+                }
+            });
+
+            boolean hasTagFilter = filterOptions.getTag().isPresent() && !filterOptions.getTag().get().isBlank();
+            if (hasTagFilter) {
+                filters.add("t.name like :tagName");
+                params.put("tagName", "%" + filterOptions.getTag().get() + "%");
+            }
+
+            StringBuilder queryString = new StringBuilder("select p from Post p join p.author a ");
+            StringBuilder countQueryString = new StringBuilder("select count(p) from Post p join p.author a ");
+
+            if (hasTagFilter) {
+                queryString.append("join p.tags t ");
+                countQueryString.append("join p.tags t ");
+            }
+
+            if (!filters.isEmpty()) {
+                String whereClause = "where " + String.join(" and ", filters);
+                queryString.append(whereClause);
+                countQueryString.append(whereClause);
+            }
+
+            queryString.append(generateOrderBy(filterOptions));
+
+            Query<Long> countQuery = session.createQuery(countQueryString.toString(), Long.class);
+            countQuery.setProperties(params);
+            long total = countQuery.uniqueResult();
+
+            Query<Post> query = session.createQuery(queryString.toString(), Post.class);
+            query.setProperties(params);
+            query.setFirstResult((int) pageable.getOffset());
+            query.setMaxResults(pageable.getPageSize());
+
+            List<Post> posts = query.list();
+            return new PageImpl<>(posts, pageable, total);
+        }
+    }
+
 
 
     private String generateOrderBy(PostsFilterOptions filterOptions) {

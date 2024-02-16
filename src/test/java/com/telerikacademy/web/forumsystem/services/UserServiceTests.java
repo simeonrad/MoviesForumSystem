@@ -106,34 +106,26 @@ public class UserServiceTests {
     }
 
     @Test
-    void createUser_WhenUserIsDeletedAndEmailDoesNotExist_UpdatesUser() {
-        // Assuming deletedUser is properly initialized in setUp()
-
-        // Ensure mocks return the expected objects
+    public void createUser_WhenUserIsDeletedAndEmailDoesNotExist_UpdatesUser() {
         when(userRepository.getByUsername(username)).thenReturn(deletedUser);
         when(userRepository.getByEmail(email)).thenThrow(new EntityNotFoundException("User", "email", email));
 
-        // Ensure the updated user is properly initialized and not null
         User updatedUser = new User();
         updatedUser.setUsername(username);
         updatedUser.setEmail(email);
         updatedUser.setDeleted(false);
 
-        // Ensure the mapper mock correctly simulates behavior
         when(userMapper.fromDtoUpdate(any(User.class))).thenReturn(updatedUser);
 
-        // Act
         userService.create(updatedUser);
 
-        // Assertions to ensure correct behavior
         verify(userMapper, times(1)).fromDtoUpdate(any(User.class));
         verify(userRepository, times(1)).update(updatedUser);
         assertFalse(updatedUser.isDeleted());
     }
 
     @Test
-    void createUser_WhenUserIsDeletedButEmailExists_ThrowsDuplicateExistsException() {
-        // Assuming deletedUser and other necessary objects are properly initialized
+    public void createUser_WhenUserIsDeletedButEmailExists_ThrowsDuplicateExistsException() {
         String username = "existingUser";
         String email = "existingEmail@example.com";
         User deletedUser = new User(); // Proper initialization with username, email, etc.
@@ -144,7 +136,6 @@ public class UserServiceTests {
 
         assertThrows(DuplicateExistsException.class, () -> userService.create(deletedUser));
 
-        // Verify that update is not called due to the exception
         verify(userRepository, never()).update(deletedUser);
     }
 
@@ -219,8 +210,7 @@ public class UserServiceTests {
     }
 
     @Test
-    void update_WhenUsernameIsChanged_ThrowsUnauthorizedOperationException() {
-        // Setup
+    public void update_WhenUsernameIsChanged_ThrowsUnauthorizedOperationException() {
         User user = new User();
         user.setId(1); // Assuming ID is part of equals/hashCode
         user.setUsername("originalUsername");

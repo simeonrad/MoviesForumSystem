@@ -23,6 +23,24 @@
     </div>
 
     <h2 th:text="${dashboardTitle}">User Dashboard</h2>
+
+    <form action="#" th:action="@{/posts/posted-by/{username}(username=${username})}" method="get" th:object="${postFilterOptions}">
+        <h2>Filter Posts</h2>
+        <input type="text" placeholder="Title" th:field="*{title}"/>
+        <input type="text" placeholder="Tag" th:field="*{tag}" />
+        <select th:field="*{sortBy}">
+            <option value="">Sort By</option>
+            <option value="title">Title</option>
+            <option value="timeStamp">Date Created</option>
+        </select>
+        <select th:field="*{sortOrder}">
+            <option value="">Sort Order</option>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+        <input type="submit" value="Search"/>
+    </form>
+
     <div class="content-container">
 
         <!-- Posts Section with Pagination -->

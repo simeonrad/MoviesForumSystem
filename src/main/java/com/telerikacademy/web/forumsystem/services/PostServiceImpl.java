@@ -104,6 +104,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public Page<Post> getMyPosts(PostsFilterOptions filterOptions, Pageable pageable) {
+        return postRepository.getMyPosts(filterOptions, pageable);
+    }
+
+    @Override
     public List<Post> getMostRecentPosts(int limit) {
         return postRepository.findMostRecentPosts(limit);
     }
