@@ -1,8 +1,13 @@
 package com.telerikacademy.web.forumsystem.controllers.mvc;
 
 
+import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
+import com.telerikacademy.web.forumsystem.exceptions.InvalidEmailException;
 import com.telerikacademy.web.forumsystem.models.*;
+import com.telerikacademy.web.forumsystem.repositories.UserRepository;
+import com.telerikacademy.web.forumsystem.services.CommentService;
 import com.telerikacademy.web.forumsystem.services.ImageStorageService;
+import com.telerikacademy.web.forumsystem.services.PostService;
 import com.telerikacademy.web.forumsystem.services.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -11,15 +16,41 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/profile")
 public class ProfileController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
+    private final PostService postService;
+    private final CommentService commentService;
+    private final ImageStorageService imageStorageService;
+
     @Autowired
-    public ProfileController(UserService userService, ImageStorageService imageStorageService) {
+    public ProfileController(UserService userService, ImageStorageService imageStorageService, ImageStorageService imageStorageService1, UserRepository userRepository, PostService postService, CommentService commentService) {
         this.userService = userService;
+        this.imageStorageService = imageStorageService;
+        this.userRepository = userRepository;
+        this.postService = postService;
+        this.commentService = commentService;
+    }
+
+    @ModelAttribute("isAdmin")
+    public boolean populateIsAdmin(HttpSession session) {
+        boolean isAdmin = false;
+        if (populateIsAuthenticated(session)) {
+            User currentUser = (User) session.getAttribute("currentUser");
+            if (currentUser.isAdmin()) {
+                isAdmin = true;
+            }
+        }
+        return isAdmin;
+    }
+
+    @ModelAttribute("isAuthenticated")
+    public boolean populateIsAuthenticated(HttpSession session) {
+        return session.getAttribute("currentUser") != null;
     }
 
     @GetMapping()
@@ -50,7 +81,7 @@ public class ProfileController {
 
     @PostMapping("/update-password")
     public String updatePassword(@Valid @ModelAttribute("passwordDto") UserPasswordUpdateDto passwordDto,
-                                 BindingResult bindingResult, Model model, HttpSession session) {
+                                 BindingResult bindingResult, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser.getUsername() == null) {
             return "redirect:/login";
@@ -79,6 +110,7 @@ public class ProfileController {
         currentUser.setPassword(passwordDto.getNewPassword());
         userService.update(currentUser);
 
+        redirectAttributes.addFlashAttribute("passwordUpdateSuccess", "Password updated successfully.");
         model.addAttribute("successMessage", "Password updated successfully.");
         return "redirect:/profile";
     }
@@ -86,7 +118,7 @@ public class ProfileController {
 
     @PostMapping("/update-names")
     public String updateNames(@Valid @ModelAttribute("namesDto") UserProfileDto namesDto,
-                              BindingResult bindingResult, HttpSession session, Model model) {
+                              BindingResult bindingResult, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("emailDto", new UserEmailUpdateDto());
@@ -110,13 +142,14 @@ public class ProfileController {
         userService.update(currentUser);
 
         model.addAttribute("successMessage", "Names updated successfully.");
+        redirectAttributes.addFlashAttribute("namesUpdateSuccess", "Names updated successfully.");
         return "redirect:/profile";
     }
 
 
     @PostMapping("/update-email")
     public String updateEmail(@Valid @ModelAttribute("emailDto") UserEmailUpdateDto emailDto,
-                              BindingResult bindingResult, HttpSession session, Model model) {
+                              BindingResult bindingResult, HttpSession session, Model model, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             model.addAttribute("namesDto", new UserProfileDto());
@@ -133,9 +166,19 @@ public class ProfileController {
         }
 
         currentUser.setEmail(emailDto.getEmail());
-        userService.update(currentUser);
-
-        model.addAttribute("successMessage", "Email updated successfully.");
+        try {
+            userRepository.getByEmail(currentUser.getEmail());
+        } catch (EntityNotFoundException e) {
+            try {
+                userService.update(currentUser);
+            }catch (InvalidEmailException iee) {
+                redirectAttributes.addFlashAttribute("emailUpdateDenied", "The provided email is not valid.");
+            }
+            model.addAttribute("successMessage", "Email updated successfully.");
+            redirectAttributes.addFlashAttribute("emailUpdateSuccess", "Email updated successfully.");
+            return "redirect:/profile";
+        }
+        redirectAttributes.addFlashAttribute("emailUpdateDenied", "This Email is already in use.");
         return "redirect:/profile";
     }
 
@@ -160,6 +203,26 @@ public class ProfileController {
         }
 
         return "redirect:/auth/login";
+    }
+
+    @PostMapping("/upload-image")
+    public String uploadProfileImage(@ModelAttribute ProfileImageForm form, HttpSession session, Model model) {
+        User user = (User) session.getAttribute("currentUser");
+        if (user == null) {
+            return "redirect:/auth/login";
+        }
+
+        try {
+            User currentUser = (User) session.getAttribute("currentUser");
+            String imageUrl = imageStorageService.saveImage(form.getImage());
+            currentUser.setProfilePhotoUrl(imageUrl);
+            userService.addProfilePhoto(imageUrl, currentUser);
+            model.addAttribute("message", "Profile image updated successfully.");
+        } catch (Exception e) {
+            model.addAttribute("error", "Failed to upload image.");
+        }
+
+        return "redirect:/profile";
     }
 
 

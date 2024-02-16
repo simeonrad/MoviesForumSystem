@@ -2,15 +2,15 @@ package com.telerikacademy.web.forumsystem.services;
 
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
-import com.telerikacademy.web.forumsystem.models.Post;
-import com.telerikacademy.web.forumsystem.models.PostView;
-import com.telerikacademy.web.forumsystem.models.Tag;
-import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.models.*;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepository;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepositoryImpl;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.PostRepository;
 
@@ -94,6 +94,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<Post> get(PostsFilterOptions filterOptions) {
+        return postRepository.get(filterOptions);
+    }
+
+    @Override
+    public Page<Post> get(PostsFilterOptions filterOptions, Pageable pageable) {
+        return postRepository.get(filterOptions, pageable);
+    }
+
+    @Override
     public List<Post> getMostRecentPosts(int limit) {
         return postRepository.findMostRecentPosts(limit);
     }
@@ -102,4 +112,11 @@ public class PostServiceImpl implements PostService {
     public List<Post> getMostCommentedPosts(int limit) {
         return postRepository.findMostCommentedPosts(limit);
     }
+
+    @Override
+    public Page<Post> getUsersPosts(User currentUser, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return postRepository.findUserPosts(currentUser, pageable);
+    }
+
 }

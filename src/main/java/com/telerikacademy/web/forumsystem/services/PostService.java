@@ -1,8 +1,8 @@
 package com.telerikacademy.web.forumsystem.services;
 
-import com.telerikacademy.web.forumsystem.models.Post;
-import com.telerikacademy.web.forumsystem.models.Tag;
-import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.models.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 
 import java.util.List;
@@ -19,10 +19,15 @@ public interface PostService {
 
     List<Post> getAll();
 
+    List<Post> get(PostsFilterOptions filterOptions);
+    Page<Post> get(PostsFilterOptions filterOptions, Pageable page);
+
     void likePost(int postId, User user);
 
-     List<Post> getMostRecentPosts(int limit);
+    List<Post> getMostRecentPosts(int limit);
 
-     List<Post> getMostCommentedPosts(int limit);
+    List<Post> getMostCommentedPosts(int limit);
+
+    Page<Post> getUsersPosts(User currentUser, int page, int size);
     void tryViewingPost(int postId, int userId);
 }

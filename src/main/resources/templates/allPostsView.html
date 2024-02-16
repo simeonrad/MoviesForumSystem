@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Posts | Movie Forum</title>
+    <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div th:replace="~{fragments.html :: header}"></div>
+<div class="body-content">
+    <form action="#" th:action="@{/posts}" method="get" th:object="${postFilterOptions}">
+        <h2>Posts Search and Filter Options</h2>
+        <br/><br/>
+        <input type="text" placeholder="Title" th:field="*{title}"/>
+        <input type="text" placeholder="Content" th:field="*{content}"/>
+        <input type="text" placeholder="User Creator" th:field="*{userCreator}"/>
+        <input type="text" placeholder="Tag" th:field="*{tag}" />
+        <select th:field="*{sortBy}">
+            <option value="">Sort By</option>
+            <option value="title">Title</option>
+            <option value="userCreator">User Creator</option>
+            <option value="timeStamp">Date Created</option>
+        </select>
+        <select th:field="*{sortOrder}">
+            <option value="">Sort Order</option>
+            <option value="asc">Ascending</option>
+            <option value="desc">Descending</option>
+        </select>
+        <br/><br/>
+        <input type="submit" value="Search"/>
+    </form>
+
+    <div th:if="${posts.isEmpty()}">
+        <h2>No Posts Found</h2>
+    </div>
+    <div th:unless="${posts.isEmpty()}">
+        <div class="posts-container">
+            <h2>All Posts</h2>
+            <div class="posts-table">
+                <div class="posts-header">
+                    <div class="post-title">TITLE</div>
+                    <div class="posts-cell">CREATED BY</div>
+                    <div class="posts-cell">DATE CREATED</div>
+                </div>
+                <div class="posts-row" th:each="post : ${posts}">
+                    <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title"></a>
+                    <div class="posts-cell">
+                        <a th:href="@{/posts/posted-by/{username}(username=${post.getAuthor().username})}" th:text="${post.getAuthor().username}"></a>
+                    </div>
+                    <div class="posts-cell" th:text="${#temporals.format(post.timeStamp, 'yyyy-MM-dd HH:mm')}">Date</div>
+                </div>
+            </div>
+        </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-controls">
+            <ul class="pagination">
+                <li th:if="${posts.hasPrevious()}">
+                    <a th:if="${posts.hasPrevious()}" th:href="@{/posts(page=${posts.number - 1}, size=${posts.size})}" class="button">Previous</a>
+                </li>
+                <span>Page <span th:text="${posts.number + 1}"></span> of <span th:text="${posts.totalPages}"></span></span>
+                <li th:if="${posts.hasNext()}">
+                    <a th:if="${posts.hasNext()}" th:href="@{/posts(page=${posts.number + 1}, size=${posts.size})}" class="button">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div th:replace="~{fragments.html :: footer}"></div>
+</body>
+</html>

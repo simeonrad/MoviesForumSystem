@@ -21,6 +21,7 @@ public class TextPurifier {
 
             public void checkTextAndBan(String text, User user) throws NotAllowedContentException {
                 if (containsNonAllowedWords(text)){
+
                     user.setIsBlocked(true);
                     throw new NotAllowedContentException(THE_CONTENT_CONTAINS_FORBIDDEN_WORD);
                 }

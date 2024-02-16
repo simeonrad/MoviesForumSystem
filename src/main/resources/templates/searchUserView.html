@@ -2,26 +2,14 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>All Users</title>
+    <title>All Users | Movie Forum</title>
     <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
 </head>
 <body>
-<header>
-    <div class="header-container">
-        <img src="/logo.webp" class="logo" alt="Logo">
-        <h1 class="title">Movie Forum</h1>
-        <div class="navigation-links">
-            <div class="auth-links">
-                <a th:href="@{/profile}" class="button">Profile Page</a>
-                <a th:href="@{/posts/new}" class="button">Create New Post</a>
-                <a th:href="@{/posts}" class="button">All Posts</a>
-                <a th:href="@{/auth/logout}" class="button">Logout</a>
-            </div>
-        </div>
-    </div>
-</header>
-<div class="body-content">
-    <form action="#" th:action="@{/admin/search-user}" method="get" th:object="${filterOptions}">
+<div th:replace="~{fragments.html :: header}"></div>
+
+<div class="body-content user-page">
+    <form action="#" th:action="@{/search-user}" method="get" th:object="${filterOptions}">
         <label>Search and Filter Options</label>
         <br/><br/>
         <input type="text" placeholder="Username" th:field="*{username}"/>
@@ -52,13 +40,14 @@
                 <div class="cell">Username</div>
                 <div class="cell">Email</div>
                 <div class="cell">Name</div>
-                <div class="cell">Actions</div>
             </div>
             <div class="row" th:each="user : ${users}">
-                <div class="cell" th:text="${user.username}"></div>
+                <div class="cell">
+                    <a th:href="@{/posts/posted-by/{username}(username=${user.getUsername()})}" th:text="${user.getUsername()}"></a>
+                </div>
                 <div class="cell" th:text="${user.email}"></div>
                 <div class="cell" th:text="${user.firstName}"></div>
-                <div class="cell">
+                <div th:if="${isAdmin}" class="cell">
                     <form th:action="@{/admin/toggle-block/{id}(id=${user.id})}" class="user-action-form" method="post">
                         <button class="button" type="submit" th:text="${user.isBlocked ? 'Unblock' : 'Block'}"></button>
                     </form>
@@ -68,32 +57,20 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
-<footer>
-    <div class="footer-container">
-        <div class="footer-content">
-            <div class="footer-section about">
-                <h3>About Film Forum</h3>
-                <p>A place to share and discuss your favorite movies and series.</p>
-            </div>
-            <div class="footer-section links">
-                <h3>Quick Links</h3>
-                <ul>
-                    <div>
-                        <li><a th:href="@{/admin}">Home</a></li>
-                        <li><a th:href="@{/posts/new}">Create New Post</a></li>
-                        <li><a th:href="@{/posts}">All Posts</a></li>
-                        <li><a th:href="@{/profile}">Profile Page</a></li>
-                    </div>
-                </ul>
-            </div>
-            <div class="footer-section contact">
-                <h3>Contact Us</h3>
-                <p>Email: support@filmforum.com</p>
-            </div>
+        <!-- Pagination Controls -->
+        <div class="pagination-controls">
+            <ul class="pagination">
+                <li th:if="${users.hasPrevious()}">
+                    <a th:if="${users.hasPrevious()}" th:href="@{/search-user(page=${users.number - 1}, size=${users.size})}" class="button">Previous</a>
+                </li>
+                <span>Page <span th:text="${users.number + 1}"></span> of <span th:text="${users.totalPages}"></span></span>
+                <li th:if="${users.hasNext()}">
+                    <a th:if="${users.hasNext()}" th:href="@{/search-user(page=${users.number + 1}, size=${users.size})}" class="button">Next</a>
+                </li>
+            </ul>
         </div>
     </div>
-</footer>
+</div>
+<div th:replace="~{fragments.html :: footer}"></div>
 </body>
 </html>

@@ -35,8 +35,12 @@
             font-weight: bold;
         }
         .comment {
-            border-top: 1px solid #eee;
-            padding-top: 15px;
+            background-color: #f9f9f9; /* Light grey background */
+            border: 1px solid #ddd; /* Light grey border */
+            border-radius: 8px; /* Rounded corners */
+            padding: 15px; /* Padding inside the box */
+            margin-bottom: 20px; /* Space between each comment */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
         }
         .comment:first-child {
             border-top: none;
@@ -133,15 +137,25 @@
     <p>Posted by <span th:text="${post.author.username}">Author Username</span> on <span th:text="${#temporals.format(post.timeStamp, 'yyyy-MM-dd HH:mm')}">Timestamp</span></p>
     <p><strong>Views:</strong> <span th:text="${viewCount}">0</span></p>
     <div>
+        <div th:unless="${tags.isEmpty()}" class="tags">
+            <p>Tags:</p>
+            <a th:each="tag : ${post.tags}" th:href="@{/posts?title=&content=&userCreator=&tag={filter}&sortBy=&sortOrder=(filter=${tag.name})}" class="tag-button" th:text="${tag.name}">Tag Name</a>
+        </div>
         <form method="post" th:action="@{/posts/{postId}/like(postId=${post.id})}">
             <button type="submit" class="like-button">
                 <i class="far fa-heart"></i>  <span th:text="${likesCount}">0</span>
             </button>
         </form>
     </div>
-    <form method="post" class="delete-div" th:action="@{/posts/{postId}/delete(postId=${post.id})}">
+    <form th:if="${currentUser == post.author}" method="post" class="delete-div" th:action="@{/posts/{postId}/delete(postId=${post.id})}">
         <button type="submit" class="delete-button">
             <span>Delete post</span>
+        </button>
+    </form>
+
+    <form th:if="${currentUser == post.author}" method="get" class="delete-div" th:action="@{/posts/edit/{postId}(postId=${post.id})}">
+        <button type="submit" class="button">
+            <span>edit post</span>
         </button>
     </form>
 </div>
@@ -150,11 +164,22 @@
     <div class="comment" th:each="comment : ${post_comments}">
         <p><span th:text="${comment.author.username}">Comment Author</span> on <span th:text="${#temporals.format(comment.timeStamp, 'yyyy-MM-dd HH:mm')}">Comment Timestamp</span></p>
         <p th:text="${comment.content}">Comment content goes here...</p>
+        <form th:if="${currentUser == comment.author}" method="get" class="delete-div" th:action="@{/posts/comment/{commentId}(commentId=${comment.id})}">
+            <button type="submit" class="button">
+                <span>Edit comment</span>
+            </button>
+        </form>
+        
         <div class="reply" th:if="${comment.replies.size() > 0}">
             <h4>Replies</h4>
             <div th:each="reply : ${comment.replies}">
                 <p><span th:text="${reply.author.username}">Reply Author</span> on <span th:text="${#temporals.format(reply.timeStamp, 'yyyy-MM-dd HH:mm')}">Reply Timestamp</span></p>
                 <p th:text="${reply.content}">Reply content goes here...</p>
+                <form th:if="${currentUser == reply.author}" method="post" class="delete-div" th:action="@{/posts/{postId}/delete(postId=${post.id})}">
+                    <button type="submit" class="button">
+                        <span>Edit</span>
+                    </button>
+                </form>
             </div>
         </div>
 
@@ -171,28 +196,6 @@
     </form>
 
 </div>
-<div class="footer-container">
-    <div class="footer-content">
-        <div class="footer-section about">
-            <h3>About Film Forum</h3>
-            <p>A place to share and discuss your favorite movies and series.</p>
-        </div>
-        <div class="footer-section links">
-            <h3>Quick Links</h3>
-            <ul>
-                <div>
-                    <li><a th:href="@{/}">Home</a></li>
-                    <li><a th:href="@{/posts/new}">Create New Post</a></li>
-                    <li><a th:href="@{/posts}">All Posts</a></li>
-                    <li><a th:href="@{/profile}">Profile Page</a></li>
-                </div>
-            </ul>
-        </div>
-        <div class="footer-section contact">
-            <h3>Contact Us</h3>
-            <p>Email: support@filmforum.com</p>
-        </div>
-    </div>
-</div>
+<div th:replace="~{fragments.html :: footer}"></div>
 </body>
 </html>

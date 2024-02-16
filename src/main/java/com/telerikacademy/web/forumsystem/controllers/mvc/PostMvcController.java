@@ -1,5 +1,6 @@
 package com.telerikacademy.web.forumsystem.controllers.mvc;
 
+import com.telerikacademy.web.forumsystem.exceptions.AuthenticationFailureException;
 import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
 import com.telerikacademy.web.forumsystem.helpers.AuthenticationHelper;
@@ -18,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,8 +46,22 @@ public class PostMvcController {
         return session.getAttribute("currentUser") != null;
     }
 
+    @ModelAttribute("isAdmin")
+    public boolean populateIsAdmin(HttpSession session) {
+        boolean isAdmin = false;
+        if (populateIsAuthenticated(session)) {
+            User currentUser = (User) session.getAttribute("currentUser");
+            if (currentUser.isAdmin()) {
+                isAdmin = true;
+            }
+        }
+        return isAdmin;
+    }
     @GetMapping("/new")
-    public String showCreatePostForm(Model model) {
+    public String showCreatePostForm(Model model, HttpSession session) {
+        if (!populateIsAuthenticated(session)) {
+            return "redirect:/auth/login";
+        }
         model.addAttribute("postDto", new PostDto());
         return "createPost";
     }
@@ -56,9 +72,11 @@ public class PostMvcController {
             User currentUser = authenticationHelper.tryGetUser(session);
             Post post = postMapper.fromDto(postDto);
             postService.create(post, currentUser);
-            return "redirect:/posts";
+            return "redirect:/posts/" + post.getId();
         } catch (UnauthorizedOperationException uo) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, uo.getMessage());
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
         }
     }
 
@@ -85,8 +103,11 @@ public class PostMvcController {
                 return "redirect:/posts";
             }
 
+
         } catch (UnauthorizedOperationException | EntityNotFoundException e) {
             return "redirect:/posts";
+        } catch (AuthenticationFailureException e) {
+            return "redirect:/auth/login";
         }
     }
 
@@ -95,6 +116,7 @@ public class PostMvcController {
                              @ModelAttribute("postDto") PostDto postDto,
                              @RequestParam(required = false) String tags,
                              HttpSession session,
+                             Model model,
                              RedirectAttributes redirectAttributes) {
         try {
             User currentUser = authenticationHelper.tryGetUser(session);
@@ -113,10 +135,10 @@ public class PostMvcController {
             postService.update(existingPost, currentUser, processTags);
 
             redirectAttributes.addFlashAttribute("successMessage", "Post updated successfully!");
-            return "redirect:/posts";
-        } catch (Exception e) {
+            return "redirect:/posts/" + postId;
+        } catch (AuthenticationFailureException e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Error updating post: " + e.getMessage());
-            return "redirect:/posts/edit/" + postId;
+            return "redirect:/auth/login";
         }
     }
 
@@ -127,6 +149,7 @@ public class PostMvcController {
             for (String tagName : tagNames) {
                 try {
                     Tag tag = tagService.getByName(tagName.trim().toLowerCase());
+                    tags.add(tag);
                 } catch (EntityNotFoundException e) {
                     tagService.create(tagName.trim().toLowerCase());
                     Tag tag = tagService.getByName(tagName.trim().toLowerCase());

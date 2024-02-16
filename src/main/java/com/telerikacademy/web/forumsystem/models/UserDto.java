@@ -5,8 +5,6 @@ import jakarta.validation.constraints.Size;
 
 public class UserDto {
 
-    private int id;
-
     @NotNull(message = "Username can't be empty!")
     @Size(min = 4, max = 50, message = "Username should be between 4 and 50 symbols!")
     private String username;
@@ -39,10 +37,6 @@ public class UserDto {
         this.phoneNumber = phoneNumber;
     }
 
-    public int getId() {
-        return id;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -69,10 +63,6 @@ public class UserDto {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public void setUsername(String username) {

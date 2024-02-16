@@ -6,27 +6,23 @@
     <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
 </head>
 <body>
-<header>
-    <div class="header-container">
-        <img src="/logo.webp" class="logo" alt="Logo">
-        <h1 class="title">Movie Forum</h1>
-        <div class="navigation-links">
-
-            <!-- For Non-Authenticated Users -->
-            <a th:unless="${isAuthenticated}" th:href="@{/auth/register}" class="button">Register</a>
-            <a th:unless="${isAuthenticated}" th:href="@{/auth/login}" class="button">Login</a>
-
-            <!-- For Authenticated Users -->
-            <div th:if="${isAuthenticated}" class="auth-links">
-                <a th:href="@{/profile}" class="button">Profile Page</a>
-                <a th:href="@{/posts/new}" class="button">Create New Post</a>
-                <a th:href="@{/posts}" class="button">All Posts</a>
-                <a th:href="@{/auth/logout}" class="button">Logout</a>
-            </div>
+<div th:replace="~{fragments.html :: header}"></div>
+<main>
+    <!-- Statistics Section -->
+    <div class="statistics-container">
+        <div class="statistic">
+            <span class="statistic-value" th:text="${totalUsers}">0</span>
+            <span class="statistic-label">Users</span>
+        </div>
+        <div class="statistic">
+            <span class="statistic-value" th:text="${totalPosts}">0</span>
+            <span class="statistic-label">Posts</span>
+        </div>
+        <div class="statistic">
+            <span class="statistic-value" th:text="${totalComments}">0</span>
+            <span class="statistic-label">Comments</span>
         </div>
     </div>
-</header>
-<main>
     <div class="content-container">
         <!-- Recent Posts -->
         <div class="column recent-posts">
@@ -55,34 +51,6 @@
         </div>
     </div>
 </main>
-<footer>
-    <div class="footer-container">
-        <div class="footer-content">
-            <div class="footer-section about">
-                <h3>About Film Forum</h3>
-                <p>A place to share and discuss your favorite movies and series.</p>
-            </div>
-            <div class="footer-section links">
-                <h3>Quick Links</h3>
-                <ul>
-                    <!-- For Non-Authenticated Users -->
-                    <li th:unless="${isAuthenticated}"><a th:href="@{/}">Home</a></li>
-
-                    <!-- For Authenticated Users -->
-                    <div th:if="${isAuthenticated}">
-                        <li><a th:href="@{/}">Home</a></li>
-                        <li><a th:href="@{/posts/new}">Create New Post</a></li>
-                        <li><a th:href="@{/posts}">All Posts</a></li>
-                        <li><a th:href="@{/profile}">Profile Page</a></li>
-                    </div>
-                </ul>
-            </div>
-            <div class="footer-section contact">
-                <h3>Contact Us</h3>
-                <p>Email: support@filmforum.com</p>
-            </div>
-        </div>
-    </div>
-</footer>
+<div th:replace="~{fragments.html :: footer}"></div>
 </body>
 </html>

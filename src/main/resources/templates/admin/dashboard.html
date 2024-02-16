@@ -6,30 +6,14 @@
     <link href="../static/styles.css" th:href="@{/styles.css}" rel="stylesheet"/>
 </head>
 <body>
-<header>
-    <header>
-        <div class="header-container">
-            <img src="/logo.webp" class="logo" alt="Logo">
-            <h1 class="title">Admin Dashboard</h1>
-            <div class="navigation-links">
-                <div  class="auth-links">
-                    <a th:href="@{/profile}" class="button">Profile Page</a>
-                    <a th:href="@{/posts/new}" class="button">Create New Post</a>
-                    <a th:href="@{/posts}" class="button">All Posts</a>
-                    <a th:href="@{/admin/search-user}" class="button">Search User</a>
-                    <a th:href="@{/auth/logout}" class="button">Logout</a>
-                </div>
-            </div>
-        </div>
-    </header>
-</header>
+<div th:replace="~{fragments.html :: header}"></div>
 <main>
     <div class="content-container">
-        <!-- Recent Posts -->
-        <div class="column recent-posts">
+        <!-- All Posts -->
+        <div class="column recent-posts" id="recent-posts-section">
             <h2>All Posts</h2>
             <ul class="posts-list">
-                <li th:each="post : ${allPosts}" class="post-item">
+                <li th:each="post, iterStat : ${allPosts}" class="post-item" th:classappend="${iterStat.index} >= 5 ? 'hidden' : ''">
                     <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="post-title"></a>
                     <div class="post-details">
                         <form th:action="@{/admin/delete-post/{id}(id=${post.id})}" method="post">
@@ -38,52 +22,70 @@
                     </div>
                 </li>
             </ul>
+            <div class="pagination-info" id="posts-pagination-info"></div>
+            <button onclick="changePage(-1)" class="button pagination-btn">Previous</button>
+            <button onclick="changePage(1)" class="button pagination-btn">Next</button>
         </div>
-        <!-- Admin Users List -->
-        <div class="column recent-posts">
+        <!-- Users List -->
+        <div class="column recent-posts" id="users-section">
             <h2>All Users</h2>
-            <ul class="posts-list"> <!-- Use the same list class as for posts -->
-                <li th:each="user : ${allUsers}" class="post-item">
-                    <span class="post-title" th:text="${user.username}"></span>
+            <ul class="posts-list">
+                <li th:each="user, iterStat : ${allUsers}" class="post-item" th:classappend="${iterStat.index} >= 5 ? 'hidden' : ''">
+                    <a th:href="@{/posts/posted-by/{username}(username=${user.username})}" class="post-title" th:text="${user.username}"></a>
                     <div class="post-details">
-                        <!-- Block Status Button -->
                         <form th:action="@{${user.isBlocked ? '/admin/toggle-block/' + user.id : '/admin/toggle-block/' + user.id}}" method="post" class="user-action-form">
                             <button class="button" type="submit" th:text="${user.isBlocked ? 'Unblock User' : 'Block User'}"></button>
                         </form>
-                        <!-- Admin Status Button -->
                         <form th:action="@{/admin/toggle-admin/{id}(id=${user.id})}" method="post" class="user-action-form">
                             <button class="button" type="submit" th:text="${user.isAdmin ? 'Remove Admin' : 'Make Admin'}"></button>
                         </form>
                     </div>
                 </li>
             </ul>
+            <div class="pagination-info" id="users-pagination-info"></div>
+            <button onclick="changePage(-1, true)" class="button pagination-btn">Previous</button>
+            <button onclick="changePage(1, true)" class="button pagination-btn">Next</button>
         </div>
     </div>
 </main>
-<footer>
-    <div class="footer-container">
-        <div class="footer-content">
-            <div class="footer-section about">
-                <h3>About Film Forum</h3>
-                <p>A place to share and discuss your favorite movies and series.</p>
-            </div>
-            <div class="footer-section links">
-                <h3>Quick Links</h3>
-                <ul>
-                    <div>
-                        <li><a th:href="@{/admin}">Home</a></li>
-                        <li><a th:href="@{/posts/new}">Create New Post</a></li>
-                        <li><a th:href="@{/posts}">All Posts</a></li>
-                        <li><a th:href="@{/profile}">Profile Page</a></li>
-                    </div>
-                </ul>
-            </div>
-            <div class="footer-section contact">
-                <h3>Contact Us</h3>
-                <p>Email: support@filmforum.com</p>
-            </div>
-        </div>
-    </div>
-</footer>
+<div th:replace="~{fragments.html :: footer}"></div>
+<script>
+    let currentPagePosts = 0;
+    let currentPageUsers = 0;
+    const itemsPerPage = 5;
+
+    function updatePaginationInfo(sectionId, currentPage, maxPage) {
+        const pageInfoElement = document.getElementById(sectionId);
+        pageInfoElement.innerText = `Page ${currentPage + 1} of ${maxPage}`;
+    }
+
+
+    function changePage(direction, isUser = false) {
+        const section = isUser ? document.getElementById('users-section') : document.getElementById('recent-posts-section');
+        const items = section.getElementsByClassName('post-item');
+        const maxPage = Math.ceil(items.length / itemsPerPage);
+        const currentPage = isUser ? currentPageUsers : currentPagePosts;
+        let newPage = currentPage + direction;
+
+        if (newPage < 0) newPage = 0;
+        if (newPage >= maxPage) newPage = maxPage - 1;
+
+        for (let i = 0; i < items.length; i++) {
+            items[i].classList.add('hidden');
+        }
+
+        const start = newPage * itemsPerPage;
+        const end = start + itemsPerPage;
+        for (let i = start; i < items.length && i < end; i++) {
+            items[i].classList.remove('hidden');
+        }
+
+        if (isUser) {
+            currentPageUsers = newPage;
+        } else {
+            currentPagePosts = newPage;
+        }
+    }
+</script>
 </body>
 </html>

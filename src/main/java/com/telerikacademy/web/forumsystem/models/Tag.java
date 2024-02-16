@@ -3,6 +3,7 @@ package com.telerikacademy.web.forumsystem.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -21,6 +22,10 @@ public class Tag {
             inverseJoinColumns = @JoinColumn(name = "post_id")
     )
     private Set<Tag> tagSet;
+
+    @ManyToMany(mappedBy = "tags")
+    private Set<Post> posts = new HashSet<>();
+    // getters and setters
 
     @Column(name = "tag_name")
     private String name;

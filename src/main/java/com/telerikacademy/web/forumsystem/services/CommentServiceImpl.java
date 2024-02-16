@@ -5,9 +5,13 @@ import com.telerikacademy.web.forumsystem.models.Comment;
 import com.telerikacademy.web.forumsystem.models.User;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.telerikacademy.web.forumsystem.repositories.CommentRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -33,6 +37,7 @@ public class CommentServiceImpl implements CommentService{
 
     @Override
     public void update(Comment comment, User user) {
+        comment.setTimeStamp(LocalDateTime.now());
         if (!comment.getAuthor().equals(user))
             throw new UnauthorizedOperationException("Only authors can edit their comments");
         commentRepository.update(comment);
@@ -51,11 +56,22 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
+    public List<Comment> getAll() {
+        return commentRepository.getAll();
+    }
+
+    @Override
     public List<Comment> getByPostId(int id) {
         return commentRepository.getByPostId(id);
     }
     @Override
     public List<Comment> getByCommentId(int id) {
         return commentRepository.getByCommentId(id);
+    }
+
+    @Override
+    public Page<Comment> getUserComments(User user, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return commentRepository.getUserComments(user, pageable);
     }
 }
