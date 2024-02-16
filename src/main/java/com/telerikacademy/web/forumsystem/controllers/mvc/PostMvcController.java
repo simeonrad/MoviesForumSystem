@@ -149,6 +149,7 @@ public class PostMvcController {
             for (String tagName : tagNames) {
                 try {
                     Tag tag = tagService.getByName(tagName.trim().toLowerCase());
+                    tags.add(tag);
                 } catch (EntityNotFoundException e) {
                     tagService.create(tagName.trim().toLowerCase());
                     Tag tag = tagService.getByName(tagName.trim().toLowerCase());
