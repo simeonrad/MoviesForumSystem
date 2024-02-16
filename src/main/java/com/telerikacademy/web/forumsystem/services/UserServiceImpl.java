@@ -122,9 +122,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> get(FilterOptions filterOptions, User user) {
-        if (!user.isAdmin()) {
-            throw new UnauthorizedOperationException("Only admins have access to the requested functionality!");
-        }
         return userRepository.get(filterOptions);
     }
 

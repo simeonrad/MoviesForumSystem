@@ -10,10 +10,16 @@ import com.telerikacademy.web.forumsystem.repositories.UserRepository;
 import com.telerikacademy.web.forumsystem.services.UserService;
 import com.telerikacademy.web.forumsystem.helpers.AuthenticationHelper;
 import com.telerikacademy.web.forumsystem.helpers.UserMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -36,6 +42,21 @@ public class UserController {
     }
 
     @PostMapping()
+    @Operation(
+            summary = "Creating a user",
+            description = "This method is used for creating a user.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "In the request body you need to include username(min = 4, max = 50), password(min = 8, max = 50), " +
+                            "firstName(min = 4, max = 32), lastName(min = 2, max = 32) and email(min = 10, max = 100)"),
+            responses = {@ApiResponse(responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = UserShow.class), mediaType = MediaType.APPLICATION_JSON_VALUE),
+                    description = "Successful user creation"),
+                    @ApiResponse(responseCode = "409",
+                            description = "User with same username exists."),
+                    @ApiResponse(responseCode = "422",
+                            description = "Invalid email.")
+            }
+    )
     public UserShow createUser(@Valid @RequestBody UserDto userDto) {
         try {
             User user = userMapper.fromDto(userDto);
@@ -44,11 +65,29 @@ public class UserController {
         } catch (DuplicateExistsException de) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, de.getMessage());
         } catch (InvalidEmailException ie) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, ie.getMessage());
+            throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, ie.getMessage());
         }
     }
 
     @PutMapping()
+    @Operation(
+            summary = "Updating a user",
+            description = "This method is used for updating a user.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(schema = @Schema(implementation = UserDto.class)),
+                    description = "In the request body you need to include username(min = 4, max = 50), password(min = 8, max = 50), " +
+                            "firstName(min = 4, max = 32), lastName(min = 2, max = 32) and email(min = 10, max = 100)"),
+            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication")},
+            responses = {@ApiResponse(responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = UserShow.class), mediaType = MediaType.APPLICATION_JSON_VALUE),
+                    description = "Successful user creation"),
+                    @ApiResponse(responseCode = "401",
+                            description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404",
+                            description = "There is no such user."),
+                    @ApiResponse(responseCode = "409",
+                            description = "If the email is already in use.")}
+    )
     public UserShow updateUser(@RequestHeader HttpHeaders headers, @Valid @RequestBody User user) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
@@ -65,13 +104,25 @@ public class UserController {
     }
 
     @DeleteMapping()
-    public UserShow deleteUser(@RequestHeader HttpHeaders headers, @RequestBody UserDto userDto) {
+    @Operation(
+            summary = "Deleting a user",
+            description = "This method is used for deleting a user.",
+            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
+                    @Parameter(name = "username", description = "The username of the user you want to delete.")},
+            responses = {@ApiResponse(responseCode = "200",
+                    description = "Successful deletion of user"),
+                    @ApiResponse(responseCode = "401",
+                            description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404",
+                            description = "There is no such user.")}
+    )
+    public String deleteUser(@RequestHeader HttpHeaders headers, @RequestParam String username) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
-            User user = userMapper.fromDto(userDto);
+            User user = userRepository.getByUsername(username);
             userService.delete(user, currentUser);
             user = userRepository.getByUsername(user.getUsername());
-            return userMapper.toDto(user);
+            return String.format("User with username %s successfully deleted.", user.getUsername());
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         } catch (UnauthorizedOperationException uo) {
@@ -80,6 +131,18 @@ public class UserController {
     }
 
     @PutMapping("/block")
+    @Operation(
+            summary = "Blocking a user",
+            description = "This method is used for block a user.",
+            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
+                    @Parameter(name = "username", description = "The username of the user you want to delete.")},
+            responses = {@ApiResponse(responseCode = "200",
+                    description = "Successful blockage of user"),
+                    @ApiResponse(responseCode = "401",
+                            description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404",
+                            description = "There is no such user.")}
+    )
     public UserShowAdmin blockUser(@RequestParam String username, @RequestHeader HttpHeaders headers) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
@@ -94,6 +157,18 @@ public class UserController {
     }
 
     @PutMapping("/unblock")
+    @Operation(
+            summary = "Unblocking a user",
+            description = "This method is used for unblock a user.",
+            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
+                    @Parameter(name = "username", description = "The username of the user you want to delete.")},
+            responses = {@ApiResponse(responseCode = "200",
+                    description = "Successful blockage of user"),
+                    @ApiResponse(responseCode = "401",
+                            description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404",
+                            description = "There is no such user.")}
+    )
     public UserShowAdmin unblockUser(@RequestParam String username, @RequestHeader HttpHeaders headers) {
         try {
             User currentUser = authenticationHelper.tryGetUser(headers);
@@ -108,6 +183,18 @@ public class UserController {
     }
 
     @PutMapping("/makeAdmin")
+    @Operation(
+            summary = "Making user an admin",
+            description = "This method is used for making user an admin.",
+            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
+                    @Parameter(name = "username", description = "The username of the user you want to delete.")},
+            responses = {@ApiResponse(responseCode = "200",
+                    description = "Successful blockage of user"),
+                    @ApiResponse(responseCode = "401",
+                            description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404",
+                            description = "There is no such user.")}
+    )
     public UserShowAdmin makeUserAdmin(@RequestParam String username,
                                        @RequestParam(required = false) String phoneNumber,
                                        @RequestHeader HttpHeaders headers) {
@@ -124,6 +211,18 @@ public class UserController {
     }
 
     @PutMapping("/unmakeAdmin")
+    @Operation(
+            summary = "Unmaking user an admin",
+            description = "This method is used for unmaking user an admin.",
+            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
+                    @Parameter(name = "username", description = "The username of the user you want to delete.")},
+            responses = {@ApiResponse(responseCode = "200",
+                    description = "Successful blockage of user"),
+                    @ApiResponse(responseCode = "401",
+                            description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404",
+                            description = "There is no such user.")}
+    )
     public UserShowAdmin unmakeUserAdmin(@RequestParam String username,
                                          @RequestHeader HttpHeaders headers) {
         try {
@@ -137,11 +236,6 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
-
-//    @PostMapping("/uploadPhoto")
-//    public ResponseEntity<String> uploadPhoto(@RequestParam("file") MultipartFile file, @RequestParam String username) {
-//
-//    }
 
     @GetMapping
     public List<User> get(

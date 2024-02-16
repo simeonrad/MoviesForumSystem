@@ -103,7 +103,6 @@ public class CommentRepositoryImpl implements CommentRepository {
                 .setParameter("currentUser", currentUser)
                 .getSingleResult();
 
-        // Return a page of comments using PageImpl
         return new PageImpl<>(comments, pageable, totalCommentsCount);
     }
 

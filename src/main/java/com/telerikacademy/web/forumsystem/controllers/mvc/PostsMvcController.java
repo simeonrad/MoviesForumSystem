@@ -88,31 +88,11 @@ public class PostsMvcController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping
-    public String showAllPosts(Model model,
-                               @ModelAttribute("postFilterOptions") PostFilterDto postFilterDto,
-                               @RequestParam(defaultValue = "0") int page,
-                               @RequestParam(defaultValue = "5") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Post> posts = postService.get(
-                new PostsFilterOptions(
-                        postFilterDto.getTitle(),
-                        postFilterDto.getContent(),
-                        postFilterDto.getUserCreator(),
-                        postFilterDto.getTag(),
-                        postFilterDto.getSortBy(),
-                        postFilterDto.getSortOrder()),
-                pageable);
-        model.addAttribute("postFilterOptions", postFilterDto);
-        model.addAttribute("posts", posts);
-        return "allPostsView";
-    }
-
     @GetMapping("/{id}")
     public String singlePostView(Model model, @PathVariable int id, HttpSession session) {
         User user = null;
         try {
-           Post post = postService.getById(id);
+            Post post = postService.getById(id);
             model.addAttribute("tags", tagService.getTagsForPost(post));
             user = authenticationHelper.tryGetUser(session);
             model.addAttribute("currentUser", user);
@@ -141,19 +121,59 @@ public class PostsMvcController {
 
     }
 
+    @GetMapping
+    public String showAllPosts(Model model,
+                               @ModelAttribute("postFilterOptions") PostFilterDto postFilterDto,
+                               @RequestParam(defaultValue = "0") int page,
+                               @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> posts = postService.get(
+                new PostsFilterOptions(
+                        postFilterDto.getTitle(),
+                        postFilterDto.getContent(),
+                        postFilterDto.getUserCreator(),
+                        postFilterDto.getTag(),
+                        postFilterDto.getSortBy(),
+                        postFilterDto.getSortOrder()),
+                pageable);
+        model.addAttribute("postFilterOptions", postFilterDto);
+        model.addAttribute("posts", posts);
+        return "allPostsView";
+    }
+
     @GetMapping("/my-posts")
-    public String showMyPostsAndCommentedPosts(Model model, HttpSession session, @RequestParam(defaultValue = "0", name = "postPage") int postPage,
+    public String showMyPostsAndCommentedPosts(Model model, HttpSession session,
+                                               @RequestParam(defaultValue = "0", name = "postPage") int postPage,
                                                @RequestParam(defaultValue = "5", name = "postSize") int postSize,
                                                @RequestParam(defaultValue = "0", name = "commentPage") int commentPage,
-                                               @RequestParam(defaultValue = "5", name = "commentSize") int commentSize) {
+                                               @RequestParam(defaultValue = "5", name = "commentSize") int commentSize,
+                                               @ModelAttribute("postFilterOptions") PostFilterDto postFilterDto) {
+
         User currentUser = (User) session.getAttribute("currentUser");
         if (currentUser == null) {
             return "redirect:/auth/login";
         }
-        Page<Post> userPosts = postService.getUsersPosts(currentUser, postPage, postSize);
+        postFilterDto.setUserCreator(currentUser.getUsername());
+
+        Pageable postPageable = PageRequest.of(postPage, postSize);
+
+        Page<Post> userPosts = postService.get(
+                new PostsFilterOptions(
+                        postFilterDto.getTitle(),
+                        postFilterDto.getContent(),
+                        postFilterDto.getUserCreator(),
+                        postFilterDto.getTag(),
+                        postFilterDto.getSortBy(),
+                        postFilterDto.getSortOrder()),
+                postPageable);
+
+
         Page<Comment> userComments = commentService.getUserComments(currentUser, commentPage, commentSize);
+
+        model.addAttribute("postFilterOptions", postFilterDto);
         model.addAttribute("userPosts", userPosts);
         model.addAttribute("userComments", userComments);
+
         return "myPostsView";
     }
 
@@ -162,11 +182,13 @@ public class PostsMvcController {
                                            @RequestParam(defaultValue = "0", name = "postPage") int postPage,
                                            @RequestParam(defaultValue = "5", name = "postSize") int postSize,
                                            @RequestParam(defaultValue = "0", name = "commentPage") int commentPage,
-                                           @RequestParam(defaultValue = "5", name = "commentSize") int commentSize) {
+                                           @RequestParam(defaultValue = "5", name = "commentSize") int commentSize,
+                                           @ModelAttribute("postFilterOptions") PostFilterDto postFilterDto) {
         User user = userRepository.getByUsername(username);
         if (user.isDeleted()) {
             model.addAttribute("isDeleted", true);
         }
+
         Page<Post> userPosts = postService.getUsersPosts(user, postPage, postSize);
         Page<Comment> userComments = commentService.getUserComments(user, commentPage, commentSize);
         String dashboardTitle = user.getUsername() + "'s Dashboard";
@@ -175,16 +197,14 @@ public class PostsMvcController {
         model.addAttribute("userPosts", userPosts);
         model.addAttribute("userComments", userComments);
         model.addAttribute("profileUser", user);
-
         return "userDashboardView";
     }
-
 
 
     @PostMapping("/{id}/delete")
     public String deletePost(Model model, @PathVariable int id, HttpSession session) {
         try {
-           Post post = postService.getById(id);
+            Post post = postService.getById(id);
             User user = authenticationHelper.tryGetUser(session);
             postService.delete(post, user);
             return "redirect:/posts/my-posts";
@@ -194,13 +214,13 @@ public class PostsMvcController {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
-        }
-        catch (UnauthorizedOperationException e){
+        } catch (UnauthorizedOperationException e) {
             model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
         }
     }
+
     @PostMapping("/{id}")
     public String commentOnPost(@Valid @ModelAttribute("comment") CommentDto commentDto,
                                 Model model, HttpSession session,
@@ -220,22 +240,21 @@ public class PostsMvcController {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
-        }
-        catch (NotAllowedContentException e){
+        } catch (NotAllowedContentException e) {
             model.addAttribute("statusCode", HttpStatus.FORBIDDEN.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "bannedView";
-        }
-        catch (UnauthorizedOperationException e){
+        } catch (UnauthorizedOperationException e) {
             model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
         }
     }
- @PostMapping("/{id}/edit-comment")
+
+    @PostMapping("/{id}/edit-comment")
     public String editCommentOnPost(@Valid @ModelAttribute("comment") CommentDto commentDto,
-                                Model model, HttpSession session,
-                                @PathVariable int id) {
+                                    Model model, HttpSession session,
+                                    @PathVariable int id) {
         User user;
         try {
             user = authenticationHelper.tryGetUser(session);
@@ -251,13 +270,11 @@ public class PostsMvcController {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
-        }
-        catch (NotAllowedContentException e){
+        } catch (NotAllowedContentException e) {
             model.addAttribute("statusCode", HttpStatus.FORBIDDEN.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "bannedView";
-        }
-        catch (UnauthorizedOperationException e){
+        } catch (UnauthorizedOperationException e) {
             model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
@@ -304,8 +321,7 @@ public class PostsMvcController {
             model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
-        }
-        catch (UnauthorizedOperationException e){
+        } catch (UnauthorizedOperationException e) {
             model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
             model.addAttribute("error", e.getMessage());
             return "ErrorView";
