@@ -9,8 +9,10 @@ import com.telerikacademy.web.forumsystem.services.CommentService;
 import com.telerikacademy.web.forumsystem.services.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,16 +52,18 @@ public class PostController {
     @PostMapping()
     @Operation(
             summary = "Creating a post",
-            description = "This method is used for creating a post",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(schema = @Schema(implementation = PostView.class)),
-                    description = "In the request body you need to include title(min = 16, max = 64) and content(min = 32, max = 8192)"),
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication")},
-            responses = {@ApiResponse(responseCode = "200",
-                    content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE),
-                    description = "Successful creation of a post"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password.")}
+            description = "This method is used for creating a post. Ensure the title and content adhere to the specified length requirements.",
+            requestBody = @RequestBody(
+                    content = @Content(
+                            schema = @Schema(implementation = PostView.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    ),
+                    description = "Include title (min = 16, max = 64 characters) and content (min = 32, max = 8192 characters) in the request body."
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful creation of a post", content = @Content(schema = @Schema(implementation = PostDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized access - wrong username or password.")
+            }
     )
     public PostDto createPost(@RequestBody PostDto postDto, @RequestHeader HttpHeaders headers) {
         try {
@@ -75,19 +79,22 @@ public class PostController {
     @PutMapping("/post/{postId}")
     @Operation(
             summary = "Update a post",
-            description = "This method is used for updating a post",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(schema = @Schema(implementation = PostView.class)),
-                    description = "In the request body you need to include title(min = 16, max = 64) and content(min = 32, max = 8192)"),
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "postId", description = "Requires path variable that is te id of the post you are trying to edit.")},
-            responses = {@ApiResponse(responseCode = "200",
-                    content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE),
-                    description = "Successful updating of a post"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password. Or the user from headers is not the author of the post"),
-                    @ApiResponse(responseCode = "404",
-                            description = "No such post found.")}
+            description = "This method is used for updating a post. If the user from headers is not the author of the post, access will be denied.",
+            requestBody = @RequestBody(
+                    content = @Content(
+                            schema = @Schema(implementation = PostView.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    ),
+                    description = "Include title (min = 16, max = 64) and content (min = 32, max = 8192) in the request body."
+            ),
+            parameters = {
+                    @Parameter(name = "postId", description = "Path variable that is the ID of the post you are trying to edit.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful updating of a post", content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized access - wrong username or password, or the user is not the author of the post."),
+                    @ApiResponse(responseCode = "404", description = "No such post found.")
+            }
     )
     public PostDto updatePost(@PathVariable int postId, @RequestBody PostDto postDto, @RequestHeader HttpHeaders headers) {
         try {
@@ -107,16 +114,15 @@ public class PostController {
     @DeleteMapping("/{postId}")
     @Operation(
             summary = "Deleting a post",
-            description = "This method is used for deleting a post",
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "postId", description = "Requires path variable that is te id of the post you are trying to delete.")},
-            responses = {@ApiResponse(responseCode = "200",
-                    content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE),
-                    description = "Successful updating of a post"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password. Or the user from headers is neither the author of the post or an admin"),
-                    @ApiResponse(responseCode = "404",
-                            description = "No such post found.")}
+            description = "This method is used for deleting a post. The operation requires that the requester is either the author of the post or an admin.",
+            parameters = {
+                    @Parameter(name = "postId", description = "The ID of the post you are trying to delete.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful deletion of a post"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized access - wrong username or password, or the requester is neither the author of the post nor an admin."),
+                    @ApiResponse(responseCode = "404", description = "Post not found - no such post found.")
+            }
     )
     public void deletePost(@PathVariable int postId, @RequestHeader HttpHeaders headers) {
         try {
@@ -133,21 +139,23 @@ public class PostController {
     @PostMapping("/post/{postId}")
     @Operation(
             summary = "Commenting on a post",
-            description = "This method is used for creating and adding a comment to a certain post.",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(schema = @Schema(implementation = CommentDto.class)),
-                    description = "In the request body you need to include content(min = 1, max = 500"),
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "commentId", description = "this is the Id of the post you are trying to comment to")},
-            responses = {@ApiResponse(responseCode = "200",
-                    content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE),
-                    description = "Successful comment creation and adding it to a post"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password."),
-                    @ApiResponse(responseCode = "404",
-                            description = "There is no such post."),
-                    @ApiResponse(responseCode = "403",
-                            description = "The content in the comment contains forbidden content")}
+            description = "This method is used for creating and adding a comment to a certain post. Ensure the comment does not contain forbidden content.",
+            requestBody = @RequestBody(
+                    content = @Content(
+                            schema = @Schema(implementation = CommentDto.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE
+                    ),
+                    description = "Include content in the request body (min = 1, max = 500 characters)."
+            ),
+            parameters = {
+                    @Parameter(name = "postId", description = "The ID of the post you are trying to comment on.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful comment creation and adding it to a post", content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized access - wrong username or password."),
+                    @ApiResponse(responseCode = "404", description = "Post not found - there is no such post."),
+                    @ApiResponse(responseCode = "403", description = "Forbidden - the content in the comment contains forbidden content.")
+            }
     )
     public CommentDto commentOnPost(@RequestHeader HttpHeaders headers, @Valid @RequestBody CommentDto commentDto, @PathVariable int postId) {
         try {
@@ -190,16 +198,15 @@ public class PostController {
     @PutMapping("/{postId}/like")
     @Operation(
             summary = "Liking a post",
-            description = "This method is used for liking a certain post if" +
-                    " you use the method after you have already liked it you will unlike the certain post",
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "postId", description = "this is the Id of the post you are trying to like.")},
-            responses = {@ApiResponse(responseCode = "200",
-                    description = "Successfully liked post"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password."),
-                    @ApiResponse(responseCode = "404",
-                            description = "There is no such post.")}
+            description = "This method is used for liking a certain post. If you use the method after you have already liked it, you will unlike the certain post.",
+            parameters = {
+                    @Parameter(name = "postId", description = "The ID of the post you are trying to like.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully liked or unliked post"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized access - wrong username or password."),
+                    @ApiResponse(responseCode = "404", description = "Post not found - there is no such post.")
+            }
     )
     public void likePost(@PathVariable int postId, @RequestHeader HttpHeaders headers) {
         try {

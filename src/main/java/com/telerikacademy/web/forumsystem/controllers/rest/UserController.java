@@ -12,8 +12,10 @@ import com.telerikacademy.web.forumsystem.helpers.AuthenticationHelper;
 import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,20 +75,29 @@ public class UserController {
     @Operation(
             summary = "Updating a user",
             description = "This method is used for updating a user.",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(schema = @Schema(implementation = UserDto.class)),
-                    description = "In the request body you need to include username(min = 4, max = 50), password(min = 8, max = 50), " +
-                            "firstName(min = 4, max = 32), lastName(min = 2, max = 32) and email(min = 10, max = 100)"),
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication")},
-            responses = {@ApiResponse(responseCode = "200",
-                    content = @Content(schema = @Schema(implementation = UserShow.class), mediaType = MediaType.APPLICATION_JSON_VALUE),
-                    description = "Successful user creation"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password."),
-                    @ApiResponse(responseCode = "404",
-                            description = "There is no such user."),
-                    @ApiResponse(responseCode = "409",
-                            description = "If the email is already in use.")}
+            requestBody = @RequestBody(
+                    content = @Content(
+                            schema = @Schema(implementation = UserDto.class)
+                    ),
+                    description = "In the request body, include username (min = 4, max = 50), password (min = 8, max = 50), " +
+                            "firstName (min = 4, max = 32), lastName (min = 2, max = 32), and email (min = 10, max = 100)."
+            ),
+            parameters = {
+                    @Parameter(name = "Authorization", description = "Basic authentication header", in = ParameterIn.HEADER, required = true, schema = @Schema(type = "string"))
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            content = @Content(
+                                    schema = @Schema(implementation = UserShow.class),
+                                    mediaType = MediaType.APPLICATION_JSON_VALUE
+                            ),
+                            description = "Successful user update"
+                    ),
+                    @ApiResponse(responseCode = "401", description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404", description = "There is no such user."),
+                    @ApiResponse(responseCode = "409", description = "If the email is already in use.")
+            }
     )
     public UserShow updateUser(@RequestHeader HttpHeaders headers, @Valid @RequestBody User user) {
         try {
@@ -107,14 +118,14 @@ public class UserController {
     @Operation(
             summary = "Deleting a user",
             description = "This method is used for deleting a user.",
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "username", description = "The username of the user you want to delete.")},
-            responses = {@ApiResponse(responseCode = "200",
-                    description = "Successful deletion of user"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password."),
-                    @ApiResponse(responseCode = "404",
-                            description = "There is no such user.")}
+            parameters = {
+                    @Parameter(name = "username", description = "The username of the user you want to delete.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful deletion of user"),
+                    @ApiResponse(responseCode = "401", description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404", description = "There is no such user.")
+            }
     )
     public String deleteUser(@RequestHeader HttpHeaders headers, @RequestParam String username) {
         try {
@@ -133,15 +144,15 @@ public class UserController {
     @PutMapping("/block")
     @Operation(
             summary = "Blocking a user",
-            description = "This method is used for block a user.",
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "username", description = "The username of the user you want to block.")},
-            responses = {@ApiResponse(responseCode = "200",
-                    description = "Successful blockage of user"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password."),
-                    @ApiResponse(responseCode = "404",
-                            description = "There is no such user.")}
+            description = "This method is used to block a user.",
+            parameters = {
+                    @Parameter(name = "username", description = "The username of the user you want to block.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful blockage of user"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized access - wrong username or password."),
+                    @ApiResponse(responseCode = "404", description = "User not found - there is no such user.")
+            }
     )
     public UserShowAdmin blockUser(@RequestParam String username, @RequestHeader HttpHeaders headers) {
         try {
@@ -159,15 +170,15 @@ public class UserController {
     @PutMapping("/unblock")
     @Operation(
             summary = "Unblocking a user",
-            description = "This method is used for unblock a user.",
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "username", description = "The username of the user you want to unblock.")},
-            responses = {@ApiResponse(responseCode = "200",
-                    description = "Successful blockage of user"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password."),
-                    @ApiResponse(responseCode = "404",
-                            description = "There is no such user.")}
+            description = "This method is used to unblock a user.",
+            parameters = {
+                    @Parameter(name = "username", description = "The username of the user you want to unblock.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful unblocking of user"),
+                    @ApiResponse(responseCode = "401", description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404", description = "There is no such user.")
+            }
     )
     public UserShowAdmin unblockUser(@RequestParam String username, @RequestHeader HttpHeaders headers) {
         try {
@@ -185,15 +196,15 @@ public class UserController {
     @PutMapping("/makeAdmin")
     @Operation(
             summary = "Making user an admin",
-            description = "This method is used for making user an admin.",
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "username", description = "The username of the user you want to make an admin.")},
-            responses = {@ApiResponse(responseCode = "200",
-                    description = "Successful blockage of user"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password."),
-                    @ApiResponse(responseCode = "404",
-                            description = "There is no such user.")}
+            description = "This method is used to make a user an admin.",
+            parameters = {
+                    @Parameter(name = "username", description = "The username of the user you want to make an admin.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully made user an admin"),
+                    @ApiResponse(responseCode = "401", description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404", description = "There is no such user.")
+            }
     )
     public UserShowAdmin makeUserAdmin(@RequestParam String username,
                                        @RequestParam(required = false) String phoneNumber,
@@ -214,14 +225,14 @@ public class UserController {
     @Operation(
             summary = "Unmaking user an admin",
             description = "This method is used for unmaking user an admin.",
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "username", description = "The username of the user you want to unmake an admin.")},
-            responses = {@ApiResponse(responseCode = "200",
-                    description = "Successful blockage of user"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password."),
-                    @ApiResponse(responseCode = "404",
-                            description = "There is no such user.")}
+            parameters = {
+                    @Parameter(name = "username", description = "The username of the user you want to unmake an admin.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful removal of admin privileges"),
+                    @ApiResponse(responseCode = "401", description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404", description = "There is no such user.")
+            }
     )
     public UserShowAdmin unmakeUserAdmin(@RequestParam String username,
                                          @RequestHeader HttpHeaders headers) {
@@ -240,22 +251,20 @@ public class UserController {
     @GetMapping
     @Operation(
             summary = "Getting a list with all the users",
-            description = "This method is used for getting a list with all the users.",
-            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
+            description = "This method is used for getting a list with all the users. Requires Basic Authentication.",
+            parameters = {
                     @Parameter(name = "username", description = "The username of the user you want to get."),
                     @Parameter(name = "email", description = "The email of the user you want to get."),
                     @Parameter(name = "firstName", description = "The first name of the user you want to get."),
                     @Parameter(name = "sortBy", description = "The sort by method for the user you want to sort."),
                     @Parameter(name = "sortOrder", description = "The sort order for the user you want to order.")
             },
-            responses = {@ApiResponse(responseCode = "200",
-                    description = "Successful blockage of user"),
-                    @ApiResponse(responseCode = "400",
-                            description = "Wrong given query parameters"),
-                    @ApiResponse(responseCode = "401",
-                            description = "Wrong username or password."),
-                    @ApiResponse(responseCode = "404",
-                            description = "There is no such user.")}
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successful retrieval of users"),
+                    @ApiResponse(responseCode = "400", description = "Wrong given query parameters"),
+                    @ApiResponse(responseCode = "401", description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404", description = "There is no such user.")
+            }
     )
     public List<User> get(
             @RequestParam(required = false) String email,
