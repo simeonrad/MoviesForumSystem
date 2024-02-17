@@ -14,3 +14,5 @@ The users can update their profile, add profile picture also.
 Also, it is possible to add tags that are associated with the current post.
 
 ![forum_system_database_diagram.png](forum_system_database_diagram.png)
+
+Link to the Swagger documentation: https://github.com/simeonrad/MoviesForumSystem/blob/master/movie-forum-system.json
