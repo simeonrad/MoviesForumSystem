@@ -82,6 +82,7 @@
             transform: translateY(0);
         }
         .like-button {
+            color: #555555;
             background-color: transparent;
             border: none;
             cursor: pointer;
@@ -90,6 +91,9 @@
             justify-content: center;
             padding: 5px 10px;
             transition: color 0.3s ease;
+        }
+        .like-count-text {
+            color: #555555;
         }
         .delete-button {
             background-color: #b3273c;
@@ -113,6 +117,10 @@
         .like-button i {
             color: #606060; /* Gray heart */
             transition: transform 0.3s ease;
+            color-text-height: black
+        }
+     .like-button text {
+            color: #606060; /* Gray heart */
         }
 
         .like-button:hover i {
@@ -143,7 +151,7 @@
         </div>
         <form method="post" th:action="@{/posts/{postId}/like(postId=${post.id})}">
             <button type="submit" class="like-button">
-                <i class="far fa-heart"></i>  <span th:text="${likesCount}">0</span>
+                <i class="far fa-heart"></i>  <span id="like-count-text" th:text="${likesCount}">0</span>
             </button>
         </form>
     </div>
