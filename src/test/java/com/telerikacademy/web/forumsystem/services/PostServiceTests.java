@@ -6,7 +6,6 @@ import com.telerikacademy.web.forumsystem.models.*;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepository;
 import com.telerikacademy.web.forumsystem.repositories.PostRepository;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
