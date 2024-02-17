@@ -201,7 +201,8 @@ public class PostsMvcController {
                         postFilterDto.getTag(),
                         postFilterDto.getSortBy(),
                         postFilterDto.getSortOrder()),
-                postPageable);        Page<Comment> userComments = commentService.getUserComments(user, commentPage, commentSize);
+                postPageable);
+        Page<Comment> userComments = commentService.getUserComments(user, commentPage, commentSize);
         String dashboardTitle = user.getUsername() + "'s Dashboard";
 
         model.addAttribute("dashboardTitle", dashboardTitle);
@@ -361,5 +362,31 @@ public class PostsMvcController {
 
         }
         return "redirect:/posts/" + existingComment.getPost().getId();
+    }
+
+    @PostMapping("/comment/delete/{commentId}")
+    public String deleteComment(@PathVariable("commentId") int commentId,
+                                Model model,
+                                HttpSession session) {
+        try {
+
+            User user = authenticationHelper.tryGetUser(session);
+            Comment existingComment = commentService.getById(commentId);
+            commentService.delete(existingComment, user);
+            if (existingComment.getPost() == null) {
+                return "redirect:/posts/" + existingComment.getRepliedTo().getPost().getId();
+            }
+            return "redirect:/posts/" + existingComment.getPost().getId();
+
+        } catch (UnauthorizedOperationException e) {
+            model.addAttribute("statusCode", HttpStatus.UNAUTHORIZED.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("statusCode", HttpStatus.NOT_FOUND.getReasonPhrase());
+            model.addAttribute("error", e.getMessage());
+            return "ErrorView";
+        }
+
     }
 }

@@ -117,7 +117,6 @@
         .like-button i {
             color: #606060; /* Gray heart */
             transition: transform 0.3s ease;
-            color-text-height: black
         }
      .like-button text {
             color: #606060; /* Gray heart */
@@ -177,6 +176,11 @@
                 <span>Edit comment</span>
             </button>
         </form>
+        <form th:if="${currentUser == comment.author}" method="post" class="delete-div" th:action="@{/posts/comment/delete/{commentId}(commentId=${comment.id})}">
+            <button type="submit" class="delete-button">
+                <span>Delete comment</span>
+            </button>
+        </form>
         
         <div class="reply" th:if="${comment.replies.size() > 0}">
             <h4>Replies</h4>
@@ -186,6 +190,12 @@
                 <form th:if="${currentUser == reply.author}" method="get" class="delete-div" th:action="@{/posts/comment/{commentId}(commentId=${reply.id})}">
                     <input type="hidden" name="replyId" th:value="${reply.getId()}" />
                     <button type="submit" class="button">
+                        <span>Edit reply</span>
+                    </button>
+                </form>
+                <form th:if="${currentUser == reply.author}" method="post" class="delete-div" th:action="@{/posts/comment/delete/{commentId}(commentId=${reply.id})}">
+                    <input type="hidden" name="replyId" th:value="${reply.getId()}" />
+                    <button type="submit" class="delete-button">
                         <span>Edit reply</span>
                     </button>
                 </form>
