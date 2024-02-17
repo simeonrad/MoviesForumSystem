@@ -77,6 +77,8 @@ public class UserServiceTests {
         User mockUser = new User();
         mockUser.setUsername("testUsername");
         mockUser.setEmail("testEmail@email.com");
+        mockUser.setPassword("securePassword");
+
         when(userRepository.getByUsername(mockUser.getUsername())).thenThrow(new EntityNotFoundException("User", "username", mockUser.getUsername()));
         when(userRepository.getByEmail(mockUser.getEmail())).thenThrow(new EntityNotFoundException("User", "email", mockUser.getEmail()));
 
@@ -84,6 +86,7 @@ public class UserServiceTests {
 
         verify(userRepository).create(mockUser);
     }
+
 
     @Test
     public void addPhoneNumber_ToUser_SavesPhoneNumber() {
