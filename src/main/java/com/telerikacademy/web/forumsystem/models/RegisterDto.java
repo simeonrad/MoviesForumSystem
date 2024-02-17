@@ -12,7 +12,7 @@ public class RegisterDto extends LoginDto {
     @Size(min = 4, max = 32, message = "First name should be between 4 and 32 symbols!")
     private String firstName;
     @NotEmpty
-    @Size(min = 2, max = 32, message = "Last name should be between 2 and 32 symbols!")
+    @Size(min = 4, max = 32, message = "Last name should be between 4 and 32 symbols!")
     private String lastName;
     @NotEmpty
     @Email

@@ -10,7 +10,7 @@
 
 <div class="body-content user-page">
     <form action="#" th:action="@{/search-user}" method="get" th:object="${filterOptions}">
-        <label>Search and Filter Options</label>
+        <h2>Users Search and Filter Options</h2>
         <br/><br/>
         <input type="text" placeholder="Username" th:field="*{username}"/>
         <input type="text" placeholder="Email" th:field="*{email}"/>

@@ -79,6 +79,9 @@
                 <label>Telephone Number</label>
                 <input type="text" name="phoneNumber" placeholder="Enter phone number">
             </div>
+            <div th:if="${phoneNumberUpdateSuccess}" class="success-message">
+                <p th:text="${phoneNumberUpdateSuccess}"></p>
+            </div>
             <button type="submit" class="submit-btn">Add Phone Number</button>
         </form>
     </div>

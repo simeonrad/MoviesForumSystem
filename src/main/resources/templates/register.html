@@ -11,7 +11,10 @@
     <label th:text="#{user.label.username}">Username</label>
     <br/>
     <input type="text" th:field="*{username}">
-    <label class="error" th:errors="*{username}">Username error placeholder</label>
+    <th:block th:if="${#fields.hasErrors('username')}">
+        <br/>
+        <label class="error" th:errors="*{username}">Username error placeholder</label>
+    </th:block>
     <br/><br/>
 
     <label th:text="#{user.label.password}">Password</label>
@@ -23,25 +26,34 @@
     <label th:text="#{user.label.password-confirm}">Confirm Password</label>
     <br/>
     <input type="password" th:field="*{passwordConfirm}"/>
-    <label class="error" th:errors="*{passwordConfirm}">Password confirm error placeholder</label>
+    <th:block th:if="${#fields.hasErrors('passwordConfirm')}">
+        <br/>
+        <label class="error" th:errors="*{passwordConfirm}">Password confirm error placeholder</label>
+    </th:block>
     <br/><br/>
 
     <label th:text="#{user.label.first-name}">First Name</label>
     <br/>
     <input type="text" th:field="*{firstName}"/>
-    <label class="error" th:errors="*{firstName}">First name error placeholder</label>
+    <th:block th:if="${#fields.hasErrors('firstName')}">
+        <br/>
+        <label class="error" th:errors="*{firstName}">First name error placeholder</label>
+    </th:block>
     <br/><br/>
 
     <label th:text="#{user.label.last-name}">Last Name</label>
     <br/>
     <input type="text" th:field="*{lastName}"/>
-    <label class="error" th:errors="*{lastName}">Last name error placeholder</label>
+    <th:block th:if="${#fields.hasErrors('lastName')}">
+        <br/>
+        <label class="error" th:errors="*{lastName}">Last name error placeholder</label>
+    </th:block>
     <br/><br/>
 
     <label th:text="#{user.label.email}">Email</label>
     <br/>
-    <input type="text" th:field="*{email}"/>
-    <label class="error" th:errors="*{email}">Email error placeholder</label>
+    <input type="email" th:field="*{email}"/>
+    <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}"></div>
     <br/><br/>
 
     <input class="button" type="submit" value="Register"/>

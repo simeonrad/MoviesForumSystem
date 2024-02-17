@@ -11,13 +11,19 @@
     <label th:text="#{user.label.username}">Username</label>
     <br/>
     <input type="text" th:field="*{username}">
-    <label class="error" th:errors="*{username}">Username error placeholder</label>
+    <th:block th:if="${#fields.hasErrors('username')}">
+        <br/>
+        <label class="error" th:errors="*{username}">Username error placeholder</label>
+    </th:block>
     <br/><br/>
 
     <label th:text="#{user.label.password}">Password</label>
     <br/>
     <input type="password" th:field="*{password}">
-    <label class="error" th:errors="*{password}">Password error placeholder</label>
+    <th:block th:if="${#fields.hasErrors('password')}">
+        <br/>
+        <label class="error" th:errors="*{password}">Password error placeholder</label>
+    </th:block>
     <br/><br/>
 
     <div th:if="${loginError}" class="alert alert-danger" th:text="${loginError}">

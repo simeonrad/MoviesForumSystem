@@ -1,10 +1,7 @@
 package com.telerikacademy.web.forumsystem.services;
 
 
-import com.telerikacademy.web.forumsystem.exceptions.DuplicateExistsException;
-import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
-import com.telerikacademy.web.forumsystem.exceptions.InvalidEmailException;
-import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
+import com.telerikacademy.web.forumsystem.exceptions.*;
 import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import com.telerikacademy.web.forumsystem.models.FilterOptions;
 import com.telerikacademy.web.forumsystem.models.PhoneNumber;
@@ -66,7 +63,7 @@ public class UserServiceImpl implements UserService {
             emailExists = false;
         }
         if (emailExists) {
-            throw new DuplicateExistsException("User", "email", user.getEmail());
+            throw new DuplicateEmailExists("User", "email", user.getEmail());
         }
         if (user.getPassword().length() < 6) {
             throw new IllegalArgumentException("Password must be at least 6 symbols long");
