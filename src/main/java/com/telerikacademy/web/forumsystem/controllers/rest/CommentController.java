@@ -83,7 +83,9 @@ public class CommentController {
                     description = "Include content in the request body (min = 1, max = 500 characters)."
             ),
             parameters = {
-                    @Parameter(name = "commentId", description = "The ID of the comment you are trying to reply to.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                    @Parameter(name = "commentId", description = "The ID of the comment you are trying to reply to.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful reply creation and adding it to a comment", content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -115,7 +117,9 @@ public class CommentController {
            summary = "Deleting a comment",
            description = "This method is used for deleting and removing a comment from a certain post. Ensure the user has the necessary permissions to delete the comment.",
            parameters = {
-                   @Parameter(name = "commentId", description = "The ID of the comment you are trying to delete.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                   @Parameter(name = "commentId", description = "The ID of the comment you are trying to delete.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                   @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                   @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
            },
            responses = {
                    @ApiResponse(responseCode = "200", description = "Successful deletion of the comment", content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),

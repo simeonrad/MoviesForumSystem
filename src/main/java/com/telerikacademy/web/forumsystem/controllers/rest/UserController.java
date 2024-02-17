@@ -83,8 +83,8 @@ public class UserController {
                             "firstName (min = 4, max = 32), lastName (min = 2, max = 32), and email (min = 10, max = 100)."
             ),
             parameters = {
-                    @Parameter(name = "Authorization", description = "Basic authentication header", in = ParameterIn.HEADER, required = true, schema = @Schema(type = "string"))
-            },
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)               },
             responses = {
                     @ApiResponse(
                             responseCode = "200",
@@ -119,7 +119,9 @@ public class UserController {
             summary = "Deleting a user",
             description = "This method is used for deleting a user.",
             parameters = {
-                    @Parameter(name = "username", description = "The username of the user you want to delete.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                    @Parameter(name = "username", description = "The username of the user you want to delete.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful deletion of user"),
@@ -146,12 +148,14 @@ public class UserController {
             summary = "Blocking a user",
             description = "This method is used to block a user.",
             parameters = {
-                    @Parameter(name = "username", description = "The username of the user you want to block.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                    @Parameter(name = "username", description = "The username of the user you want to block.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful blockage of user"),
                     @ApiResponse(responseCode = "401", description = "Unauthorized access - wrong username or password."),
-                    @ApiResponse(responseCode = "404", description = "User not found - there is no such user.")
+                    @ApiResponse(responseCode = "404", description = "User not found - there is no such user."),
             }
     )
     public UserShowAdmin blockUser(@RequestParam String username, @RequestHeader HttpHeaders headers) {
@@ -172,7 +176,9 @@ public class UserController {
             summary = "Unblocking a user",
             description = "This method is used to unblock a user.",
             parameters = {
-                    @Parameter(name = "username", description = "The username of the user you want to unblock.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                    @Parameter(name = "username", description = "The username of the user you want to unblock.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful unblocking of user"),
@@ -198,7 +204,9 @@ public class UserController {
             summary = "Making user an admin",
             description = "This method is used to make a user an admin.",
             parameters = {
-                    @Parameter(name = "username", description = "The username of the user you want to make an admin.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                    @Parameter(name = "username", description = "The username of the user you want to make an admin.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successfully made user an admin"),
@@ -226,7 +234,9 @@ public class UserController {
             summary = "Unmaking user an admin",
             description = "This method is used for unmaking user an admin.",
             parameters = {
-                    @Parameter(name = "username", description = "The username of the user you want to unmake an admin.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                    @Parameter(name = "username", description = "The username of the user you want to unmake an admin.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful removal of admin privileges"),
@@ -257,8 +267,9 @@ public class UserController {
                     @Parameter(name = "email", description = "The email of the user you want to get."),
                     @Parameter(name = "firstName", description = "The first name of the user you want to get."),
                     @Parameter(name = "sortBy", description = "The sort by method for the user you want to sort."),
-                    @Parameter(name = "sortOrder", description = "The sort order for the user you want to order.")
-            },
+                    @Parameter(name = "sortOrder", description = "The sort order for the user you want to order."),
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)            },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful retrieval of users"),
                     @ApiResponse(responseCode = "400", description = "Wrong given query parameters"),

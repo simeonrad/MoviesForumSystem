@@ -20,9 +20,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.springframework.http.HttpHeaders;
 
 
@@ -60,6 +62,10 @@ public class PostController {
                     ),
                     description = "Include title (min = 16, max = 64 characters) and content (min = 32, max = 8192 characters) in the request body."
             ),
+            parameters = {
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
+            },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful creation of a post", content = @Content(schema = @Schema(implementation = PostDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
                     @ApiResponse(responseCode = "401", description = "Unauthorized access - wrong username or password.")
@@ -88,7 +94,9 @@ public class PostController {
                     description = "Include title (min = 16, max = 64) and content (min = 32, max = 8192) in the request body."
             ),
             parameters = {
-                    @Parameter(name = "postId", description = "Path variable that is the ID of the post you are trying to edit.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                    @Parameter(name = "postId", description = "Path variable that is the ID of the post you are trying to edit.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful updating of a post", content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -116,7 +124,9 @@ public class PostController {
             summary = "Deleting a post",
             description = "This method is used for deleting a post. The operation requires that the requester is either the author of the post or an admin.",
             parameters = {
-                    @Parameter(name = "postId", description = "The ID of the post you are trying to delete.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                    @Parameter(name = "postId", description = "The ID of the post you are trying to delete.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful deletion of a post"),
@@ -148,7 +158,9 @@ public class PostController {
                     description = "Include content in the request body (min = 1, max = 500 characters)."
             ),
             parameters = {
-                    @Parameter(name = "postId", description = "The ID of the post you are trying to comment on.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                    @Parameter(name = "postId", description = "The ID of the post you are trying to comment on.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successful comment creation and adding it to a post", content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE)),
@@ -176,6 +188,7 @@ public class PostController {
             summary = "Get comments to a post",
             description = "This method is used for getting all comments to a certain post",
             parameters = {@Parameter(name = "postId", description = "This is the Id of the post you are trying get the comments of.")},
+
             responses = {@ApiResponse(responseCode = "200",
                     content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE),
                     description = "Successful got some comments to a existing post"),
@@ -200,7 +213,9 @@ public class PostController {
             summary = "Liking a post",
             description = "This method is used for liking a certain post. If you use the method after you have already liked it, you will unlike the certain post.",
             parameters = {
-                    @Parameter(name = "postId", description = "The ID of the post you are trying to like.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string"))
+                    @Parameter(name = "postId", description = "The ID of the post you are trying to like.", required = true, in = ParameterIn.PATH, schema = @Schema(type = "string")),
+                    @Parameter(name = "username", description = "Header for the username", in = ParameterIn.HEADER, required = true),
+                    @Parameter(name = "password", description = "Header for the password", in = ParameterIn.HEADER, required = true)
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Successfully liked or unliked post"),
@@ -238,13 +253,11 @@ public class PostController {
             return postMapper.toDto(post);
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        catch (ResponseStatusException e){
+        } catch (ResponseStatusException e) {
             try {
                 Post post = postService.getById(postId);
                 return postMapper.toDto(post);
-            }
-            catch (EntityNotFoundException ee) {
+            } catch (EntityNotFoundException ee) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, ee.getMessage());
             }
         }
@@ -264,8 +277,7 @@ public class PostController {
         try {
             List<Post> posts = postService.getAll();
             return postMapper.toDtoList(posts);
-        }
-     catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
