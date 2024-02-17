@@ -2,12 +2,20 @@ package com.telerikacademy.web.forumsystem.helpers;
 
 import com.telerikacademy.web.forumsystem.exceptions.NotAllowedContentException;
 import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.services.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 public class TextPurifier {
+    private UserService userService;
+    @Autowired
+    public TextPurifier(UserService userService) {
+        this.userService = userService;
+    }
+
     public static final String THE_CONTENT_CONTAINS_FORBIDDEN_WORD = "The content contains forbidden word/s your account has been banned!";
     private static final List<String> nonAllowedWords = List.of("arse", " ass ", "ballsack", "balls", "bastard",
             "bitch", "biatch", "bloody", "blowjob", "blow job", "bollock", "bollok", "boner",
@@ -21,8 +29,8 @@ public class TextPurifier {
 
             public void checkTextAndBan(String text, User user) throws NotAllowedContentException {
                 if (containsNonAllowedWords(text)){
-
                     user.setIsBlocked(true);
+                    userService.update(user);
                     throw new NotAllowedContentException(THE_CONTENT_CONTAINS_FORBIDDEN_WORD);
                 }
             }

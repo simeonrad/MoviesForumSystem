@@ -26,6 +26,8 @@ public class Post {
     private int likes;
     @Column(name = "date_created")
     private LocalDateTime timeStamp;
+    @Column(name = "date_modified")
+    private LocalDateTime editTimeStamp;
     @Column(name = "title")
     private String title;
     @OneToMany
@@ -58,6 +60,14 @@ public class Post {
 
     public Post() {
         this.timeStamp = LocalDateTime.now();
+    }
+
+    public LocalDateTime getEditTimeStamp() {
+        return editTimeStamp;
+    }
+
+    public void setEditTimeStamp(LocalDateTime editTimeStamp) {
+        this.editTimeStamp = editTimeStamp;
     }
 
     public int getId() {

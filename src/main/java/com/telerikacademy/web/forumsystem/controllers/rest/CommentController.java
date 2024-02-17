@@ -6,14 +6,23 @@ import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationExcept
 import com.telerikacademy.web.forumsystem.helpers.AuthenticationHelper;
 import com.telerikacademy.web.forumsystem.helpers.CommentMapper;
 import com.telerikacademy.web.forumsystem.helpers.TextPurifier;
+import com.telerikacademy.web.forumsystem.helpers.UserShow;
 import com.telerikacademy.web.forumsystem.models.Comment;
 import com.telerikacademy.web.forumsystem.models.CommentDto;
 import com.telerikacademy.web.forumsystem.models.User;
+import com.telerikacademy.web.forumsystem.models.UserDto;
 import com.telerikacademy.web.forumsystem.services.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -38,43 +47,18 @@ public class CommentController {
         this.textPurifier = textPurifier;
     }
 
-    @PostMapping("/post/{postId}")
-    public CommentDto commentOnPost(@RequestHeader HttpHeaders headers, @Valid @RequestBody CommentDto commentDto, @PathVariable int postId) {
-        try {
-            User author = authenticationHelper.tryGetUser(headers);
-            Comment comment = commentMapper.fromDto(commentDto, author, postId);
-            textPurifier.checkTextAndBan(comment.getContent(), author);
-            commentService.create(comment, author);
-            return commentMapper.toDto(comment);
-        }
-        catch (NotAllowedContentException e){
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
-        }
-        catch (EntityNotFoundException e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-        catch (UnauthorizedOperationException e){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        }
-    }
-
-    @GetMapping("/post/{postId}")
-    public List<CommentDto> getCommentsOnPost(@PathVariable int postId) {
-        try {
-            return commentService.getByPostId(postId)
-                    .stream()
-                    .map(commentMapper::toDto)
-                    .collect(Collectors.toList());
-        }
-        catch (UnauthorizedOperationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        }
-        catch (EntityNotFoundException e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
-        }
-    }
 
     @GetMapping("/comment/{commentId}")
+    @Operation(
+            summary = "Get replies to a comment",
+            description = "This method is used for getting all replies to a certain comment",
+            parameters = {@Parameter(name = "commentId", description = "This is the Id of the comment you are trying get the replies of.")},
+            responses = {@ApiResponse(responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE),
+                    description = "Successful got some replies to a existing comment"),
+                    @ApiResponse(responseCode = "404",
+                            description = "There is no such comment or there aren't any replies to it.")}
+    )
     public List<CommentDto> getRepliesToComment(@PathVariable int commentId) {
         try {
             return commentService.getByCommentId(commentId)
@@ -83,15 +67,30 @@ public class CommentController {
                     .collect(Collectors.toList());
 
         }
-        catch (UnauthorizedOperationException e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        }
         catch (EntityNotFoundException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
     @PostMapping("/comment/{commentId}")
+    @Operation(
+            summary = "Replying on a comment",
+            description = "This method is used for creating and adding a reply to a certain comment.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = @Content(schema = @Schema(implementation = CommentDto.class)),
+                    description = "In the request body you need to include content(min = 1, max = 500"),
+            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
+            @Parameter(name = "commentId", description = "this is the Id of the comment you are trying to reply to")},
+            responses = {@ApiResponse(responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE),
+                    description = "Successful reply creation and adding it to a comment"),
+                    @ApiResponse(responseCode = "401",
+                            description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404",
+                            description = "There is no such comment."),
+                    @ApiResponse(responseCode = "403",
+                            description = "The content in the comment contains forbidden content")}
+    )
     public CommentDto replyToComment(@RequestHeader HttpHeaders headers, @Valid @RequestBody CommentDto commentDto, @PathVariable int commentId) {
        try {
            User author = authenticationHelper.tryGetUser(headers);
@@ -111,6 +110,21 @@ public class CommentController {
        }
     }
    @DeleteMapping("/comment/{commentId}")
+   @Operation(
+           summary = "Deleting a comment",
+           description = "This method is used for deleting and removing a comment from a certain post.",
+           parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
+                   @Parameter(name = "commentId", description = "this is the Id of the comment you are trying to delete")},
+           responses = {@ApiResponse(responseCode = "200",
+                   content = @Content(schema = @Schema(implementation = CommentDto.class), mediaType = MediaType.APPLICATION_JSON_VALUE),
+                   description = "Successful reply creation and adding it to a comment"),
+                   @ApiResponse(responseCode = "401",
+                           description = "Wrong username or password."),
+                   @ApiResponse(responseCode = "404",
+                           description = "There is no such comment."),
+                   @ApiResponse(responseCode = "403",
+                           description = "The content in the comment contains forbidden content")}
+   )
     public void deleteComment(@RequestHeader HttpHeaders headers, @PathVariable int commentId) {
        try {
            User user = authenticationHelper.tryGetUser(headers);

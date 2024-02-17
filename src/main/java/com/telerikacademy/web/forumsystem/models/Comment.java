@@ -26,6 +26,8 @@ public class Comment {
 
     @Column(name = "date_created")
     private LocalDateTime timeStamp;
+    @Column(name = "date_modified")
+    private LocalDateTime editTimeStamp;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -45,6 +47,14 @@ public class Comment {
     public Comment(String content) {
         this.content = content;
         this.timeStamp = LocalDateTime.now();
+    }
+
+    public LocalDateTime getEditTimeStamp() {
+        return editTimeStamp;
+    }
+
+    public void setEditTimeStamp(LocalDateTime editTimeStamp) {
+        this.editTimeStamp = editTimeStamp;
     }
 
     public int getId() {
