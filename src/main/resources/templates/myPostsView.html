@@ -9,6 +9,19 @@
 <div th:replace="~{fragments.html :: header}"></div>
 <main>
     <h2>My Dashboard</h2>
+    <div class="user-details-card">
+        <img th:if="${profileUser.profilePhotoUrl != null}"
+             th:src="${profileUser.profilePhotoUrl}"
+             alt="User Photo" class="user-photo"/>
+        <div class="user-info">
+            <p th:text="${profileUser.firstName + ' ' + profileUser.lastName}">Full Name</p>
+            <p th:text="${profileUser.username}" class="username">Username</p>
+            <p th:text="${profileUser.email}" class="email">user@example.com</p>
+        </div>
+        <div th:if="${isDeleted}" class="user-deleted-message">
+            <p>This user profile is deleted!</p>
+        </div>
+    </div>
     <form action="#" th:action="@{/posts/my-posts}" method="get" th:object="${postFilterOptions}">
         <h2>Filter My Posts</h2>
         <input type="text" placeholder="Title" th:field="*{title}"/>

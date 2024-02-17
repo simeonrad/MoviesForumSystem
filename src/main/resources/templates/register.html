@@ -16,8 +16,8 @@
 
     <label th:text="#{user.label.password}">Password</label>
     <br/>
-    <input type="password" th:field="*{password}">
-    <label class="error" th:errors="*{password}">Password error placeholder</label>
+    <input type="password" th:field="*{password}" minlength="6" required>
+    <label class="error" th:errors="*{password}">Password must be at least 6 symbols long</label>
     <br/><br/>
 
     <label th:text="#{user.label.password-confirm}">Confirm Password</label>

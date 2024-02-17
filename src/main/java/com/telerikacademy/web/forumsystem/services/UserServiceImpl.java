@@ -58,7 +58,6 @@ public class UserServiceImpl implements UserService {
         if (usernameExists && !user.isDeleted()) {
             throw new DuplicateExistsException("User", "username", user.getUsername());
         }
-
         emailValidator(user.getEmail());
         boolean emailExists = true;
         try {
@@ -68,6 +67,9 @@ public class UserServiceImpl implements UserService {
         }
         if (emailExists) {
             throw new DuplicateExistsException("User", "email", user.getEmail());
+        }
+        if (user.getPassword().length() < 6) {
+            throw new IllegalArgumentException("Password must be at least 6 symbols long");
         }
         userRepository.create(user);
     }
