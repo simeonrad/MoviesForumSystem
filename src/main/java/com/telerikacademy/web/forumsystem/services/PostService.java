@@ -21,6 +21,7 @@ public interface PostService {
 
     List<Post> get(PostsFilterOptions filterOptions);
     Page<Post> get(PostsFilterOptions filterOptions, Pageable page);
+    Page<Post> getMyPosts(PostsFilterOptions filterOptions, Pageable page);
 
     void likePost(int postId, User user);
 

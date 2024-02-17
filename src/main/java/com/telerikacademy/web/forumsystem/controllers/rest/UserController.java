@@ -135,7 +135,7 @@ public class UserController {
             summary = "Blocking a user",
             description = "This method is used for block a user.",
             parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "username", description = "The username of the user you want to delete.")},
+                    @Parameter(name = "username", description = "The username of the user you want to block.")},
             responses = {@ApiResponse(responseCode = "200",
                     description = "Successful blockage of user"),
                     @ApiResponse(responseCode = "401",
@@ -161,7 +161,7 @@ public class UserController {
             summary = "Unblocking a user",
             description = "This method is used for unblock a user.",
             parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "username", description = "The username of the user you want to delete.")},
+                    @Parameter(name = "username", description = "The username of the user you want to unblock.")},
             responses = {@ApiResponse(responseCode = "200",
                     description = "Successful blockage of user"),
                     @ApiResponse(responseCode = "401",
@@ -187,7 +187,7 @@ public class UserController {
             summary = "Making user an admin",
             description = "This method is used for making user an admin.",
             parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "username", description = "The username of the user you want to delete.")},
+                    @Parameter(name = "username", description = "The username of the user you want to make an admin.")},
             responses = {@ApiResponse(responseCode = "200",
                     description = "Successful blockage of user"),
                     @ApiResponse(responseCode = "401",
@@ -215,7 +215,7 @@ public class UserController {
             summary = "Unmaking user an admin",
             description = "This method is used for unmaking user an admin.",
             parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
-                    @Parameter(name = "username", description = "The username of the user you want to delete.")},
+                    @Parameter(name = "username", description = "The username of the user you want to unmake an admin.")},
             responses = {@ApiResponse(responseCode = "200",
                     description = "Successful blockage of user"),
                     @ApiResponse(responseCode = "401",
@@ -238,6 +238,25 @@ public class UserController {
     }
 
     @GetMapping
+    @Operation(
+            summary = "Getting a list with all the users",
+            description = "This method is used for getting a list with all the users.",
+            parameters = {@Parameter(name = "headers", description = "Requires username and password headers for authentication"),
+                    @Parameter(name = "username", description = "The username of the user you want to get."),
+                    @Parameter(name = "email", description = "The email of the user you want to get."),
+                    @Parameter(name = "firstName", description = "The first name of the user you want to get."),
+                    @Parameter(name = "sortBy", description = "The sort by method for the user you want to sort."),
+                    @Parameter(name = "sortOrder", description = "The sort order for the user you want to order.")
+            },
+            responses = {@ApiResponse(responseCode = "200",
+                    description = "Successful blockage of user"),
+                    @ApiResponse(responseCode = "400",
+                            description = "Wrong given query parameters"),
+                    @ApiResponse(responseCode = "401",
+                            description = "Wrong username or password."),
+                    @ApiResponse(responseCode = "404",
+                            description = "There is no such user.")}
+    )
     public List<User> get(
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String username,

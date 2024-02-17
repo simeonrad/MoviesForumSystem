@@ -157,7 +157,7 @@ public class PostsMvcController {
 
         Pageable postPageable = PageRequest.of(postPage, postSize);
 
-        Page<Post> userPosts = postService.get(
+        Page<Post> userPosts = postService.getMyPosts(
                 new PostsFilterOptions(
                         postFilterDto.getTitle(),
                         postFilterDto.getContent(),
@@ -189,8 +189,19 @@ public class PostsMvcController {
             model.addAttribute("isDeleted", true);
         }
 
-        Page<Post> userPosts = postService.getUsersPosts(user, postPage, postSize);
-        Page<Comment> userComments = commentService.getUserComments(user, commentPage, commentSize);
+        postFilterDto.setUserCreator(user.getUsername());
+
+        Pageable postPageable = PageRequest.of(postPage, postSize);
+
+        Page<Post> userPosts = postService.getMyPosts(
+                new PostsFilterOptions(
+                        postFilterDto.getTitle(),
+                        postFilterDto.getContent(),
+                        postFilterDto.getUserCreator(),
+                        postFilterDto.getTag(),
+                        postFilterDto.getSortBy(),
+                        postFilterDto.getSortOrder()),
+                postPageable);        Page<Comment> userComments = commentService.getUserComments(user, commentPage, commentSize);
         String dashboardTitle = user.getUsername() + "'s Dashboard";
 
         model.addAttribute("dashboardTitle", dashboardTitle);

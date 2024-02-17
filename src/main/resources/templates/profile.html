@@ -89,6 +89,9 @@
             <label for="profileImage">Profile Image</label>
             <input type="file" id="profileImage" name="image" required>
         </div>
+        <div th:if="${photoSuccess}" class="success-message">
+            <p th:text="${photoSuccess}"></p>
+        </div>
         <button type="submit" class="submit-btn">Upload Image</button>
     </form>
 
