@@ -196,7 +196,7 @@
                 <form th:if="${currentUser == reply.author}" method="post" class="delete-div" th:action="@{/posts/comment/delete/{commentId}(commentId=${reply.id})}">
                     <input type="hidden" name="replyId" th:value="${reply.getId()}" />
                     <button type="submit" class="delete-button">
-                        <span>Edit reply</span>
+                        <span>Delete reply</span>
                     </button>
                 </form>
             </div>

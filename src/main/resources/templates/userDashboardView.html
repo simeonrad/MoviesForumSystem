@@ -74,9 +74,11 @@
             <ul class="comments-list">
                 <li th:each="comment : ${userComments.content}" class="comment-item">
                     <div th:text="${comment.content}" class="comment-content"></div>
-                    <div>On Post:
-                        <a th:href="@{/posts/{id}(id=${comment.post.id})}" th:text="${comment.post.title}"
-                           class="comment-post-link"></a>
+                    <div th:if="${comment.post != null}">
+                        <a th:href="@{/posts/{id}(id=${comment.post.id})}" th:text="${comment.post.title}" class="comment-post-link">Post Title</a>
+                    </div>
+                    <div th:if="${comment.post == null and comment.repliedTo != null}">
+                        <a th:href="@{/posts/{id}(id=${comment.repliedTo.post.id})}" th:text="${comment.repliedTo.post.title}" class="comment-post-link">Replied to Post Title</a>
                     </div>
                 </li>
             </ul>

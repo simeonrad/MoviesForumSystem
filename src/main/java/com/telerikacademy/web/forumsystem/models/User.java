@@ -1,7 +1,6 @@
 package com.telerikacademy.web.forumsystem.models;
 
 import jakarta.persistence.*;
-
 import java.util.Objects;
 
 @Entity

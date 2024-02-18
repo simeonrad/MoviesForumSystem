@@ -68,6 +68,7 @@ public class UserServiceImpl implements UserService {
         if (user.getPassword().length() < 6) {
             throw new IllegalArgumentException("Password must be at least 6 symbols long");
         }
+        user.setProfilePhotoUrl("https://i.ibb.co/3dVFMxL/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg");
         userRepository.create(user);
     }
 

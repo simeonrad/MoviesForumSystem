@@ -73,9 +73,10 @@
                         <div th:if="${comment.post != null}">
                             <a th:href="@{'/posts/' + ${comment.post.id}}" th:text="${comment.post.title}" class="comment-post-link">Post Title</a>
                         </div>
-                        <div th:if="${comment.post.id == null}">
+                        <div th:if="${comment.post == null}">
                             <a th:href="@{'/posts/' + ${comment.repliedTo.post.id}}" th:text="${comment.repliedTo.post.title}" class="comment-post-link">Post Title</a>
                         </div>
+
                     </div>
                 </li>
             </ul>
