@@ -154,13 +154,13 @@
             </button>
         </form>
     </div>
-    <form th:if="${currentUser == post.author}" method="post" class="delete-div" th:action="@{/posts/{postId}/delete(postId=${post.id})}">
+    <form th:if="${currentUser == post.author || currentUser.isAdmin()}" method="post" class="delete-div" th:action="@{/posts/{postId}/delete(postId=${post.id})}">
         <button type="submit" class="delete-button">
             <span>Delete post</span>
         </button>
     </form>
 
-    <form th:if="${currentUser == post.author}" method="get" class="delete-div" th:action="@{/posts/edit/{postId}(postId=${post.id})}">
+    <form th:if="${currentUser == post.author || currentUser.isAdmin()}" method="get" class="delete-div" th:action="@{/posts/edit/{postId}(postId=${post.id})}">
         <button type="submit" class="button">
             <span>edit post</span>
         </button>

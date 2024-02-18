@@ -45,7 +45,7 @@
         <div class="column user-posts">
             <h3 th:text="${profileUser.username} + '’s Posts'">User's Posts</h3>
             <ul class="comments-list">
-                <li th:each="post : ${userPosts.content}" class="comment-item">
+                <li th:each="post : ${userPosts}" class="comment-item">
                     <a th:href="@{/posts/{id}(id=${post.id})}" th:text="${post.title}" class="comment-post-link"></a>
                     <div class="comment-content">
                         <span th:text="${#temporals.format(post.timeStamp, 'dd/MM/yyyy HH:mm')}"
