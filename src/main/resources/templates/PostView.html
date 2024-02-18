@@ -154,13 +154,13 @@
             </button>
         </form>
     </div>
-    <form th:if="${currentUser == post.author || currentUser.isAdmin()}" method="post" class="delete-div" th:action="@{/posts/{postId}/delete(postId=${post.id})}">
+    <form th:if="${currentUser != null && (currentUser == post.author || currentUser?.isAdmin())}" method="post" class="delete-div" th:action="@{/posts/{postId}/delete(postId=${post.id})}">
         <button type="submit" class="delete-button">
             <span>Delete post</span>
         </button>
     </form>
 
-    <form th:if="${currentUser == post.author || currentUser.isAdmin()}" method="get" class="delete-div" th:action="@{/posts/edit/{postId}(postId=${post.id})}">
+    <form th:if="${currentUser == post.author}" method="post" class="delete-div" th:action="@{/posts/{postId}/delete(postId=${post.id})}">
         <button type="submit" class="button">
             <span>edit post</span>
         </button>
@@ -171,12 +171,12 @@
     <div class="comment" th:each="comment : ${post_comments}">
         <p><span th:text="${comment.author.username}">Comment Author</span> on <span th:text="${#temporals.format(comment.timeStamp, 'yyyy-MM-dd HH:mm')}">Comment Timestamp</span> <span th:unless="${comment.getEditTimeStamp() == null}"> last edited: </span> <span th:unless="${comment.getEditTimeStamp() == null}" th:text="${#temporals.format(comment.editTimeStamp, 'yyyy-MM-dd HH:mm')}">Comment edit Timestamp</span></p>
         <p th:text="${comment.content}">Comment content goes here...</p>
-        <form th:if="${currentUser == comment.author}" method="get" class="delete-div" th:action="@{/posts/comment/{commentId}(commentId=${comment.id})}">
+        <form th:if="${currentUser != null && (currentUser == post.author || currentUser?.isAdmin())}" method="get" class="delete-div" th:action="@{/posts/comment/{commentId}(commentId=${comment.id})}">
             <button type="submit" class="button">
                 <span>Edit comment</span>
             </button>
         </form>
-        <form th:if="${currentUser == comment.author}" method="post" class="delete-div" th:action="@{/posts/comment/delete/{commentId}(commentId=${comment.id})}">
+        <form th:if="${currentUser != null && (currentUser == post.author || currentUser?.isAdmin())}" method="post" class="delete-div" th:action="@{/posts/comment/delete/{commentId}(commentId=${comment.id})}">
             <button type="submit" class="delete-button">
                 <span>Delete comment</span>
             </button>
