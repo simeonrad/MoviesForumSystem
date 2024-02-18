@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 @Controller
 @RequestMapping("/posts")
 public class PostMvcController {
-
     private final AuthenticationHelper authenticationHelper;
     private final PostService postService;
     private final PostMapper postMapper;
@@ -57,6 +56,7 @@ public class PostMvcController {
         }
         return isAdmin;
     }
+
     @GetMapping("/new")
     public String showCreatePostForm(Model model, HttpSession session) {
         if (!populateIsAuthenticated(session)) {
@@ -102,8 +102,6 @@ public class PostMvcController {
             } else {
                 return "redirect:/posts";
             }
-
-
         } catch (UnauthorizedOperationException | EntityNotFoundException e) {
             return "redirect:/posts";
         } catch (AuthenticationFailureException e) {

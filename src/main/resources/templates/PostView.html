@@ -160,7 +160,7 @@
         </button>
     </form>
 
-    <form th:if="${currentUser != null && (currentUser == post.author || currentUser?.isAdmin())}" method="post" class="delete-div" th:action="@{/posts/{postId}/delete(postId=${post.id})}">
+    <form th:if="${currentUser != null && (currentUser == post.author || currentUser?.isAdmin())}" method="get" class="delete-div" th:action="@{/posts/edit/{postId}(postId=${post.id})}">
         <button type="submit" class="button">
             <span>edit post</span>
         </button>

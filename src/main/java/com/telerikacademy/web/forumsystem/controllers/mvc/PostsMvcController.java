@@ -121,6 +121,7 @@ public class PostsMvcController {
 
     }
 
+
     @GetMapping
     public String showAllPosts(Model model,
                                @ModelAttribute("postFilterOptions") PostFilterDto postFilterDto,
