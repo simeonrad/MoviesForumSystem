@@ -4,7 +4,6 @@ import com.telerikacademy.web.forumsystem.exceptions.EntityNotFoundException;
 import com.telerikacademy.web.forumsystem.exceptions.UnauthorizedOperationException;
 import com.telerikacademy.web.forumsystem.models.*;
 import com.telerikacademy.web.forumsystem.repositories.LikeRepository;
-import com.telerikacademy.web.forumsystem.repositories.LikeRepositoryImpl;
 import com.telerikacademy.web.forumsystem.repositories.View_Repository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ public class PostServiceImpl implements PostService {
     private final View_Repository viewRepository;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, TagService tagService, LikeRepositoryImpl likeRepository, View_Repository viewRepository) {
+    public PostServiceImpl(PostRepository postRepository, TagService tagService, LikeRepository likeRepository, View_Repository viewRepository) {
         this.postRepository = postRepository;
         this.tagService = tagService;
         this.likeRepository = likeRepository;

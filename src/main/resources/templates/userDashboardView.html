@@ -8,7 +8,7 @@
 <body>
 <div th:replace="~{fragments :: header}"></div>
 <main>
-        <div class="user-details-card">
+    <div class="user-details-card">
         <img th:if="${profileUser.profilePhotoUrl != null}"
              th:src="${profileUser.profilePhotoUrl}"
              alt="User Photo" class="user-photo"/>

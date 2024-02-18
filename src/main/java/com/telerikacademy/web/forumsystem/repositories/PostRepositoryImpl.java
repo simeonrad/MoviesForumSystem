@@ -287,7 +287,7 @@ public class PostRepositoryImpl implements PostRepository {
 
         String orderBy = switch (filterOptions.getSortBy().get()) {
             case "title" -> "title";
-            case "userCreator" -> "user_id";
+            case "userCreator" -> "author";
             case "timeStamp" -> "timeStamp";
             default -> "";
         };

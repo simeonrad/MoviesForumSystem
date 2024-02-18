@@ -1,7 +1,9 @@
 package com.telerikacademy.web.forumsystem.controllers.mvc;
 
 import com.telerikacademy.web.forumsystem.exceptions.AuthenticationFailureException;
+import com.telerikacademy.web.forumsystem.exceptions.DuplicateEmailExists;
 import com.telerikacademy.web.forumsystem.exceptions.DuplicateExistsException;
+import com.telerikacademy.web.forumsystem.exceptions.InvalidEmailException;
 import com.telerikacademy.web.forumsystem.helpers.AuthenticationHelper;
 import com.telerikacademy.web.forumsystem.helpers.UserMapper;
 import com.telerikacademy.web.forumsystem.models.LoginDto;
@@ -40,10 +42,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public String handleLogin(@Valid @ModelAttribute("login") LoginDto dto,
-                              BindingResult bindingResult,
-                              HttpSession session,
-                              RedirectAttributes redirectAttributes) {
+    public String handleLogin(@Valid @ModelAttribute("login") LoginDto dto, BindingResult bindingResult, HttpSession session, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             return "login";
         }
@@ -55,11 +54,10 @@ public class AuthenticationController {
             }
             return "redirect:/";
         } catch (AuthenticationFailureException e) {
-            redirectAttributes.addFlashAttribute("loginError", "Login was not possible due to wrong username or password.");
+            redirectAttributes.addFlashAttribute("loginError", "Login was not possible due to wrong username or password or non-existent user.");
             return "redirect:/auth/login";
         }
     }
-
 
 
     @GetMapping("/logout")
@@ -75,16 +73,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/register")
-    public String handleRegister(@Valid @ModelAttribute("register") RegisterDto register,
-                                 BindingResult bindingResult,
-                                 HttpSession session) {
+    public String handleRegister(@Valid @ModelAttribute("register") RegisterDto register, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "register";
         }
         if (!register.getPassword().equals(register.getPasswordConfirm())) {
-            bindingResult.rejectValue("passwordConfirm",
-                    "password_error",
-                    "Password confirmation should match password");
+            bindingResult.rejectValue("passwordConfirm", "password_error", "Password confirmation should match password");
             return "register";
         }
         try {
@@ -93,6 +87,12 @@ public class AuthenticationController {
             return "redirect:/auth/login";
         } catch (DuplicateExistsException e) {
             bindingResult.rejectValue("username", "username-error", e.getMessage());
+            return "register";
+        } catch (InvalidEmailException e) {
+            bindingResult.rejectValue("email", "email-error", e.getMessage());
+            return "register";
+        } catch (DuplicateEmailExists e) {
+            bindingResult.rejectValue("email", "email-error", e.getMessage());
             return "register";
         }
     }

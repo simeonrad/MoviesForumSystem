@@ -173,6 +173,7 @@ public class ProfileController {
                 userService.update(currentUser);
             }catch (InvalidEmailException iee) {
                 redirectAttributes.addFlashAttribute("emailUpdateDenied", "The provided email is not valid.");
+                return "redirect:/profile";
             }
             model.addAttribute("successMessage", "Email updated successfully.");
             redirectAttributes.addFlashAttribute("emailUpdateSuccess", "Email updated successfully.");

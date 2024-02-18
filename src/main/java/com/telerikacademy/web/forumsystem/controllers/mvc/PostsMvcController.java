@@ -173,6 +173,7 @@ public class PostsMvcController {
         model.addAttribute("postFilterOptions", postFilterDto);
         model.addAttribute("userPosts", userPosts);
         model.addAttribute("userComments", userComments);
+        model.addAttribute("profileUser", currentUser);
 
         return "myPostsView";
     }
