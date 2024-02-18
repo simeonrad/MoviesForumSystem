@@ -8,6 +8,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +26,7 @@ public class CommentServiceTests {
     @InjectMocks
     private CommentServiceImpl commentService;
     @Test
-    void createComment_WithUnblockedUser_Success() {
+    public void createComment_WithUnblockedUser_Success() {
         User user = new User();
         user.setIsBlocked(false);
         Comment comment = new Comment();
@@ -30,7 +36,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void createComment_WithBlockedUser_ThrowsException() {
+    public void createComment_WithBlockedUser_ThrowsException() {
         User user = new User();
         user.setIsBlocked(true);
         Comment comment = new Comment();
@@ -38,7 +44,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void updateComment_ByAuthor_Success() {
+    public void updateComment_ByAuthor_Success() {
         User author = new User();
         Comment comment = new Comment();
         comment.setAuthor(author);
@@ -48,7 +54,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void updateComment_ByNonAuthor_ThrowsException() {
+    public void updateComment_ByNonAuthor_ThrowsException() {
         User author = new User();
         author.setId(1);
         User nonAuthor = new User();
@@ -59,7 +65,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void deleteComment_ByAuthorOrAdmin_Success() {
+    public void deleteComment_ByAuthorOrAdmin_Success() {
         User author = new User();
         User admin = new User();
         admin.setAdmin(true);
@@ -71,7 +77,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void deleteComment_ByNonAuthorNonAdmin_ThrowsException() {
+    public void deleteComment_ByNonAuthorNonAdmin_ThrowsException() {
         User author = new User();
         author.setId(1);
         User nonAuthorNonAdmin = new User();
@@ -83,7 +89,7 @@ public class CommentServiceTests {
     }
 
     @Test
-    void getCommentById_Success() {
+    public void getCommentById_Success() {
         int id = 1;
         Comment expectedComment = new Comment();
         when(commentRepository.getById(id)).thenReturn(expectedComment);
@@ -92,12 +98,49 @@ public class CommentServiceTests {
     }
 
     @Test
-    void getCommentsByPostId_Success() {
+    public void getCommentsByPostId_Success() {
         int postId = 1;
         List<Comment> expectedComments = Collections.singletonList(new Comment());
         when(commentRepository.getByPostId(postId)).thenReturn(expectedComments);
         List<Comment> actualComments = commentService.getByPostId(postId);
         assertEquals(expectedComments, actualComments);
+    }
+
+    @Test
+    public void testGetUserComments() {
+        // Given
+        User user = new User();
+        int page = 0;
+        int size = 10;
+        Pageable pageable = PageRequest.of(page, size);
+        Comment comment1 = new Comment();
+        Comment comment2 = new Comment();
+        List<Comment> comments = Arrays.asList(comment1, comment2);
+        Page<Comment> pageOfComments = new PageImpl<>(comments);
+        when(commentRepository.getUserComments(eq(user), any(Pageable.class))).thenReturn(pageOfComments);
+
+        // When
+        Page<Comment> resultPage = commentService.getUserComments(user, page, size);
+
+        // Then
+        assertNotNull(resultPage);
+        assertEquals(2, resultPage.getContent().size());
+        verify(commentRepository).getUserComments(eq(user), any(Pageable.class));
+    }
+
+    @Test
+    public void testGetAll() {
+        // Given
+        Comment comment1 = new Comment(); // Assuming Comment is a class with appropriate fields
+        Comment comment2 = new Comment();
+        List<Comment> mockComments = Arrays.asList(comment1, comment2);
+        when(commentRepository.getAll()).thenReturn(mockComments);
+
+        // When
+        List<Comment> result = commentService.getAll();
+
+        // Then
+        verify(commentRepository, times(1)).getAll();
     }
 
 }
