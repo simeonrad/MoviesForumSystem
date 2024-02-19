@@ -56,7 +56,7 @@ button:hover {
 <div class="container">
     <h2>Edit Comment</h2>
     <form th:action="@{update/{commentId}(commentId=${comment.id})}" th:object="${comment}" method="post">
-        <textarea th:field="*{content}" placeholder="Write your comment here..."></textarea>
+        <textarea th:field="*{content}" placeholder="Write your comment here..." minlength="5" required></textarea>
         <button type="submit">Update Comment</button>
     </form>
 </div>
