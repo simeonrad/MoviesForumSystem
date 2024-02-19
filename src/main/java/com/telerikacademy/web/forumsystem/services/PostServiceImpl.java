@@ -41,7 +41,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void update(Post post, User user, Set<Tag> tags) {
-        if (!post.getAuthor().equals(user)) {
+        if (!post.getAuthor().equals(user) && !user.isAdmin()) {
             throw new UnauthorizedOperationException("Only the author can modify it's data!");
         } else {
             post.setEditTimeStamp(LocalDateTime.now());
